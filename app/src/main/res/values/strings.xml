@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Story-Ghost-Compose</string>
+    <string name="error_unauthorized">Error Unauthorized Access</string>
+    <string name="error_not_found">Error Not Found</string>
+    <string name="error_server">Error Server Issue</string>
+    <string name="error_unexpected">Unexpected Error</string>
+    <string name="error_network">Network Error</string>
 </resources>

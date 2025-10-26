@@ -1,0 +1,55 @@
+def getEnvValue(String key) {
+    def envFile = file("${rootProject.projectDir}/.env")
+    if (!envFile.exists()) {
+        throw new GradleException(".env file not found at the root of the project")
+    }
+
+    def props = new Properties()
+    envFile.withInputStream { stream ->
+        props.load(stream)
+    }
+
+    return props.getProperty(key)
+}
+
+def createGoogleServicesJson(String base64String) {
+    def decodedBytes = Base64.decoder.decode(base64String)
+    def jsonString = new String(decodedBytes, "UTF-8")
+    def jsonFile = file("${rootProject.projectDir}/app/google-services.json")
+
+    jsonFile.withWriter('UTF-8') { writer ->
+        writer.write(jsonString)
+    }
+
+    println("google-services.json created successfully")
+}
+
+android {
+    defaultConfig {
+        buildConfigField "String", "API_USER_INFO", "\"${getEnvValue('API_USER_INFO')}\""
+        buildConfigField "String", "API_STORY_LIST", "\"${getEnvValue('API_STORY_LIST')}\""
+        buildConfigField "String", "API_USER_STORY", "\"${getEnvValue('API_USER_STORY')}\""
+        buildConfigField "String", "API_SEARCH_USER", "\"${getEnvValue('API_SEARCH_USER')}\""
+        buildConfigField "String", "API_HIGHLIGHT_LIST", "\"${getEnvValue('API_HIGHLIGHT_LIST')}\""
+        buildConfigField "String", "API_HIGHLIGHT_STORY", "\"${getEnvValue('API_HIGHLIGHT_STORY')}\""
+        buildConfigField "String", "ONESIGNAL_APP_ID", "\"${getEnvValue('ONESIGNAL_APP_ID')}\""
+        buildConfigField "String", "FAN_REWARDED_INTERSTITIAL_AD_ID", "\"${getEnvValue('FAN_REWARDED_INTERSTITIAL_AD_ID')}\""
+        buildConfigField "String", "ADMOB_REWARDED_INTERSTITIAL_AD_ID", "\"${getEnvValue('ADMOB_REWARDED_INTERSTITIAL_AD_ID')}\""
+        buildConfigField "String", "ADMOB_INTERSTITIAL_AD_ID", "\"${getEnvValue('ADMOB_INTERSTITIAL_AD_ID')}\""
+        buildConfigField "String", "ADMOB_APP_OPEN_AD_ID", "\"${getEnvValue('ADMOB_APP_OPEN_AD_ID')}\""
+        manifestPlaceholders(ADMOB_APP_ID: "${getEnvValue('ADMOB_APP_ID')}")
+    }
+}
+
+tasks.register('createGoogleServicesJsonFile') {
+    doLast {
+        def firebaseBase64 = getEnvValue('FIREBASE_BASE64')
+        if (firebaseBase64) {
+            createGoogleServicesJson(firebaseBase64)
+        } else {
+            throw new GradleException("FIREBASE_BASE64 not found in .env file")
+        }
+    }
+}
+
+preBuild.dependsOn createGoogleServicesJsonFile
