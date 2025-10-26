@@ -42,6 +42,8 @@ android {
     }
 }
 
+apply(from = "readEnv.gradle")
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -69,5 +71,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
+
+    //datastore
+    implementation(libs.androidx.datastore.preferences)
 
 }
