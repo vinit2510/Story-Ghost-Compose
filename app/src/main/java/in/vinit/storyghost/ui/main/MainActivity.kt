@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost
+package `in`.vinit.storyghost.ui.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,7 +13,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import `in`.vinit.storyghost.ui.theme.StoryGhostComposeTheme
+import `in`.vinit.storyghost.ui.UiState
+import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class MainActivity : ComponentActivity() {
@@ -22,12 +23,18 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val viewModel = getViewModel<MainViewModel>()
-            val data by viewModel.data.collectAsState()
+            val storyList by viewModel.storyList.collectAsState()
 
-            StoryGhostComposeTheme {
+            StoryGhostTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    val text = when (val state = storyList) {
+                        is UiState.Success -> state.data.toString()
+                        is UiState.Loading -> "Loading"
+                        is UiState.Error -> state.errorMsg.asString()
+                    }
+
                     Greeting(
-                        name = data?.title.toString(),
+                        name = text,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -47,7 +54,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    StoryGhostComposeTheme {
+    StoryGhostTheme {
         Greeting("Android")
     }
 }
