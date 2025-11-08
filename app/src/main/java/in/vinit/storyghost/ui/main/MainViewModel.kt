@@ -2,17 +2,20 @@ package `in`.vinit.storyghost.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.vinit.storyghost.data.local.LocalDataSource
 import `in`.vinit.storyghost.data.model.StoryListResponse
 import `in`.vinit.storyghost.data.remote.story.StoryRepository
 import `in`.vinit.storyghost.data.remote.user.UserRepository
 import `in`.vinit.storyghost.ui.UiState
+import `in`.vinit.storyghost.util.makeApiCall
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val storyRepository: StoryRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val localRepository: LocalDataSource
 ) : ViewModel() {
 
     private val _storyList = MutableStateFlow<UiState<StoryListResponse>>(UiState.Loading)
@@ -25,7 +28,7 @@ class MainViewModel(
 
     private fun fetchStories() {
         viewModelScope.launch {
-            _storyList.value = storyRepository.getStoryList()
+            _storyList.value = makeApiCall { storyRepository.getStoryList() }
         }
     }
 
