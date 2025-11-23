@@ -6,6 +6,8 @@ import `in`.vinit.storyghost.BuildConfig
 import `in`.vinit.storyghost.data.local.LocalDataSource
 import `in`.vinit.storyghost.data.remote.auth.LoginInterceptor
 import `in`.vinit.storyghost.data.remote.auth.LogoutAuthenticator
+import `in`.vinit.storyghost.data.remote.config.FirebaseRemoteConfigImpl
+import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.data.remote.story.StoryAPI
 import `in`.vinit.storyghost.data.remote.story.StoryRepository
 import `in`.vinit.storyghost.data.remote.story.StoryRepositoryImpl
@@ -33,6 +35,11 @@ val appModule = module {
     // LocalDataSource
     single {
         LocalDataSource(get())
+    }
+
+    // Remote config
+    single<RemoteConfigRepository> {
+        FirebaseRemoteConfigImpl()
     }
 
     // Retrofit instance
