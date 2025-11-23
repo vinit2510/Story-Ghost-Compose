@@ -28,7 +28,6 @@ class FirebaseRemoteConfigImpl : RemoteConfigRepository {
     private val firebaseRemoteConfig = Firebase.remoteConfig
 
     init {
-        Log.d(TAG, "vinit ------> firebase init: ")
         val configSettings = remoteConfigSettings {
             minimumFetchIntervalInSeconds = 3600
         }
