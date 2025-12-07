@@ -7,15 +7,19 @@ import `in`.vinit.storyghost.data.model.StoryListResponse
 import `in`.vinit.storyghost.data.remote.story.StoryRepository
 import `in`.vinit.storyghost.data.remote.user.UserRepository
 import `in`.vinit.storyghost.ui.UiState
+import `in`.vinit.storyghost.util.Logger
 import `in`.vinit.storyghost.util.makeApiCall
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+private const val TAG = "MainViewModel"
+
 class MainViewModel(
     private val storyRepository: StoryRepository,
     private val userRepository: UserRepository,
-    private val localRepository: LocalDataSource
+    private val localRepository: LocalDataSource,
+    private val logger: Logger
 ) : ViewModel() {
 
     private val _storyList = MutableStateFlow<UiState<StoryListResponse>>(UiState.Loading)
@@ -28,7 +32,11 @@ class MainViewModel(
 
     private fun fetchStories() {
         viewModelScope.launch {
-            _storyList.value = makeApiCall { storyRepository.getStoryList() }
+            val result = makeApiCall { storyRepository.getStoryList() }
+            if (result is UiState.Error) {
+                logger.e(TAG, "Error fetching stories", result.cause)
+            }
+            _storyList.value = result
         }
     }
 
