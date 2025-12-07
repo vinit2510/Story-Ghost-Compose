@@ -17,6 +17,8 @@ import `in`.vinit.storyghost.data.remote.user.UserRepositoryImpl
 import `in`.vinit.storyghost.ui.main.MainViewModel
 import `in`.vinit.storyghost.util.AnalyticsLogger
 import `in`.vinit.storyghost.util.FirebaseAnalyticsLogger
+import `in`.vinit.storyghost.util.Logger
+import `in`.vinit.storyghost.util.TimberLoggerImpl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -26,6 +28,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val appModule = module {
+
+    // Logger
+    single<Logger> {
+        TimberLoggerImpl()
+    }
 
     // DataStore
     single {
@@ -41,7 +48,7 @@ val appModule = module {
 
     // Remote config
     single<RemoteConfigRepository> {
-        FirebaseRemoteConfigImpl()
+        FirebaseRemoteConfigImpl(get())
     }
 
     // Analytics Helper
@@ -90,6 +97,6 @@ val appModule = module {
 
     // ViewModel
     viewModel {
-        MainViewModel(get(), get(), get())
+        MainViewModel(get(), get(), get(), get())
     }
 }

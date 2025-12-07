@@ -87,4 +87,6 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)
 
+    implementation(libs.timber)
+
 }
