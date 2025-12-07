@@ -29,6 +29,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            manifestPlaceholders["firebase_collection_enabled"] = "true"
+        }
+        debug {
+            manifestPlaceholders["firebase_collection_enabled"] = "false"
         }
     }
     compileOptions {
@@ -81,5 +85,6 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.config)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 
 }
