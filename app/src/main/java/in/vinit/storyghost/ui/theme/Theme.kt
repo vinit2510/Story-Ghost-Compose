@@ -31,6 +31,7 @@ fun StoryGhostTheme(
     MaterialTheme(
         colorScheme = DarkColorScheme,
         typography = Typography,
+        shapes = AppShapes,
         content = content
     )
 }
