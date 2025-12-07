@@ -15,6 +15,8 @@ import `in`.vinit.storyghost.data.remote.user.UserAPI
 import `in`.vinit.storyghost.data.remote.user.UserRepository
 import `in`.vinit.storyghost.data.remote.user.UserRepositoryImpl
 import `in`.vinit.storyghost.ui.main.MainViewModel
+import `in`.vinit.storyghost.util.AnalyticsLogger
+import `in`.vinit.storyghost.util.FirebaseAnalyticsLogger
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -42,10 +44,15 @@ val appModule = module {
         FirebaseRemoteConfigImpl()
     }
 
+    // Analytics Helper
+    single<AnalyticsLogger> {
+        FirebaseAnalyticsLogger()
+    }
+
     // Retrofit instance
     single {
         val client = OkHttpClient.Builder().apply {
-            addInterceptor(LoginInterceptor(get()))
+            addInterceptor(LoginInterceptor(get(), get()))
             authenticator(LogoutAuthenticator(get()))
             if (BuildConfig.DEBUG) {
                 addInterceptor(
