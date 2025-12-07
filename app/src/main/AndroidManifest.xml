@@ -5,7 +5,7 @@
 
     <application
         android:name=".MyApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -13,6 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.StoryGhostCompose">
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="${firebase_collection_enabled}" />
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="${firebase_collection_enabled}" />
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
