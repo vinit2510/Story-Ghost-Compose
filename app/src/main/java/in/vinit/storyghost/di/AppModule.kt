@@ -45,7 +45,7 @@ val appModule = module {
     // Retrofit instance
     single {
         val client = OkHttpClient.Builder().apply {
-            addInterceptor(LoginInterceptor(get()))
+            addInterceptor(LoginInterceptor(get(), get()))
             authenticator(LogoutAuthenticator(get()))
             if (BuildConfig.DEBUG) {
                 addInterceptor(
