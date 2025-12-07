@@ -1,10 +1,10 @@
 package `in`.vinit.storyghost.data.remote.config
 
-import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
 import `in`.vinit.storyghost.R
+import `in`.vinit.storyghost.util.Logger
 
 
 private const val TAG = "RemoteConfigRepository"
@@ -23,7 +23,7 @@ interface RemoteConfigRepository {
     fun getCookieMinVersion(): Int
 }
 
-class FirebaseRemoteConfigImpl : RemoteConfigRepository {
+class FirebaseRemoteConfigImpl(private val logger: Logger) : RemoteConfigRepository {
 
     private val firebaseRemoteConfig = Firebase.remoteConfig
 
@@ -37,13 +37,13 @@ class FirebaseRemoteConfigImpl : RemoteConfigRepository {
         try {
             firebaseRemoteConfig.fetchAndActivate().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "fetchAndActivate: Success")
+                    logger.d(TAG, "fetchAndActivate: Success")
                 } else {
-                    Log.d(TAG, "fetchAndActivate: Failure")
+                    logger.e(TAG, "fetchAndActivate: Failure")
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "fetchAndActivate: ", e)
+            logger.e(TAG, "fetchAndActivate: ", e)
         }
     }
 
