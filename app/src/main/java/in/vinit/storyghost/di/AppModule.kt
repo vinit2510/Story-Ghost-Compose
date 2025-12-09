@@ -22,7 +22,7 @@ import `in`.vinit.storyghost.util.TimberLoggerImpl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -96,7 +96,5 @@ val appModule = module {
     }
 
     // ViewModel
-    viewModel {
-        MainViewModel(get(), get(), get(), get())
-    }
+    viewModelOf(::MainViewModel)
 }
