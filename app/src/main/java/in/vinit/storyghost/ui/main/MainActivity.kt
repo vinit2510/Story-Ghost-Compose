@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import `in`.vinit.storyghost.ui.UiState
+import `in`.vinit.storyghost.ui.onboarding.OnboardingScreen
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
@@ -38,10 +39,7 @@ class MainActivity : ComponentActivity() {
                         is UiState.Error -> state.errorMsg.asString()
                     }
 
-                    Greeting(
-                        name = text,
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    OnboardingScreen()
                 }
             }
         }
