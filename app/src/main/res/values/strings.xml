@@ -10,7 +10,7 @@
     <string name="onboarding_text_1">View anyone’s story without getting into their viewer list 🙈</string>
     <string name="onboarding_text_2">Show hidden mention of any Story 🤫</string>
     <string name="onboarding_text_3">Download any story with music into your storage ⬇️</string>
-    <string name="login_warning"><font color="#C93737">*</font> We do not store, share or use your personal information including your name, email, username and password!</string>
+    <string name="login_warning"><![CDATA[<font color="#C93737">*</font> We do not store, share or use your personal information including your name, email, username and password!]]></string>
     <string name="login_with_ig">Login with IG</string>
     <string name="fake_account_login_msg">Login with fake account if you want to see only story of public account.</string>
     <string name="fake10">fake10</string>
@@ -19,4 +19,6 @@
     <string name="real_name">John Doe</string>
     <string name="real_user_name">john15.d</string>
     <string name="search_username_name">search username/name…</string>
+    <string name="or">OR</string>
+    <string name="login_with_cookie"><u>Login with cookie</u></string>
 </resources>

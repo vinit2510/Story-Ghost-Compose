@@ -60,6 +60,8 @@ fun OnboardingScreen(modifier: Modifier = Modifier) {
                     R.drawable.img_onboarding_3,
                     R.string.onboarding_text_3
                 )
+
+                3 -> OnboardingLoginPage()
             }
 
         }
