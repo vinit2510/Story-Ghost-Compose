@@ -1,3 +1,5 @@
+package `in`.vinit.storyghost.ui.component
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable

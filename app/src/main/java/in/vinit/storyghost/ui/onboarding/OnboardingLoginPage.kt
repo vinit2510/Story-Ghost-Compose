@@ -1,6 +1,5 @@
 package `in`.vinit.storyghost.ui.onboarding
 
-import DashedDivider
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -31,6 +30,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import `in`.vinit.storyghost.R
+import `in`.vinit.storyghost.ui.component.DashedDivider
 import `in`.vinit.storyghost.ui.component.PrimaryButton
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 
