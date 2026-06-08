@@ -45,7 +45,7 @@ fun OnboardingScreen(
     val pagerState = rememberPagerState(pageCount = { 4 })
     val scope = rememberCoroutineScope()
 
-    Scaffold(modifier = modifier.fillMaxSize(), content = {
+    Scaffold(content = {
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
