@@ -28,11 +28,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import `in`.vinit.storyghost.R
+import `in`.vinit.storyghost.di.appModule
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.KoinApplicationPreview
 
 @Composable
-fun OnboardingScreen(onboardingComplete: () -> Unit, modifier: Modifier = Modifier) {
+fun OnboardingScreen(
+    onboardingComplete: () -> Unit,
+    onLoginClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: OnboardingViewModel = koinViewModel()
+) {
 
     val pagerState = rememberPagerState(pageCount = { 4 })
     val scope = rememberCoroutineScope()
@@ -61,7 +69,7 @@ fun OnboardingScreen(onboardingComplete: () -> Unit, modifier: Modifier = Modifi
                     R.string.onboarding_text_3
                 )
 
-                3 -> OnboardingLoginPage()
+                3 -> OnboardingLoginPage(onLoginClick = onLoginClick)
             }
 
         }
@@ -80,7 +88,7 @@ fun OnboardingScreen(onboardingComplete: () -> Unit, modifier: Modifier = Modifi
                 modifier = Modifier
                     .padding(vertical = 20.dp)
                     .clickable {
-                        onboardingComplete()
+                        viewModel.completeOnboarding { onboardingComplete() }
                     },
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.tertiary
@@ -103,7 +111,7 @@ fun OnboardingScreen(onboardingComplete: () -> Unit, modifier: Modifier = Modifi
             Button(
                 onClick = {
                     if (pagerState.currentPage == pagerState.pageCount - 1) {
-                        onboardingComplete()
+                        viewModel.completeOnboarding { onboardingComplete() }
                     } else {
                         scope.launch {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -130,7 +138,13 @@ fun OnboardingScreen(onboardingComplete: () -> Unit, modifier: Modifier = Modifi
 @Preview
 @Composable
 private fun OnboardingScreenPreview() {
-    StoryGhostTheme {
-        OnboardingScreen(modifier = Modifier.fillMaxSize(), onboardingComplete = {})
+    KoinApplicationPreview(application = { modules(appModule) }) {
+        StoryGhostTheme {
+            OnboardingScreen(
+                modifier = Modifier.fillMaxSize(),
+                onboardingComplete = {},
+                onLoginClick = {}
+            )
+        }
     }
 }

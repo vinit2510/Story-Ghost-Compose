@@ -15,7 +15,9 @@ import `in`.vinit.storyghost.data.remote.user.UserAPI
 import `in`.vinit.storyghost.data.remote.user.UserRepository
 import `in`.vinit.storyghost.data.remote.user.UserRepositoryImpl
 import `in`.vinit.storyghost.ui.home.HomeViewModel
-import `in`.vinit.storyghost.ui.main.MainViewModel
+import `in`.vinit.storyghost.ui.navigation.NavViewModel
+import `in`.vinit.storyghost.ui.onboarding.LoginViewModel
+import `in`.vinit.storyghost.ui.onboarding.OnboardingViewModel
 import `in`.vinit.storyghost.util.AnalyticsLogger
 import `in`.vinit.storyghost.util.FirebaseAnalyticsLogger
 import `in`.vinit.storyghost.util.Logger
@@ -97,6 +99,8 @@ val appModule = module {
     }
 
     // ViewModel
-    viewModelOf(::MainViewModel)
+    viewModelOf(::NavViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::LoginViewModel)
+    viewModelOf(::OnboardingViewModel)
 }

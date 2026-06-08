@@ -35,7 +35,7 @@ import `in`.vinit.storyghost.ui.component.PrimaryButton
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 
 @Composable
-fun OnboardingLoginPage() {
+fun OnboardingLoginPage(onLoginClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -75,7 +75,7 @@ fun OnboardingLoginPage() {
             text = stringResource(R.string.login_with_ig),
             color = MaterialTheme.colorScheme.surface
         ) {
-
+            onLoginClick()
         }
 
         Row(
@@ -171,6 +171,6 @@ private fun AccountTypeSection(
 @Composable
 private fun OnboardingLoginPagePreview() {
     StoryGhostTheme {
-        OnboardingLoginPage()
+        OnboardingLoginPage {}
     }
 }

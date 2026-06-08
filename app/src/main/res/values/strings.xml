@@ -21,4 +21,8 @@
     <string name="search_username_name">search username/name…</string>
     <string name="or">OR</string>
     <string name="login_with_cookie"><u>Login with cookie</u></string>
+    <string name="failed_to_login">Failed to login</string>
+    <string name="force_update_msg">For your security and optimal experience, this app requires an immediate update to the latest version. Without this update, you may experience limited functionality. Failure to update may result in restricted app access or malfunction. Please update now to continue using the app smoothly.</string>
+    <string name="update_app_now">Update App Now</string>
+    <string name="action_needed_update_required">Action Needed: Update Required</string>
 </resources>
