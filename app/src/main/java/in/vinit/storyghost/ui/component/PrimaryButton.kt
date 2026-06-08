@@ -30,6 +30,7 @@ fun PrimaryButton(
         shape = MaterialTheme.shapes.small,
         colors = ButtonDefaults.buttonColors(containerColor = color),
         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 13.dp),
+        elevation = ButtonDefaults.buttonElevation(1.dp),
         onClick = { onClick() }
     ) {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {

@@ -2,13 +2,13 @@ package `in`.vinit.storyghost.ui.onboarding
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -32,15 +32,15 @@ import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun OnboardingScreen(modifier: Modifier = Modifier) {
+fun OnboardingScreen(onboardingComplete: () -> Unit, modifier: Modifier = Modifier) {
 
     val pagerState = rememberPagerState(pageCount = { 4 })
     val scope = rememberCoroutineScope()
 
-    Scaffold(content = {
+    Scaffold(modifier = modifier.fillMaxSize(), content = {
         HorizontalPager(
             state = pagerState,
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
         ) { page ->
@@ -71,14 +71,17 @@ fun OnboardingScreen(modifier: Modifier = Modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 20.dp, bottom = 10.dp, end = 15.dp)
-                .navigationBarsPadding(),
+                .padding(start = 20.dp, bottom = 10.dp, end = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 stringResource(R.string.skip),
-                modifier = Modifier.padding(vertical = 20.dp),
+                modifier = Modifier
+                    .padding(vertical = 20.dp)
+                    .clickable {
+                        onboardingComplete()
+                    },
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.tertiary
             )
@@ -99,7 +102,13 @@ fun OnboardingScreen(modifier: Modifier = Modifier) {
 
             Button(
                 onClick = {
-                    scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+                    if (pagerState.currentPage == pagerState.pageCount - 1) {
+                        onboardingComplete()
+                    } else {
+                        scope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    }
                 }, modifier = Modifier
                     .size(60.dp),
                 shape = CircleShape,
@@ -122,6 +131,6 @@ fun OnboardingScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun OnboardingScreenPreview() {
     StoryGhostTheme {
-        OnboardingScreen()
+        OnboardingScreen(modifier = Modifier.fillMaxSize(), onboardingComplete = {})
     }
 }
