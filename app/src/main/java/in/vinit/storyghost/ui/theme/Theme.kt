@@ -21,7 +21,10 @@ private val DarkColorScheme = darkColorScheme(
     onSurfaceVariant = Grey95,
 
     outline = Grey30A20,
-    tertiary = Grey70
+    tertiary = Grey70,
+    scrim = BlackA90,
+    secondaryContainer = Blue60A30,
+    inversePrimary = Black
 )
 
 @Composable

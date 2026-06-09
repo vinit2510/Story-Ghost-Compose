@@ -42,12 +42,11 @@ val Typography = Typography(
     ),
     labelMedium = TextStyle(
         fontFamily = DMSans,
-        fontWeight = FontWeight.Normal,
         fontSize = 12.sp
     ),
     labelSmall = TextStyle(
         fontFamily = DMSans,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 10.sp
     )
 )

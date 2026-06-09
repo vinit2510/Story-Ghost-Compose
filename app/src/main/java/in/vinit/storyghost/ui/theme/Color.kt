@@ -12,3 +12,7 @@ val Grey10 = Color(0xFF101415)
 
 val Grey10A80 = Color(0xCC101415)
 val Grey30A20 = Color(0x33101415)
+
+val BlackA90 = Color(0xE6000000)
+val Blue60A30 = Color(0x4D4D94FF)
+val Black = Color(0xFF000000)

@@ -35,10 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import `in`.vinit.storyghost.R
-import `in`.vinit.storyghost.di.appModule
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.KoinApplicationPreview
 
 @Composable
 fun HomeScreen(
@@ -46,9 +44,20 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = koinViewModel()
 ) {
-
     val storyList by viewModel.storyList.collectAsStateWithLifecycle()
+    HomeContent(
+        storyList = storyList,
+        onStoryClick = onStoryClick,
+        modifier = modifier
+    )
+}
 
+@Composable
+fun HomeContent(
+    storyList: List<String>,
+    onStoryClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -65,7 +74,9 @@ fun HomeScreen(
                         .clickable {
                             onStoryClick(story)
                         }
-                        .padding(15.dp)
+                        .padding(15.dp),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -95,7 +106,7 @@ fun HomeTopBar(
             Text(
                 stringResource(R.string.app_name),
                 modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
 
@@ -166,10 +177,19 @@ fun HomeTopBar(
 
 @Preview
 @Composable
-private fun HomeScreenPreview() {
-    KoinApplicationPreview(application = { modules(appModule) }) {
-        StoryGhostTheme {
-            HomeScreen(onStoryClick = {})
-        }
+private fun HomeContentPreview() {
+    StoryGhostTheme {
+        HomeContent(
+            storyList = listOf(
+                "cristiano",
+                "leomessi",
+                "neymarjr",
+                "taylorswift",
+                "arianagrande",
+                "selenagomez"
+            ),
+            onStoryClick = {},
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }

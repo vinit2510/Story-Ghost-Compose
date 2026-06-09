@@ -25,4 +25,12 @@
     <string name="force_update_msg">For your security and optimal experience, this app requires an immediate update to the latest version. Without this update, you may experience limited functionality. Failure to update may result in restricted app access or malfunction. Please update now to continue using the app smoothly.</string>
     <string name="update_app_now">Update App Now</string>
     <string name="action_needed_update_required">Action Needed: Update Required</string>
+    <string name="login">Login</string>
+    <string name="login_using_cookie">Login using cookie</string>
+    <string name="cookie_login_info">Open instagram.com on pc &gt; Inspect or press F12 &gt; Network Tab &gt; Ctrl + R &gt; Locate www.instagram in name tab &gt; Header tab &gt; Request headers &gt; Cookie &gt; Copy &amp; Paste value</string>
+    <string name="paste_your_account_cookie_here">Paste your account cookie here…</string>
+    <string name="how_to_get_cookie_watch_video">How to get cookie? <u>watch video</u></string>
+    <string name="login_successful">Login successful</string>
+    <string name="please_paste_cookie_first">Please paste cookie first</string>
+    <string name="paste">Paste</string>
 </resources>
