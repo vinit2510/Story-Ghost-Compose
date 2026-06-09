@@ -18,7 +18,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import `in`.vinit.storyghost.ui.UiState
 import org.koin.androidx.compose.koinViewModel
 
-@SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun LoginWebViewScreen(
     onLoginSuccess: () -> Unit,
@@ -49,6 +48,20 @@ fun LoginWebViewScreen(
         }
     }
 
+    LoginWebViewContent(
+        loginUrl = loginUrl,
+        onPageFinished = { url, cookie -> viewModel.onPageFinished(url, cookie) },
+        modifier = modifier
+    )
+}
+
+@SuppressLint("SetJavaScriptEnabled")
+@Composable
+fun LoginWebViewContent(
+    loginUrl: String,
+    onPageFinished: (url: String?, cookie: String?) -> Unit,
+    modifier: Modifier = Modifier
+) {
     AndroidView(
         modifier = modifier.fillMaxSize(),
         factory = { context ->
@@ -68,7 +81,7 @@ fun LoginWebViewScreen(
                     override fun onPageFinished(view: WebView?, url: String?) {
                         super.onPageFinished(view, url)
                         val cookie = CookieManager.getInstance().getCookie(url)
-                        viewModel.onPageFinished(url, cookie)
+                        onPageFinished(url, cookie)
                     }
                 }
                 loadUrl(loginUrl)

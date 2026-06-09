@@ -59,7 +59,7 @@ fun ForceUpdateScreen(modifier: Modifier = Modifier) {
 
                 Text(
                     text = stringResource(R.string.action_needed_update_required),
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
                 )
@@ -68,7 +68,7 @@ fun ForceUpdateScreen(modifier: Modifier = Modifier) {
 
                 Text(
                     text = stringResource(R.string.force_update_msg),
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     textAlign = TextAlign.Justify
                 )
@@ -108,6 +108,6 @@ private fun openPlayStore(context: Context) {
 @Composable
 private fun ForceUpdateScreenPreview() {
     StoryGhostTheme {
-        ForceUpdateScreen()
+        ForceUpdateScreen(modifier = Modifier.fillMaxSize())
     }
 }

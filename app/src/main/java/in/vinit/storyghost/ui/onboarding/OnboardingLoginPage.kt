@@ -3,6 +3,7 @@ package `in`.vinit.storyghost.ui.onboarding
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,7 +36,11 @@ import `in`.vinit.storyghost.ui.component.PrimaryButton
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 
 @Composable
-fun OnboardingLoginPage(onLoginClick: () -> Unit) {
+fun OnboardingLoginPage(
+    isCookieLoginEnabled: Boolean,
+    onLoginClick: () -> Unit,
+    onCookieLoginClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,37 +83,41 @@ fun OnboardingLoginPage(onLoginClick: () -> Unit) {
             onLoginClick()
         }
 
-        Row(
-            modifier = Modifier
-                .padding(top = 15.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            HorizontalDivider(
-                Modifier.size(width = 60.dp, height = 1.dp),
-                color = MaterialTheme.colorScheme.tertiary
-            )
+        if (isCookieLoginEnabled) {
+            Row(
+                modifier = Modifier
+                    .padding(top = 15.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                HorizontalDivider(
+                    Modifier.size(width = 60.dp, height = 1.dp),
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+
+                Text(
+                    text = stringResource(R.string.or),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+
+                HorizontalDivider(
+                    Modifier.size(width = 60.dp, height = 1.dp),
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+            }
 
             Text(
-                text = stringResource(R.string.or),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.tertiary
-            )
-
-            HorizontalDivider(
-                Modifier.size(width = 60.dp, height = 1.dp),
-                color = MaterialTheme.colorScheme.tertiary
+                text = stringResource(R.string.login_with_cookie),
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .clickable { onCookieLoginClick() },
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    textDecoration = TextDecoration.Underline
+                ),
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
-
-        Text(
-            text = stringResource(R.string.login_with_cookie),
-            modifier = Modifier.padding(top = 10.dp),
-            style = MaterialTheme.typography.bodyLarge.copy(
-                textDecoration = TextDecoration.Underline
-            ),
-            color = MaterialTheme.colorScheme.onBackground
-        )
 
         Text(
             text = AnnotatedString.fromHtml(stringResource(R.string.login_warning)),
@@ -171,6 +180,10 @@ private fun AccountTypeSection(
 @Composable
 private fun OnboardingLoginPagePreview() {
     StoryGhostTheme {
-        OnboardingLoginPage {}
+        OnboardingLoginPage(
+            isCookieLoginEnabled = true,
+            onLoginClick = {},
+            onCookieLoginClick = {}
+        )
     }
 }

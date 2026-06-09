@@ -27,6 +27,40 @@ class LoginViewModel(
         return remoteConfigRepository.getInstagramLoginUrl()
     }
 
+    fun loginWithCookie(cookie: String) {
+        logger.d(TAG, "loginWithCookie: $cookie")
+        try {
+            val sessionId = getCookieValue(cookie, "sessionid")
+            val csrfToken = getCookieValue(cookie, "csrftoken")
+            val userId = getCookieValue(cookie, "ds_user_id")
+
+            logger.d(TAG, "cookie     : $cookie")
+            logger.d(TAG, "sessionid  : $sessionId")
+            logger.d(TAG, "csrftoken  : $csrfToken")
+            logger.d(TAG, "ds_user_id : $userId")
+
+            if (!sessionId.isNullOrEmpty() && !userId.isNullOrEmpty()) {
+                saveSession(cookie, sessionId, csrfToken, userId)
+            } else {
+                _uiState.value = UiState.Error(
+                    errorMsg = UiText.DynamicString("Failed to login, cookie is not valid.")
+                )
+            }
+        } catch (e: Exception) {
+            logger.e(TAG, "Error validating cookie", e)
+            _uiState.value = UiState.Error(
+                errorMsg = UiText.DynamicString(
+                    e.localizedMessage ?: "Failed to validate cookie"
+                ),
+                cause = e
+            )
+        }
+    }
+
+    fun resetUiState() {
+        _uiState.value = UiState.Success(false)
+    }
+
     fun onPageFinished(url: String?, rawCookie: String?) {
         logger.d(TAG, "onPageFinished: $url")
         try {

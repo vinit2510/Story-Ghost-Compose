@@ -1,13 +1,18 @@
 package `in`.vinit.storyghost.ui.component
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 
 @Composable
 fun DashedDivider(
@@ -33,5 +38,18 @@ fun DashedDivider(
             )
             x += dashWidthPx + dashGapPx
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DashedDividerPreview() {
+    StoryGhostTheme {
+        DashedDivider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            color = MaterialTheme.colorScheme.tertiary
+        )
     }
 }
