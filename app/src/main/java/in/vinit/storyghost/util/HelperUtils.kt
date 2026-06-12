@@ -3,9 +3,9 @@ package `in`.vinit.storyghost.util
 import `in`.vinit.storyghost.R
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.UiText
+import kotlinx.coroutines.CancellationException
 import retrofit2.HttpException
 import java.io.IOException
-
 
 suspend fun <T> makeApiCall(call: suspend () -> T): UiState<T> {
     return try {
@@ -21,7 +21,10 @@ suspend fun <T> makeApiCall(call: suspend () -> T): UiState<T> {
         UiState.Error(UiText.StringResource(messageRes), e.code(), e)
     } catch (e: IOException) {
         UiState.Error(UiText.StringResource(R.string.error_network), null, e)
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         UiState.Error(UiText.StringResource(R.string.error_unexpected), null, e)
     }
 }
+

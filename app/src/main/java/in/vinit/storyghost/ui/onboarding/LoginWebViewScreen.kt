@@ -32,6 +32,7 @@ fun LoginWebViewScreen(
         when (val state = uiState) {
             is UiState.Success -> {
                 if (state.data) {
+                    viewModel.resetUiState()
                     onLoginSuccess()
                 }
             }

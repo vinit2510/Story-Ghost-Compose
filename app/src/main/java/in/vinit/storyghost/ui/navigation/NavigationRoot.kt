@@ -31,8 +31,8 @@ fun NavigationRoot(
     LaunchedEffect(uiState is UiState.Success) {
         if (uiState is UiState.Success) {
             val route = (uiState as UiState.Success).data
+            backStack.clear()
             backStack.add(route)
-            backStack.remove(Route.Splash)
         }
     }
 
@@ -59,7 +59,7 @@ fun NavigationRoot(
                                 backStack.add(Route.Home)
                             },
                             onLoginClick = {
-                                backStack.add(Route.LoginWebView)
+                                backStack.add(Route.LoginWebView())
                             }
                         )
                     }
@@ -69,7 +69,7 @@ fun NavigationRoot(
                     NavEntry(key) {
                         LoginWebViewScreen(
                             onLoginSuccess = {
-                                backStack.remove(Route.LoginWebView)
+                                backStack.remove(key)
                                 backStack.remove(Route.Onboarding)
                                 backStack.add(Route.Home)
                             }
@@ -79,9 +79,14 @@ fun NavigationRoot(
 
                 is Route.Home -> {
                     NavEntry(key) {
-                        HomeScreen(onStoryClick = { storyId ->
-                            backStack.add(Route.Story(storyId))
-                        })
+                        HomeScreen(
+                            onStoryClick = { storyId ->
+                                backStack.add(Route.Story(storyId))
+                            },
+                            onLoginClick = {
+                                backStack.add(Route.LoginWebView())
+                            }
+                        )
                     }
                 }
 

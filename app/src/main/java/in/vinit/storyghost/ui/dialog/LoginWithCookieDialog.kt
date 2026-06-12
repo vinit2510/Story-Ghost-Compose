@@ -23,7 +23,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,16 +61,12 @@ fun LoginWithCookieDialog(
     val loginSuccessfulText = stringResource(R.string.login_successful)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    DisposableEffect(Unit) {
-        viewModel.resetUiState()
-        onDispose {}
-    }
-
     LaunchedEffect(uiState) {
         when (uiState) {
             is UiState.Success -> {
                 if ((uiState as UiState.Success<Boolean>).data) {
                     Toast.makeText(context, loginSuccessfulText, Toast.LENGTH_SHORT).show()
+                    viewModel.resetUiState()
                     onLoginSuccess()
                 }
             }

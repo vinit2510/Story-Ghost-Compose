@@ -25,6 +25,11 @@ val Typography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp
     ),
+    titleSmall = TextStyle(
+        fontFamily = DMSans,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp
+    ),
     bodyLarge = TextStyle(
         fontFamily = DMSans,
         fontWeight = FontWeight.Bold,
