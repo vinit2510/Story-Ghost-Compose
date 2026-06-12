@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Story Ghost</string>
-    <string name="error_unauthorized">Error Unauthorized Access</string>
+    <string name="error_unauthorized">Please login to get data</string>
     <string name="error_not_found">Error Not Found</string>
     <string name="error_server">Error Server Issue</string>
     <string name="error_unexpected">Unexpected Error</string>
@@ -30,7 +30,19 @@
     <string name="cookie_login_info">Open instagram.com on pc &gt; Inspect or press F12 &gt; Network Tab &gt; Ctrl + R &gt; Locate www.instagram in name tab &gt; Header tab &gt; Request headers &gt; Cookie &gt; Copy &amp; Paste value</string>
     <string name="paste_your_account_cookie_here">Paste your account cookie here…</string>
     <string name="how_to_get_cookie_watch_video">How to get cookie? <u>watch video</u></string>
-    <string name="login_successful">Login successful</string>
+    <string name="login_successful">Login Successful</string>
     <string name="please_paste_cookie_first">Please paste cookie first</string>
     <string name="paste">Paste</string>
+    <string name="find_highlights">Find Highlights</string>
+    <string name="search_any_user_highlights">search any user highlights…</string>
+    <string name="highlight_desc">Search or tap on below user to see their highlights</string>
+    <string name="insta_username">@%1$s</string>
+    <string name="login_with_instagram">Login with Instagram</string>
+    <string name="instagram_account_is_required">Instagram account is required to get stories data</string>
+    <string name="your_account">Your Account</string>
+    <string name="logout">Logout</string>
+    <string name="login_warning_plain">We do not store, share or use your personal information including your name, email, username and password!</string>
+    <string name="no_result_found">No result found!</string>
+    <string name="back_to_top">Back to top</string>
+    <string name="buy_premium">Buy Premium</string>
 </resources>

@@ -1,83 +1,268 @@
 package `in`.vinit.storyghost.ui.home
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import `in`.vinit.storyghost.R
+import `in`.vinit.storyghost.data.model.StoryListResponse.Data.User.FeedReelsTray.EdgeReelsTrayToReel.Edge
+import `in`.vinit.storyghost.ui.UiState
+import `in`.vinit.storyghost.ui.dialog.LoginDialog
+import `in`.vinit.storyghost.ui.dialog.LogoutDialog
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
-    onStoryClick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    onStoryClick: (String) -> Unit,
+    onLoginClick: () -> Unit = {},
+    onDownloadsClick: () -> Unit = {},
     viewModel: HomeViewModel = koinViewModel()
 ) {
-    val storyList by viewModel.storyList.collectAsStateWithLifecycle()
+    val displayList by viewModel.displayList.collectAsStateWithLifecycle()
+    val isHighlightMode by viewModel.isHighlightMode.collectAsStateWithLifecycle()
+    val profilePicUrl by viewModel.profilePicUrl.collectAsStateWithLifecycle()
+    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
+    val showLoginDialogTrigger by viewModel.showLoginDialogTrigger.collectAsStateWithLifecycle()
+
+    val showLoginDialog = remember { mutableStateOf(false) }
+    val showLogoutDialog = remember { mutableStateOf(false) }
+
+    LaunchedEffect(showLoginDialogTrigger) {
+        if (showLoginDialogTrigger) {
+            showLoginDialog.value = true
+            viewModel.onLoginDialogTriggerHandled()
+        }
+    }
+
+
+    if (showLoginDialog.value) {
+        LoginDialog(
+            onLoginClick = {
+                showLoginDialog.value = false
+                onLoginClick()
+            },
+            onCookieLoginSuccess = {
+                showLoginDialog.value = false
+            },
+            onDismissRequest = { showLoginDialog.value = false }
+        )
+    }
+
+    if (showLogoutDialog.value) {
+        LogoutDialog(
+            onLogoutSuccess = {
+                showLogoutDialog.value = false
+                viewModel.logout()
+            },
+            onDismissRequest = { showLogoutDialog.value = false }
+        )
+    }
+
     HomeContent(
-        storyList = storyList,
+        displayList = displayList,
+        isHighlightMode = isHighlightMode,
+        profilePicUrl = profilePicUrl,
+        onHighlightToggle = viewModel::toggleHighlightMode,
+        onSearchQueryChange = viewModel::onSearchQueryChange,
         onStoryClick = onStoryClick,
+        onDownloadsClick = onDownloadsClick,
+        onProfileClick = {
+            if (isLoggedIn) {
+                showLogoutDialog.value = true
+            } else {
+                showLoginDialog.value = true
+            }
+        },
         modifier = modifier
     )
 }
 
 @Composable
 fun HomeContent(
-    storyList: List<String>,
+    displayList: UiState<List<Edge>>,
+    isHighlightMode: Boolean,
+    profilePicUrl: String?,
+    onHighlightToggle: () -> Unit,
+    onSearchQueryChange: (String) -> Unit,
     onStoryClick: (String) -> Unit,
+    onDownloadsClick: () -> Unit,
+    onProfileClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = innerPadding
-        ) {
-            item {
-                HomeTopBar()
-            }
-            items(storyList) { story ->
-                Text(
-                    text = story,
+    val gridState = rememberLazyGridState()
+    val coroutineScope = rememberCoroutineScope()
+    val displayHeight =
+        with(LocalDensity.current) { LocalConfiguration.current.screenHeightDp.dp.toPx() }
+    val showButton by remember {
+        derivedStateOf {
+            gridState.firstVisibleItemIndex > 0 || gridState.firstVisibleItemScrollOffset > displayHeight
+        }
+    }
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = showButton,
+                enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+                exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
+            ) {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.9f))
                         .clickable {
-                            onStoryClick(story)
+                            coroutineScope.launch {
+                                gridState.animateScrollToItem(0)
+                            }
                         }
-                        .padding(15.dp),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 38.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.back_to_top),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    Image(
+                        painter = painterResource(R.drawable.ic_scroll_top),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(end = 10.dp)
+                    )
+                }
+            }
+        },
+        floatingActionButtonPosition = FabPosition.Center
+    ) { innerPadding ->
+        LazyVerticalGrid(
+            state = gridState,
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                start = 15.dp,
+                top = innerPadding.calculateTopPadding(),
+                end = 15.dp,
+                bottom = innerPadding.calculateBottomPadding() + 10.dp
+            ),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                HomeTopBar(
+                    isHighlightMode = isHighlightMode,
+                    profilePicUrl = profilePicUrl,
+                    onHighlightToggle = onHighlightToggle,
+                    onSearchQueryChange = onSearchQueryChange,
+                    onDownloadsClick = onDownloadsClick,
+                    onProfileClick = onProfileClick
                 )
+            }
+
+            when (displayList) {
+                is UiState.Loading -> {
+                    storyGridShimmerItems()
+                }
+
+                is UiState.Error -> {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        EmptyOrErrorState(
+                            message = displayList.errorMsg.asString()
+                        )
+                    }
+                }
+
+                is UiState.Success -> {
+                    if (displayList.data.isEmpty()) {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            EmptyOrErrorState(
+                                message = stringResource(R.string.no_result_found)
+                            )
+                        }
+                    } else {
+                        items(displayList.data) { user ->
+                            StoryGridItem(
+                                user = user,
+                                onClick = { onStoryClick(user.node?.id ?: "") }
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -85,84 +270,170 @@ fun HomeContent(
 
 @Composable
 fun HomeTopBar(
+    isHighlightMode: Boolean,
+    profilePicUrl: String?,
+    onHighlightToggle: () -> Unit,
+    onSearchQueryChange: (String) -> Unit,
+    onDownloadsClick: () -> Unit,
+    onProfileClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val searchState = rememberTextFieldState(initialText = "")
+
+    LaunchedEffect(searchState) {
+        snapshotFlow { searchState.text.toString() }
+            .collect { onSearchQueryChange(it) }
+    }
+
+    var isShowingAppIcon by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(5000)
+            isShowingAppIcon = !isShowingAppIcon
+        }
+    }
+
     Column(
         modifier
             .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 20.dp)
+            .padding(vertical = 10.dp)
     ) {
         Row(
-            Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Image(
-                painterResource(R.drawable.ic_app_logo_round),
-                "",
-                modifier = Modifier.size(40.dp)
-            )
-
-            Text(
-                stringResource(R.string.app_name),
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            Card(
-                shape = CircleShape,
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-            ) {
+            AnimatedContent(
+                targetState = isShowingAppIcon,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(500)) togetherWith fadeOut(
+                        animationSpec = tween(
+                            500
+                        )
+                    )
+                },
+                label = "AppIconAnimation"
+            ) { showingAppIcon ->
+                val resId =
+                    if (showingAppIcon) R.drawable.ic_app_logo_round else R.drawable.ic_premium_lock_round
                 Image(
-                    painterResource(R.drawable.ic_downloads),
-                    "Downloads",
-                    modifier = Modifier.padding(8.dp)
+                    painter = painterResource(resId),
+                    contentDescription = "App Icon",
+                    modifier = Modifier.size(48.dp)
                 )
             }
 
-            Image(
-                painterResource(R.drawable.avatar_instagram_user),
-                "Profile",
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+            ) {
+                Text(
+                    stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(modifier = Modifier.height(3.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary)
+                        .clickable {
+                            // Will implement subscription later
+                        }
+                ) {
+                    Text(
+                        text = stringResource(R.string.buy_premium),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.inversePrimary,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                    )
+                }
+            }
+
+            Card(
+                onClick = onDownloadsClick,
+                shape = CircleShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                modifier = Modifier.size(40.dp)
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Image(
+                        painterResource(R.drawable.ic_downloads),
+                        contentDescription = "Downloads"
+                    )
+                }
+            }
+
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(profilePicUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Profile",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(40.dp)
-                    .clip(CircleShape),
+                    .clip(CircleShape)
+                    .clickable { onProfileClick() },
+                placeholder = painterResource(R.drawable.avatar_instagram_user),
+                error = painterResource(R.drawable.avatar_instagram_user)
             )
         }
 
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(top = 40.dp),
+                .padding(top = 30.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             TextField(
-                state = rememberTextFieldState(initialText = ""),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(42.dp),
-                textStyle = MaterialTheme.typography.bodyMedium,
-                contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
-                    top = 6.dp,
-                    bottom = 6.dp
-                ),
+                state = searchState,
+                modifier = Modifier.fillMaxWidth(),
+                textStyle = MaterialTheme.typography.titleSmall,
                 placeholder = {
                     Text(
-                        stringResource(R.string.search_username_name),
-                        style = MaterialTheme.typography.bodyMedium,
+                        if (isHighlightMode)
+                            stringResource(R.string.search_any_user_highlights)
+                        else
+                            stringResource(R.string.search_username_name),
+                        style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.tertiary
                     )
                 },
                 leadingIcon = {
                     Icon(
                         painterResource(R.drawable.ic_search),
-                        "Search",
+                        contentDescription = "Search",
                         tint = MaterialTheme.colorScheme.tertiary
                     )
                 },
+                trailingIcon = {
+                    if (searchState.text.isNotEmpty()) {
+                        IconButton(onClick = { searchState.edit { replace(0, length, "") } }) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = "Clear search query",
+                                tint = MaterialTheme.colorScheme.tertiary
+                            )
+                        }
+                    }
+                },
                 colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    focusedContainerColor = if (isHighlightMode)
+                        MaterialTheme.colorScheme.secondaryContainer
+                    else
+                        MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = if (isHighlightMode)
+                        MaterialTheme.colorScheme.secondaryContainer
+                    else
+                        MaterialTheme.colorScheme.surface,
                     focusedTextColor = MaterialTheme.colorScheme.onBackground,
                     unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
                     focusedIndicatorColor = Color.Transparent,
@@ -172,6 +443,84 @@ fun HomeTopBar(
                 shape = MaterialTheme.shapes.small,
             )
         }
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 15.dp)
+                .clickable { onHighlightToggle() },
+            shape = MaterialTheme.shapes.small,
+            colors = CardDefaults.cardColors(
+                containerColor = if (isHighlightMode)
+                    MaterialTheme.colorScheme.secondary
+                else
+                    MaterialTheme.colorScheme.tertiary
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_highlight),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    text = stringResource(R.string.find_highlights),
+                    modifier = Modifier.padding(start = 6.dp),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = isHighlightMode,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
+            Text(
+                text = stringResource(R.string.highlight_desc),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.tertiary,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmptyOrErrorState(
+    message: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 40.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(R.drawable.vector_no_data),
+            contentDescription = null,
+            modifier = Modifier.size(200.dp)
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = message,
+            modifier = Modifier.fillMaxWidth(),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.tertiary,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
@@ -180,15 +529,21 @@ fun HomeTopBar(
 private fun HomeContentPreview() {
     StoryGhostTheme {
         HomeContent(
-            storyList = listOf(
-                "cristiano",
-                "leomessi",
-                "neymarjr",
-                "taylorswift",
-                "arianagrande",
-                "selenagomez"
+            displayList = UiState.Success(
+                listOf(
+                    Edge(Edge.Node("1", Edge.Node.ReelUser("1", "", "cristiano"))),
+                    Edge(Edge.Node("2", Edge.Node.ReelUser("2", "", "leomessi"))),
+                    Edge(Edge.Node("3", Edge.Node.ReelUser("3", "", "neymarjr"))),
+                    Edge(Edge.Node("4", Edge.Node.ReelUser("4", "", "taylorswift")))
+                )
             ),
+            isHighlightMode = false,
+            profilePicUrl = null,
+            onHighlightToggle = {},
+            onSearchQueryChange = {},
             onStoryClick = {},
+            onDownloadsClick = {},
+            onProfileClick = {},
             modifier = Modifier.fillMaxSize()
         )
     }

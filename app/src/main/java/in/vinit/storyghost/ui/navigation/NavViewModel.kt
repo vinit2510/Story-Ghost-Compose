@@ -31,31 +31,33 @@ class NavViewModel(
     private fun resolveInitialRoute() {
         logger.d(TAG, "Resolving initial route...")
         viewModelScope.launch {
-            try {
-                val forceUpdateVersion = remoteConfigRepository.getForceUpdateVersion()
-                logger.d(
-                    TAG,
-                    "Force update version: $forceUpdateVersion, current: ${BuildConfig.VERSION_CODE}"
-                )
-                if (forceUpdateVersion > BuildConfig.VERSION_CODE) {
-                    logger.d(TAG, "Force update required. Routing to Route.ForceUpdate")
-                    _uiState.value = UiState.Success(Route.ForceUpdate)
-                    return@launch
-                }
-
-                val isOnboarded = localRepository.isOnboarded().first()
-                logger.d(TAG, "User is onboarded: $isOnboarded")
-                val initialRoute = if (isOnboarded) {
-                    Route.Home
-                } else {
-                    Route.Onboarding
-                }
-                logger.d(TAG, "Routing to $initialRoute")
-                _uiState.value = UiState.Success(initialRoute)
-            } catch (e: Exception) {
-                logger.e(TAG, "Error resolving initial route", e)
-                _uiState.value = UiState.Success(Route.Onboarding)
+            val forceUpdateVersion = remoteConfigRepository.getForceUpdateVersion()
+            logger.d(
+                TAG,
+                "Force update version: $forceUpdateVersion, current: ${BuildConfig.VERSION_CODE}"
+            )
+            if (forceUpdateVersion > BuildConfig.VERSION_CODE) {
+                logger.d(TAG, "Force update required. Routing to Route.ForceUpdate")
+                _uiState.value = UiState.Success(Route.ForceUpdate)
+                return@launch
             }
+
+            val isOnboarded = try {
+                localRepository.isOnboarded().first()
+            } catch (e: Exception) {
+                logger.e(TAG, "Error reading isOnboarded preference from local storage", e)
+                false
+            }
+
+            logger.d(TAG, "User is onboarded: $isOnboarded")
+            val initialRoute = if (isOnboarded) {
+                Route.Home
+            } else {
+                Route.Onboarding
+            }
+            logger.d(TAG, "Routing to $initialRoute")
+            _uiState.value = UiState.Success(initialRoute)
         }
     }
 }
+

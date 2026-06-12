@@ -14,6 +14,8 @@ import `in`.vinit.storyghost.data.remote.story.StoryRepositoryImpl
 import `in`.vinit.storyghost.data.remote.user.UserAPI
 import `in`.vinit.storyghost.data.remote.user.UserRepository
 import `in`.vinit.storyghost.data.remote.user.UserRepositoryImpl
+import `in`.vinit.storyghost.ui.dialog.LoginDialogViewModel
+import `in`.vinit.storyghost.ui.dialog.LogoutDialogViewModel
 import `in`.vinit.storyghost.ui.home.HomeViewModel
 import `in`.vinit.storyghost.ui.navigation.NavViewModel
 import `in`.vinit.storyghost.ui.onboarding.LoginViewModel
@@ -44,7 +46,7 @@ val appModule = module {
         )
     }
 
-    // LocalDataSource
+    // LocalDataSourced
     single {
         LocalDataSource(get())
     }
@@ -103,4 +105,6 @@ val appModule = module {
     viewModelOf(::HomeViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::OnboardingViewModel)
+    viewModelOf(::LoginDialogViewModel)
+    viewModelOf(::LogoutDialogViewModel)
 }

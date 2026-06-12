@@ -96,12 +96,14 @@ class LoginViewModel(
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             try {
-                localDataSource.setLoggedIn(true)
-                localDataSource.setOnboarded(true)
+                // Save session details first to prevent race condition where downstream
+                // listeners query the database before credentials are saved.
                 cookie?.let { localDataSource.saveCookie(it) }
                 sessionId?.let { localDataSource.saveSessionId(it) }
                 csrfToken?.let { localDataSource.saveCsrfToken(it) }
                 userId?.let { localDataSource.saveUserId(it) }
+                localDataSource.setLoggedIn(true)
+                localDataSource.setOnboarded(true)
                 _uiState.value = UiState.Success(true)
             } catch (e: Exception) {
                 logger.e(TAG, "Failed to save session", e)
