@@ -46,7 +46,7 @@ val appModule = module {
         )
     }
 
-    // LocalDataSourced
+    // LocalDataSource
     single {
         LocalDataSource(get())
     }
