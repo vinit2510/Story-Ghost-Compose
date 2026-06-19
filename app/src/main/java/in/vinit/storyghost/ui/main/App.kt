@@ -1,0 +1,47 @@
+package `in`.vinit.storyghost.ui.main
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import `in`.vinit.storyghost.ui.UiState
+import `in`.vinit.storyghost.ui.navigation.NavigationRoot
+import `in`.vinit.storyghost.ui.navigation.StartupViewModel
+import org.koin.androidx.compose.koinViewModel
+
+@Composable
+fun App(
+    modifier: Modifier = Modifier,
+    viewModel: StartupViewModel = koinViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    when (val state = uiState) {
+        is UiState.Loading -> {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+            )
+        }
+
+        is UiState.Success -> {
+            NavigationRoot(
+                initialRoute = state.data,
+                modifier = modifier
+            )
+        }
+
+        is UiState.Error -> {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+            )
+        }
+    }
+}
