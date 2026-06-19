@@ -23,6 +23,7 @@
             android:name=".ui.main.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|density"
             android:theme="@style/Theme.StoryGhostCompose">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
