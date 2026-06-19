@@ -16,23 +16,25 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.AspectRatioFrameLayout
-import androidx.media3.ui.PlayerView
+import androidx.media3.ui.compose.PlayerSurface
+import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
+import androidx.media3.ui.compose.modifiers.resizeWithContentScale
+import androidx.media3.ui.compose.state.rememberPresentationState
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -45,93 +47,67 @@ fun VideoPlayer(
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
             repeatMode = Player.REPEAT_MODE_ALL
-            playWhenReady = isActive
         }
     }
 
-    val isBuffering = remember { mutableStateOf(true) }
+    var isBuffering by remember { mutableStateOf(true) }
 
     DisposableEffect(exoPlayer) {
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
-                isBuffering.value =
+                isBuffering =
                     playbackState == Player.STATE_BUFFERING || playbackState == Player.STATE_IDLE
             }
         }
         exoPlayer.addListener(listener)
         onDispose {
             exoPlayer.removeListener(listener)
-        }
-    }
-
-    LaunchedEffect(videoUrl) {
-        isBuffering.value = true
-        exoPlayer.setMediaItem(MediaItem.fromUri(videoUrl.toUri()))
-        exoPlayer.prepare()
-    }
-
-    LaunchedEffect(isActive) {
-        exoPlayer.playWhenReady = isActive
-        if (isActive) {
-            exoPlayer.play()
-        } else {
-            exoPlayer.pause()
-        }
-    }
-
-    val playerViewRef = remember { mutableStateOf<PlayerView?>(null) }
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_PAUSE -> {
-                    playerViewRef.value?.player = null
-                    exoPlayer.pause()
-                }
-
-                Lifecycle.Event.ON_RESUME -> {
-                    if (isActive) {
-                        playerViewRef.value?.player = exoPlayer
-                        exoPlayer.play()
-                    }
-                }
-
-                else -> {}
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
             exoPlayer.release()
         }
     }
 
+    LaunchedEffect(videoUrl) {
+        isBuffering = true
+        exoPlayer.setMediaItem(MediaItem.fromUri(videoUrl.toUri()))
+        exoPlayer.prepare()
+    }
+
+    var isResumed by remember { mutableStateOf(true) }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) {
+        isResumed = false
+    }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        isResumed = true
+    }
+
+    // Single source of truth driving playback states
+    val shouldPlay = isActive && isResumed
+
+    LaunchedEffect(shouldPlay) {
+        exoPlayer.playWhenReady = shouldPlay
+    }
+
+    val presentationState = rememberPresentationState(exoPlayer)
+
     Box(modifier = modifier
         .fillMaxSize()
         .clipToBounds()) {
-        AndroidView(
-            factory = { ctx ->
-                PlayerView(ctx).apply {
-                    layoutParams = android.view.ViewGroup.LayoutParams(
-                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                        android.view.ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                    useController = false
-                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                    player = exoPlayer
-                    keepScreenOn = true
-                    playerViewRef.value = this
-                }
-            },
-            update = { playerView ->
-                playerView.player = exoPlayer
-                playerViewRef.value = playerView
-            },
-            modifier = Modifier.fillMaxSize()
+        // We use SURFACE_TYPE_TEXTURE_VIEW to allow proper Compose layout clipToBounds() / transformations
+        // and to completely avoid SurfaceSyncGroup synchronization timeouts on API 34+ when swiping.
+        PlayerSurface(
+            player = exoPlayer,
+            surfaceType = SURFACE_TYPE_TEXTURE_VIEW,
+            modifier = Modifier
+                .fillMaxSize()
+                .resizeWithContentScale(
+                    contentScale = ContentScale.Crop,
+                    sourceSizeDp = presentationState.videoSizeDp
+                )
         )
 
-        if (isActive && isBuffering.value) {
+        if (isActive && isBuffering) {
             VideoShimmerLoader(modifier = Modifier.fillMaxSize())
         }
     }
@@ -150,7 +126,6 @@ fun VideoShimmerLoader(modifier: Modifier = Modifier) {
         label = "video_shimmer_translate"
     )
 
-    // Theme-friendly base and highlight colors (adapts to light and dark modes)
     val shimmerColor = MaterialTheme.colorScheme.onSurface
     val baseColor = shimmerColor.copy(alpha = 0.0f)
     val highlightColor = shimmerColor.copy(alpha = 0.25f)
