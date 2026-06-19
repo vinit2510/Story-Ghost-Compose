@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-private const val TAG = "NavViewModel"
+private const val TAG = "StartupViewModel"
 
-class NavViewModel(
+class StartupViewModel(
     private val localRepository: LocalDataSource,
     private val remoteConfigRepository: RemoteConfigRepository,
     private val logger: Logger
@@ -60,4 +60,3 @@ class NavViewModel(
         }
     }
 }
-

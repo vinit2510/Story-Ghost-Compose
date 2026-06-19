@@ -17,7 +17,7 @@ import `in`.vinit.storyghost.data.remote.user.UserRepositoryImpl
 import `in`.vinit.storyghost.ui.dialog.LoginDialogViewModel
 import `in`.vinit.storyghost.ui.dialog.LogoutDialogViewModel
 import `in`.vinit.storyghost.ui.home.HomeViewModel
-import `in`.vinit.storyghost.ui.navigation.NavViewModel
+import `in`.vinit.storyghost.ui.navigation.StartupViewModel
 import `in`.vinit.storyghost.ui.onboarding.LoginViewModel
 import `in`.vinit.storyghost.ui.onboarding.OnboardingViewModel
 import `in`.vinit.storyghost.ui.story.HighlightViewModel
@@ -103,7 +103,7 @@ val appModule = module {
     }
 
     // ViewModel
-    viewModelOf(::NavViewModel)
+    viewModelOf(::StartupViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::OnboardingViewModel)

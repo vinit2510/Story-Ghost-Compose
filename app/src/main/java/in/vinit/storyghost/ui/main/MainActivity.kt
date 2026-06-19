@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import `in`.vinit.storyghost.ui.navigation.NavigationRoot
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 
 class MainActivity : ComponentActivity() {
@@ -16,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             StoryGhostTheme {
-                NavigationRoot(
+                App(
                     modifier = Modifier.fillMaxSize()
                 )
             }
