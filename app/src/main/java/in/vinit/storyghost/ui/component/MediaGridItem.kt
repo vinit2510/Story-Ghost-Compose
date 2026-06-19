@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.ui.home
+package `in`.vinit.storyghost.ui.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -34,23 +34,20 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import `in`.vinit.storyghost.R
-import `in`.vinit.storyghost.data.model.StoryListResponse.Data.User.FeedReelsTray.EdgeReelsTrayToReel.Edge
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 
 @Composable
-fun StoryGridItem(
-    user: Edge,
+fun MediaGridItem(
+    title: String,
+    coverUrl: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    prefixUsername: Boolean = false
 ) {
-    val reelUser = user.node?.user
-    val username = reelUser?.username ?: ""
-    val profilePicUrl = reelUser?.profilePicUrl ?: ""
-
     BoxWithConstraints(modifier = modifier) {
         val parentWidth = maxWidth
-        val profileSize = parentWidth * 0.65f
-        val totalHeight = parentWidth * 1.25f
+        val coverSize = parentWidth * 0.65f
+        val totalHeight = parentWidth * 1.33f
 
         Card(
             onClick = onClick,
@@ -64,7 +61,7 @@ fun StoryGridItem(
                 val context = LocalContext.current
                 AsyncImage(
                     model = ImageRequest.Builder(context)
-                        .data(profilePicUrl)
+                        .data(coverUrl)
                         .crossfade(true)
                         .build(),
                     contentDescription = null,
@@ -80,16 +77,15 @@ fun StoryGridItem(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-
                     AsyncImage(
                         model = ImageRequest.Builder(context)
-                            .data(profilePicUrl)
+                            .data(coverUrl)
                             .crossfade(true)
                             .build(),
-                        contentDescription = username,
+                        contentDescription = title,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(profileSize)
+                            .size(coverSize)
                             .clip(CircleShape)
                             .border(
                                 3.dp,
@@ -102,14 +98,19 @@ fun StoryGridItem(
                     Spacer(modifier = Modifier.height(totalHeight * 0.065f))
 
                     Card(
-                        modifier = Modifier.widthIn(max = profileSize),
+                        modifier = Modifier.widthIn(max = coverSize),
                         shape = MaterialTheme.shapes.extraSmall,
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
                         )
                     ) {
+                        val displayText = if (prefixUsername) {
+                            stringResource(R.string.insta_username, title)
+                        } else {
+                            title
+                        }
                         Text(
-                            text = stringResource(R.string.insta_username, username),
+                            text = displayText,
                             modifier = Modifier
                                 .padding(horizontal = 10.dp, vertical = 5.dp),
                             style = MaterialTheme.typography.labelLarge,
@@ -125,21 +126,13 @@ fun StoryGridItem(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-private fun StoryGridItemPreview() {
+private fun MediaGridItemPreview() {
     StoryGhostTheme {
-        StoryGridItem(
-            user = Edge(
-                node = Edge.Node(
-                    id = "1",
-                    user = Edge.Node.ReelUser(
-                        id = "1",
-                        username = "instagram",
-                        profilePicUrl = ""
-                    )
-                )
-            ),
+        MediaGridItem(
+            title = "Vacation",
+            coverUrl = "",
             onClick = {}
         )
     }

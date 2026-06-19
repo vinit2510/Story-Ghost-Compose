@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 
 fun LazyGridScope.storyGridShimmerItems() {
-    items(12) {
+    items(30) {
         val infiniteTransition = rememberInfiniteTransition(label = "shimmer")
         val alpha by infiniteTransition.animateFloat(
             initialValue = 0.3f,

@@ -45,4 +45,13 @@
     <string name="no_result_found">No result found!</string>
     <string name="back_to_top">Back to top</string>
     <string name="buy_premium">Buy Premium</string>
+    <string name="hidden_mention">Hidden\nMention</string>
+    <string name="download_story">Download\nStory</string>
+    <string name="downloads">Downloads</string>
+    <string name="saved_successfully">Saved\nSuccessfully</string>
+    <string name="zero_mention">0/0\nMention</string>
+    <string name="mention_count">%1$d/%2$d\nMention</string>
+    <string name="mention_total_count">Total %1$d\nMention</string>
+    <string name="highlights">Highlights of %1$s</string>
+    <string name="show_highlights">Show\nHighlights</string>
 </resources>

@@ -74,6 +74,8 @@ import coil3.request.crossfade
 import `in`.vinit.storyghost.R
 import `in`.vinit.storyghost.data.model.StoryListResponse.Data.User.FeedReelsTray.EdgeReelsTrayToReel.Edge
 import `in`.vinit.storyghost.ui.UiState
+import `in`.vinit.storyghost.ui.component.ErrorPlaceholder
+import `in`.vinit.storyghost.ui.component.MediaGridItem
 import `in`.vinit.storyghost.ui.dialog.LoginDialog
 import `in`.vinit.storyghost.ui.dialog.LogoutDialog
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
@@ -84,7 +86,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onStoryClick: (String) -> Unit,
+    onStoryClick: (userId: String, userName: String, isHighlight: Boolean) -> Unit,
     onLoginClick: () -> Unit = {},
     onDownloadsClick: () -> Unit = {},
     viewModel: HomeViewModel = koinViewModel()
@@ -155,7 +157,7 @@ fun HomeContent(
     profilePicUrl: String?,
     onHighlightToggle: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
-    onStoryClick: (String) -> Unit,
+    onStoryClick: (userId: String, userName: String, isHighlight: Boolean) -> Unit,
     onDownloadsClick: () -> Unit,
     onProfileClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -241,7 +243,7 @@ fun HomeContent(
 
                 is UiState.Error -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
-                        EmptyOrErrorState(
+                        ErrorPlaceholder(
                             message = displayList.errorMsg.asString()
                         )
                     }
@@ -250,15 +252,27 @@ fun HomeContent(
                 is UiState.Success -> {
                     if (displayList.data.isEmpty()) {
                         item(span = { GridItemSpan(maxLineSpan) }) {
-                            EmptyOrErrorState(
+                            ErrorPlaceholder(
                                 message = stringResource(R.string.no_result_found)
                             )
                         }
                     } else {
                         items(displayList.data) { user ->
-                            StoryGridItem(
-                                user = user,
-                                onClick = { onStoryClick(user.node?.id ?: "") }
+                            val reelUser = user.node?.user
+                            val username = reelUser?.username ?: ""
+                            val profilePicUrl = reelUser?.profilePicUrl ?: ""
+
+                            MediaGridItem(
+                                title = username,
+                                coverUrl = profilePicUrl,
+                                onClick = {
+                                    onStoryClick(
+                                        user.node?.id ?: "",
+                                        username,
+                                        isHighlightMode
+                                    )
+                                },
+                                prefixUsername = true
                             )
                         }
                     }
@@ -496,33 +510,7 @@ fun HomeTopBar(
     }
 }
 
-@Composable
-private fun EmptyOrErrorState(
-    message: String,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 40.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(R.drawable.vector_no_data),
-            contentDescription = null,
-            modifier = Modifier.size(200.dp)
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = message,
-            modifier = Modifier.fillMaxWidth(),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.tertiary,
-            textAlign = TextAlign.Center
-        )
-    }
-}
+
 
 @Preview
 @Composable
@@ -541,7 +529,7 @@ private fun HomeContentPreview() {
             profilePicUrl = null,
             onHighlightToggle = {},
             onSearchQueryChange = {},
-            onStoryClick = {},
+            onStoryClick = { _, _, _ -> },
             onDownloadsClick = {},
             onProfileClick = {},
             modifier = Modifier.fillMaxSize()
