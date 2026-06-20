@@ -2,6 +2,7 @@ package `in`.vinit.storyghost.ui.story
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.vinit.storyghost.data.local.DownloadsRepository
 import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import `in`.vinit.storyghost.data.remote.story.StoryRepository
 import `in`.vinit.storyghost.ui.UiState
@@ -17,11 +18,16 @@ private const val TAG = "StoryViewModel"
 
 class StoryViewModel(
     private val storyRepository: StoryRepository,
+    private val downloadsRepository: DownloadsRepository,
     private val logger: Logger
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<List<Item>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<Item>>> = _uiState.asStateFlow()
+
+    fun downloadStory(item: Item, onSuccess: () -> Unit) {
+        downloadsRepository.downloadFile(item, onSuccess)
+    }
 
     var currentPageIndex = 0
 

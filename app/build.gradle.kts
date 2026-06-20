@@ -99,6 +99,7 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    implementation(libs.coil.video)
 
     // Media3 Playback & UI
     implementation(libs.androidx.media3.exoplayer)
