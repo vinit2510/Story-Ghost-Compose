@@ -3,6 +3,8 @@ package `in`.vinit.storyghost.di
 import androidx.datastore.dataStoreFile
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import `in`.vinit.storyghost.BuildConfig
+import `in`.vinit.storyghost.data.local.DownloadsRepository
+import `in`.vinit.storyghost.data.local.DownloadsRepositoryImpl
 import `in`.vinit.storyghost.data.local.LocalDataSource
 import `in`.vinit.storyghost.data.remote.auth.LoginInterceptor
 import `in`.vinit.storyghost.data.remote.auth.LogoutAuthenticator
@@ -16,6 +18,7 @@ import `in`.vinit.storyghost.data.remote.user.UserRepository
 import `in`.vinit.storyghost.data.remote.user.UserRepositoryImpl
 import `in`.vinit.storyghost.ui.dialog.LoginDialogViewModel
 import `in`.vinit.storyghost.ui.dialog.LogoutDialogViewModel
+import `in`.vinit.storyghost.ui.downloads.DownloadsViewModel
 import `in`.vinit.storyghost.ui.home.HomeViewModel
 import `in`.vinit.storyghost.ui.navigation.StartupViewModel
 import `in`.vinit.storyghost.ui.onboarding.LoginViewModel
@@ -102,6 +105,11 @@ val appModule = module {
         UserRepositoryImpl(get())
     }
 
+    // Downloads Repository
+    single<DownloadsRepository> {
+        DownloadsRepositoryImpl(androidContext())
+    }
+
     // ViewModel
     viewModelOf(::StartupViewModel)
     viewModelOf(::HomeViewModel)
@@ -111,4 +119,5 @@ val appModule = module {
     viewModelOf(::LogoutDialogViewModel)
     viewModelOf(::HighlightViewModel)
     viewModelOf(::StoryViewModel)
+    viewModelOf(::DownloadsViewModel)
 }

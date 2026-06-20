@@ -7,6 +7,7 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import `in`.vinit.storyghost.ui.downloads.DownloadsScreen
 import `in`.vinit.storyghost.ui.forceupdate.ForceUpdateScreen
 import `in`.vinit.storyghost.ui.home.HomeScreen
 import `in`.vinit.storyghost.ui.onboarding.LoginWebViewScreen
@@ -71,6 +72,9 @@ fun NavigationRoot(
                                     )
                                 }
                             },
+                            onDownloadsClick = {
+                                backStack.add(Route.Downloads)
+                            },
                             onLoginClick = {
                                 backStack.add(Route.LoginWebView)
                             }
@@ -112,6 +116,14 @@ fun NavigationRoot(
                 is Route.ForceUpdate -> {
                     NavEntry(key) {
                         ForceUpdateScreen()
+                    }
+                }
+
+                is Route.Downloads -> {
+                    NavEntry(key) {
+                        DownloadsScreen(
+                            onBackClick = { backStack.remove(key) }
+                        )
                     }
                 }
 

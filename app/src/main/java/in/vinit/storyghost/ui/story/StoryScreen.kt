@@ -61,7 +61,6 @@ import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.ErrorPlaceholder
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
-import `in`.vinit.storyghost.util.FileUtils
 import `in`.vinit.storyghost.util.TimeUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -120,7 +119,8 @@ fun StoryScreen(
                             isHighlight = isHighlight,
                             initialPage = viewModel.currentPageIndex,
                             onPageChanged = { viewModel.currentPageIndex = it },
-                            onHighlightClick = onHighlightClick
+                            onHighlightClick = onHighlightClick,
+                            onDownloadClick = viewModel::downloadStory
                         )
                     }
                 }
@@ -136,6 +136,7 @@ fun StoryContent(
     initialPage: Int,
     onPageChanged: (Int) -> Unit,
     onHighlightClick: (userId: String, userName: String) -> Unit,
+    onDownloadClick: (Item, () -> Unit) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(
@@ -169,7 +170,8 @@ fun StoryContent(
                     totalCount = stories.size,
                     isHighlight = isHighlight,
                     isActive = pagerState.currentPage == page,
-                    onHighlightClick = onHighlightClick
+                    onHighlightClick = onHighlightClick,
+                    onDownloadClick = onDownloadClick
                 )
             }
         }
@@ -220,6 +222,7 @@ fun StoryPage(
     isHighlight: Boolean,
     isActive: Boolean,
     onHighlightClick: (userId: String, userName: String) -> Unit,
+    onDownloadClick: (Item, () -> Unit) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -403,7 +406,7 @@ fun StoryPage(
                     verticalArrangement = Arrangement.spacedBy(5.dp),
                     modifier = Modifier.clickable {
                         if (!isDownloaded) {
-                            FileUtils.downloadFile(context, data) {
+                            onDownloadClick(data) {
                                 isDownloaded = true
                             }
                         }
@@ -592,7 +595,8 @@ fun StoryPagePreview() {
             totalCount = 1,
             isHighlight = false,
             isActive = true,
-            onHighlightClick = { _, _ -> }
+            onHighlightClick = { _, _ -> },
+            onDownloadClick = { _, _ -> }
         )
     }
 }
