@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import `in`.vinit.storyghost.R
 import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
-import `in`.vinit.storyghost.util.TimberLoggerImpl
+import `in`.vinit.storyghost.util.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -22,7 +22,8 @@ interface DownloadsRepository {
 }
 
 class DownloadsRepositoryImpl(
-    private val context: Context
+    private val context: Context,
+    private val logger: Logger
 ) : DownloadsRepository {
 
     override suspend fun getDownloadedFiles(): List<File> = withContext(Dispatchers.IO) {
@@ -85,7 +86,7 @@ class DownloadsRepositoryImpl(
 
             onSuccess()
         } catch (e: Exception) {
-            TimberLoggerImpl().e(TAG, "downloadStory: ", e)
+            logger.e(TAG, "downloadStory: Failed to enqueue download request", e)
             Toast.makeText(context, "Failed to download story", Toast.LENGTH_SHORT).show()
         }
     }

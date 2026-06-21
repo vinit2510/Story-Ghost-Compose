@@ -3,18 +3,24 @@ package `in`.vinit.storyghost.ui.downloads
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.vinit.storyghost.data.local.DownloadsRepository
+import `in`.vinit.storyghost.ui.UiState
+import `in`.vinit.storyghost.ui.UiText
+import `in`.vinit.storyghost.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
 
+private const val TAG = "DownloadsViewModel"
+
 class DownloadsViewModel(
-    private val downloadsRepository: DownloadsRepository
+    private val downloadsRepository: DownloadsRepository,
+    private val logger: Logger
 ) : ViewModel() {
 
-    private val _fileList = MutableStateFlow<List<File>?>(null)
-    val fileList: StateFlow<List<File>?> = _fileList.asStateFlow()
+    private val _fileList = MutableStateFlow<UiState<List<File>>>(UiState.Loading)
+    val fileList: StateFlow<UiState<List<File>>> = _fileList.asStateFlow()
 
     init {
         loadDownloads()
@@ -22,7 +28,15 @@ class DownloadsViewModel(
 
     fun loadDownloads() {
         viewModelScope.launch {
-            _fileList.value = downloadsRepository.getDownloadedFiles()
+            _fileList.value = UiState.Loading
+            try {
+                val files = downloadsRepository.getDownloadedFiles()
+                _fileList.value = UiState.Success(files)
+            } catch (e: Exception) {
+                logger.e(TAG, "loadDownloads: Failed to load downloaded files", e)
+                _fileList.value =
+                    UiState.Error(UiText.DynamicString(e.message ?: "Failed to load files"))
+            }
         }
     }
 
@@ -32,6 +46,8 @@ class DownloadsViewModel(
             if (success) {
                 onDeleted()
                 loadDownloads()
+            } else {
+                logger.w(TAG, "deleteDownload: Failed to delete file ${file.name}")
             }
         }
     }
