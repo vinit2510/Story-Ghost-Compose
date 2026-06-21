@@ -44,6 +44,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import `in`.vinit.storyghost.R
+import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.ErrorPlaceholder
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import `in`.vinit.storyghost.util.FileUtils
@@ -58,10 +59,10 @@ fun DownloadsScreen(
     viewModel: DownloadsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
-    val fileList by viewModel.fileList.collectAsStateWithLifecycle()
+    val uiState by viewModel.fileList.collectAsStateWithLifecycle()
 
     DownloadsContent(
-        fileList = fileList,
+        uiState = uiState,
         onBackClick = onBackClick,
         onShareClick = { file -> FileUtils.shareFile(context, file) },
         onDeleteClick = { file ->
@@ -76,7 +77,7 @@ fun DownloadsScreen(
 
 @Composable
 fun DownloadsContent(
-    fileList: List<File>?,
+    uiState: UiState<List<File>>,
     onBackClick: () -> Unit,
     onShareClick: (File) -> Unit,
     onDeleteClick: (File) -> Unit,
@@ -132,30 +133,43 @@ fun DownloadsContent(
 
             Spacer(modifier = Modifier.height(15.dp))
 
-            if (fileList == null) {
+            if (uiState is UiState.Loading) {
                 DownloadsShimmerLoader()
-            } else if (fileList.isEmpty()) {
+            } else if (uiState is UiState.Error) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     ErrorPlaceholder(
-                        message = "No downloads found!",
+                        message = uiState.errorMsg.asString(),
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-                    items(fileList, key = { it.absolutePath }) { file ->
-                        DownloadItemRow(
-                            file = file,
-                            onShareClick = { onShareClick(file) },
-                            onDeleteClick = { onDeleteClick(file) },
-                            onItemClick = { onItemClick(file) }
+            } else if (uiState is UiState.Success) {
+                val fileList = uiState.data
+                if (fileList.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        ErrorPlaceholder(
+                            message = "No downloads found!",
+                            modifier = Modifier.fillMaxWidth()
                         )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        items(fileList, key = { it.absolutePath }) { file ->
+                            DownloadItemRow(
+                                file = file,
+                                onShareClick = { onShareClick(file) },
+                                onDeleteClick = { onDeleteClick(file) },
+                                onItemClick = { onItemClick(file) }
+                            )
+                        }
                     }
                 }
             }
@@ -325,7 +339,7 @@ private fun DownloadsContentPreview() {
     )
     StoryGhostTheme {
         DownloadsContent(
-            fileList = mockFiles,
+            uiState = UiState.Success(mockFiles),
             onBackClick = {},
             onShareClick = {},
             onDeleteClick = {},
@@ -339,7 +353,7 @@ private fun DownloadsContentPreview() {
 private fun DownloadsShimmerPreview() {
     StoryGhostTheme {
         DownloadsContent(
-            fileList = null,
+            uiState = UiState.Loading,
             onBackClick = {},
             onShareClick = {},
             onDeleteClick = {},

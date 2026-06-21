@@ -107,7 +107,7 @@ val appModule = module {
 
     // Downloads Repository
     single<DownloadsRepository> {
-        DownloadsRepositoryImpl(androidContext())
+        DownloadsRepositoryImpl(androidContext(), get())
     }
 
     // ViewModel
