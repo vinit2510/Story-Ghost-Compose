@@ -8,6 +8,8 @@ import `in`.vinit.storyghost.data.local.DownloadsRepositoryImpl
 import `in`.vinit.storyghost.data.local.LocalDataSource
 import `in`.vinit.storyghost.data.remote.auth.LoginInterceptor
 import `in`.vinit.storyghost.data.remote.auth.LogoutAuthenticator
+import `in`.vinit.storyghost.data.remote.billing.BillingRepository
+import `in`.vinit.storyghost.data.remote.billing.BillingRepositoryImpl
 import `in`.vinit.storyghost.data.remote.config.FirebaseRemoteConfigImpl
 import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.data.remote.story.StoryAPI
@@ -25,6 +27,7 @@ import `in`.vinit.storyghost.ui.onboarding.LoginViewModel
 import `in`.vinit.storyghost.ui.onboarding.OnboardingViewModel
 import `in`.vinit.storyghost.ui.story.HighlightViewModel
 import `in`.vinit.storyghost.ui.story.StoryViewModel
+import `in`.vinit.storyghost.ui.subscription.SubscriptionViewModel
 import `in`.vinit.storyghost.util.AnalyticsLogger
 import `in`.vinit.storyghost.util.FirebaseAnalyticsLogger
 import `in`.vinit.storyghost.util.Logger
@@ -110,6 +113,11 @@ val appModule = module {
         DownloadsRepositoryImpl(androidContext(), get())
     }
 
+    // Billing Repository
+    single<BillingRepository> {
+        BillingRepositoryImpl(androidContext(), get(), get())
+    }
+
     // ViewModel
     viewModelOf(::StartupViewModel)
     viewModelOf(::HomeViewModel)
@@ -120,4 +128,5 @@ val appModule = module {
     viewModelOf(::HighlightViewModel)
     viewModelOf(::StoryViewModel)
     viewModelOf(::DownloadsViewModel)
+    viewModelOf(::SubscriptionViewModel)
 }

@@ -59,9 +59,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -89,12 +88,14 @@ fun HomeScreen(
     onStoryClick: (userId: String, userName: String, isHighlight: Boolean) -> Unit,
     onLoginClick: () -> Unit = {},
     onDownloadsClick: () -> Unit = {},
+    onPremiumClick: () -> Unit = {},
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val displayList by viewModel.displayList.collectAsStateWithLifecycle()
     val isHighlightMode by viewModel.isHighlightMode.collectAsStateWithLifecycle()
     val profilePicUrl by viewModel.profilePicUrl.collectAsStateWithLifecycle()
     val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
+    val isPremium by viewModel.isPremium.collectAsStateWithLifecycle()
     val showLoginDialogTrigger by viewModel.showLoginDialogTrigger.collectAsStateWithLifecycle()
 
     val showLoginDialog = remember { mutableStateOf(false) }
@@ -135,10 +136,12 @@ fun HomeScreen(
         displayList = displayList,
         isHighlightMode = isHighlightMode,
         profilePicUrl = profilePicUrl,
+        isPremium = isPremium,
         onHighlightToggle = viewModel::toggleHighlightMode,
         onSearchQueryChange = viewModel::onSearchQueryChange,
         onStoryClick = onStoryClick,
         onDownloadsClick = onDownloadsClick,
+        onPremiumClick = onPremiumClick,
         onProfileClick = {
             if (isLoggedIn) {
                 showLogoutDialog.value = true
@@ -155,17 +158,18 @@ fun HomeContent(
     displayList: UiState<List<Edge>>,
     isHighlightMode: Boolean,
     profilePicUrl: String?,
+    isPremium: Boolean,
     onHighlightToggle: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
     onStoryClick: (userId: String, userName: String, isHighlight: Boolean) -> Unit,
     onDownloadsClick: () -> Unit,
+    onPremiumClick: () -> Unit,
     onProfileClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val gridState = rememberLazyGridState()
     val coroutineScope = rememberCoroutineScope()
-    val displayHeight =
-        with(LocalDensity.current) { LocalConfiguration.current.screenHeightDp.dp.toPx() }
+    val displayHeight = LocalWindowInfo.current.containerSize.height
     val showButton by remember {
         derivedStateOf {
             gridState.firstVisibleItemIndex > 0 || gridState.firstVisibleItemScrollOffset > displayHeight
@@ -229,9 +233,11 @@ fun HomeContent(
                 HomeTopBar(
                     isHighlightMode = isHighlightMode,
                     profilePicUrl = profilePicUrl,
+                    isPremium = isPremium,
                     onHighlightToggle = onHighlightToggle,
                     onSearchQueryChange = onSearchQueryChange,
                     onDownloadsClick = onDownloadsClick,
+                    onPremiumClick = onPremiumClick,
                     onProfileClick = onProfileClick
                 )
             }
@@ -286,9 +292,11 @@ fun HomeContent(
 fun HomeTopBar(
     isHighlightMode: Boolean,
     profilePicUrl: String?,
+    isPremium: Boolean,
     onHighlightToggle: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
     onDownloadsClick: () -> Unit,
+    onPremiumClick: () -> Unit,
     onProfileClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -301,10 +309,14 @@ fun HomeTopBar(
 
     var isShowingAppIcon by remember { mutableStateOf(true) }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(5000)
-            isShowingAppIcon = !isShowingAppIcon
+    LaunchedEffect(isPremium) {
+        if (isPremium) {
+            isShowingAppIcon = true
+        } else {
+            while (true) {
+                delay(5000)
+                isShowingAppIcon = !isShowingAppIcon
+            }
         }
     }
 
@@ -352,13 +364,20 @@ fun HomeTopBar(
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(
+                            if (isPremium) MaterialTheme.colorScheme.tertiary
+                            else MaterialTheme.colorScheme.primary
+                        )
                         .clickable {
-                            // Will implement subscription later
+                            if (!isPremium) {
+                                onPremiumClick()
+                            }
                         }
                 ) {
                     Text(
-                        text = stringResource(R.string.buy_premium),
+                        text = if (isPremium) stringResource(R.string.plan_active) else stringResource(
+                            R.string.buy_premium
+                        ),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.inversePrimary,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -409,7 +428,9 @@ fun HomeTopBar(
         ) {
             TextField(
                 state = searchState,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(CircleShape),
                 textStyle = MaterialTheme.typography.titleSmall,
                 placeholder = {
                     Text(
@@ -527,10 +548,12 @@ private fun HomeContentPreview() {
             ),
             isHighlightMode = false,
             profilePicUrl = null,
+            isPremium = false,
             onHighlightToggle = {},
             onSearchQueryChange = {},
             onStoryClick = { _, _, _ -> },
             onDownloadsClick = {},
+            onPremiumClick = {},
             onProfileClick = {},
             modifier = Modifier.fillMaxSize()
         )
