@@ -76,6 +76,7 @@ fun StoryScreen(
     viewModel: StoryViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isPremium by viewModel.isPremium.collectAsStateWithLifecycle()
 
     BackHandler {
         onBackClick()
@@ -117,6 +118,7 @@ fun StoryScreen(
                         StoryContent(
                             stories = state.data,
                             isHighlight = isHighlight,
+                            isPremium = isPremium,
                             initialPage = viewModel.currentPageIndex,
                             onPageChanged = { viewModel.currentPageIndex = it },
                             onHighlightClick = onHighlightClick,
@@ -133,6 +135,7 @@ fun StoryScreen(
 fun StoryContent(
     stories: List<Item>,
     isHighlight: Boolean,
+    isPremium: Boolean,
     initialPage: Int,
     onPageChanged: (Int) -> Unit,
     onHighlightClick: (userId: String, userName: String) -> Unit,
@@ -169,6 +172,7 @@ fun StoryContent(
                     currentCount = page,
                     totalCount = stories.size,
                     isHighlight = isHighlight,
+                    isPremium = isPremium,
                     isActive = pagerState.currentPage == page,
                     onHighlightClick = onHighlightClick,
                     onDownloadClick = onDownloadClick
@@ -220,6 +224,7 @@ fun StoryPage(
     currentCount: Int,
     totalCount: Int,
     isHighlight: Boolean,
+    isPremium: Boolean,
     isActive: Boolean,
     onHighlightClick: (userId: String, userName: String) -> Unit,
     onDownloadClick: (Item, () -> Unit) -> Unit,
@@ -246,7 +251,13 @@ fun StoryPage(
     val mentionText = when {
         isShimmeringMentions -> stringResource(R.string.hidden_mention)
         lastShownIndex == -2 -> stringResource(R.string.zero_mention)
-        lastShownIndex == -1 -> stringResource(R.string.hidden_mention)
+        lastShownIndex == -1 -> {
+            if (isPremium) {
+                stringResource(R.string.mention_total_count, mentionList.size)
+            } else {
+                stringResource(R.string.hidden_mention)
+            }
+        }
         else -> stringResource(
             R.string.mention_count,
             lastShownIndex + 1,
@@ -594,6 +605,7 @@ fun StoryPagePreview() {
             currentCount = 0,
             totalCount = 1,
             isHighlight = false,
+            isPremium = false,
             isActive = true,
             onHighlightClick = { _, _ -> },
             onDownloadClick = { _, _ -> }
