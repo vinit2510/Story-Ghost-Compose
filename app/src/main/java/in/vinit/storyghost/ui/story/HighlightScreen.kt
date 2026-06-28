@@ -98,8 +98,12 @@ fun HighlightContent(
             columns = GridCells.Fixed(2),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(start = 15.dp, end = 15.dp, bottom = 10.dp),
+                .padding(top = innerPadding.calculateTopPadding()),
+            contentPadding = PaddingValues(
+                start = 15.dp,
+                end = 15.dp,
+                bottom = innerPadding.calculateBottomPadding() + 10.dp
+            ),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
