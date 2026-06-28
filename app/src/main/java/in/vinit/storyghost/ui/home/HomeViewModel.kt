@@ -17,27 +17,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 private const val TAG = "HomeViewModel"
-private const val SEARCH_THRESHOLD = 3
+const val SEARCH_THRESHOLD = 3
 
 @OptIn(FlowPreview::class)
 class HomeViewModel(
     private val storyRepository: StoryRepository,
     private val userRepository: UserRepository,
     private val localDataSource: LocalDataSource,
-    private val billingRepository: BillingRepository,
+    billingRepository: BillingRepository,
     private val logger: Logger
 ) : ViewModel() {
 
@@ -76,9 +73,16 @@ class HomeViewModel(
     val isPremium = localDataSource.isPremium()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
+    private val _isRemoteSearchActive = MutableStateFlow(false)
+
     val displayList =
-        combine(_searchQuery, _storyList, _searchResults) { query, storiesState, results ->
-            if (query.length > SEARCH_THRESHOLD) {
+        combine(
+            _searchQuery,
+            _storyList,
+            _searchResults,
+            _isRemoteSearchActive
+        ) { query, storiesState, results, remoteActive ->
+            if (remoteActive) {
                 results
             } else {
                 if (storiesState is UiState.Success) {
@@ -106,7 +110,6 @@ class HomeViewModel(
         billingRepository.checkSubscription()
         loadStoryList()
         fetchUserDataIfMissing()
-        observeSearchQuery()
     }
 
     private fun loadStoryList() {
@@ -148,18 +151,12 @@ class HomeViewModel(
         }
     }
 
-    private fun observeSearchQuery() {
-        _searchQuery
-            .debounce(1000)
-            .distinctUntilChanged()
-            .onEach { query ->
-                if (query.length > SEARCH_THRESHOLD) {
-                    performRemoteSearch(query)
-                } else {
-                    _searchResults.update { UiState.Success(emptyList()) }
-                }
-            }
-            .launchIn(viewModelScope)
+    fun performSearch() {
+        val query = _searchQuery.value.trim()
+        if (query.length >= SEARCH_THRESHOLD) {
+            _isRemoteSearchActive.update { true }
+            performRemoteSearch(query)
+        }
     }
 
     private fun performRemoteSearch(query: String) {
@@ -194,6 +191,8 @@ class HomeViewModel(
 
     fun onSearchQueryChange(query: String) {
         _searchQuery.update { query }
+        _isRemoteSearchActive.update { false }
+        _searchResults.update { UiState.Success(emptyList()) }
     }
 
     fun toggleHighlightMode() {
@@ -204,6 +203,7 @@ class HomeViewModel(
         viewModelScope.launch {
             localDataSource.clearAuthentication()
             _searchQuery.update { "" }
+            _isRemoteSearchActive.update { false }
             _searchResults.update { UiState.Success(emptyList()) }
             _storyList.update { UiState.Success(emptyList()) }
         }

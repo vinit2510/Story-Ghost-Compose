@@ -31,10 +31,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FabPosition
@@ -60,9 +59,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -139,6 +140,7 @@ fun HomeScreen(
         isPremium = isPremium,
         onHighlightToggle = viewModel::toggleHighlightMode,
         onSearchQueryChange = viewModel::onSearchQueryChange,
+        onSearchClick = viewModel::performSearch,
         onStoryClick = onStoryClick,
         onDownloadsClick = onDownloadsClick,
         onPremiumClick = onPremiumClick,
@@ -161,6 +163,7 @@ fun HomeContent(
     isPremium: Boolean,
     onHighlightToggle: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
+    onSearchClick: () -> Unit,
     onStoryClick: (userId: String, userName: String, isHighlight: Boolean) -> Unit,
     onDownloadsClick: () -> Unit,
     onPremiumClick: () -> Unit,
@@ -236,6 +239,7 @@ fun HomeContent(
                     isPremium = isPremium,
                     onHighlightToggle = onHighlightToggle,
                     onSearchQueryChange = onSearchQueryChange,
+                    onSearchClick = onSearchClick,
                     onDownloadsClick = onDownloadsClick,
                     onPremiumClick = onPremiumClick,
                     onProfileClick = onProfileClick
@@ -295,12 +299,14 @@ fun HomeTopBar(
     isPremium: Boolean,
     onHighlightToggle: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
+    onSearchClick: () -> Unit,
     onDownloadsClick: () -> Unit,
     onPremiumClick: () -> Unit,
     onProfileClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val searchState = rememberTextFieldState(initialText = "")
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(searchState) {
         snapshotFlow { searchState.text.toString() }
@@ -442,22 +448,32 @@ fun HomeTopBar(
                         color = MaterialTheme.colorScheme.tertiary
                     )
                 },
-                leadingIcon = {
-                    Icon(
-                        painterResource(R.drawable.ic_search),
-                        contentDescription = "Search",
-                        tint = MaterialTheme.colorScheme.tertiary
-                    )
-                },
                 trailingIcon = {
-                    if (searchState.text.isNotEmpty()) {
-                        IconButton(onClick = { searchState.edit { replace(0, length, "") } }) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear search query",
-                                tint = MaterialTheme.colorScheme.tertiary
-                            )
-                        }
+                    val isSearchClickable = searchState.text.trim().length >= SEARCH_THRESHOLD
+                    IconButton(
+                        onClick = {
+                            keyboardController?.hide()
+                            onSearchClick()
+                        },
+                        enabled = isSearchClickable
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_search),
+                            contentDescription = "Search",
+                            tint = if (isSearchClickable)
+                                MaterialTheme.colorScheme.onBackground
+                            else
+                                MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Search
+                ),
+                onKeyboardAction = {
+                    if (searchState.text.trim().length >= SEARCH_THRESHOLD) {
+                        keyboardController?.hide()
+                        onSearchClick()
                     }
                 },
                 colors = TextFieldDefaults.colors(
@@ -551,6 +567,7 @@ private fun HomeContentPreview() {
             isPremium = false,
             onHighlightToggle = {},
             onSearchQueryChange = {},
+            onSearchClick = {},
             onStoryClick = { _, _, _ -> },
             onDownloadsClick = {},
             onPremiumClick = {},
