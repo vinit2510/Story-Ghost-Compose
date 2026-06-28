@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import `in`.vinit.storyghost.data.local.LocalDataSource
 import `in`.vinit.storyghost.data.model.StoryListResponse.Data.User.FeedReelsTray.EdgeReelsTrayToReel.Edge
 import `in`.vinit.storyghost.data.model.UserInfoResponse
+import `in`.vinit.storyghost.data.remote.billing.BillingRepository
 import `in`.vinit.storyghost.data.remote.story.StoryRepository
 import `in`.vinit.storyghost.data.remote.user.UserRepository
 import `in`.vinit.storyghost.ui.UiState
@@ -36,6 +37,7 @@ class HomeViewModel(
     private val storyRepository: StoryRepository,
     private val userRepository: UserRepository,
     private val localDataSource: LocalDataSource,
+    private val billingRepository: BillingRepository,
     private val logger: Logger
 ) : ViewModel() {
 
@@ -71,6 +73,9 @@ class HomeViewModel(
     val isLoggedIn = localDataSource.isLoggedIn()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
+    val isPremium = localDataSource.isPremium()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     val displayList =
         combine(_searchQuery, _storyList, _searchResults) { query, storiesState, results ->
             if (query.length > SEARCH_THRESHOLD) {
@@ -98,6 +103,7 @@ class HomeViewModel(
                 }
         }
 
+        billingRepository.checkSubscription()
         loadStoryList()
         fetchUserDataIfMissing()
         observeSearchQuery()

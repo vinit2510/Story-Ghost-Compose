@@ -17,8 +17,8 @@ android {
         applicationId = "in.vinit.storyghost"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 17
+        versionName = "2.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -100,6 +100,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(libs.coil.video)
+    implementation(libs.play.billing)
 
     // Media3 Playback & UI
     implementation(libs.androidx.media3.exoplayer)

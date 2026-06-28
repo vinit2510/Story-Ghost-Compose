@@ -22,6 +22,9 @@ sealed interface Route : NavKey {
     data object Downloads : Route, NavKey
 
     @Serializable
+    data object Subscription : Route, NavKey
+
+    @Serializable
     data class Story(
         val storyId: String,
         val isHighlight: Boolean = false

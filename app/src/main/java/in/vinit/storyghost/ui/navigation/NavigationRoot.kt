@@ -14,6 +14,7 @@ import `in`.vinit.storyghost.ui.onboarding.LoginWebViewScreen
 import `in`.vinit.storyghost.ui.onboarding.OnboardingScreen
 import `in`.vinit.storyghost.ui.story.HighlightScreen
 import `in`.vinit.storyghost.ui.story.StoryScreen
+import `in`.vinit.storyghost.ui.subscription.SubscriptionScreen
 
 @Composable
 fun NavigationRoot(
@@ -75,6 +76,9 @@ fun NavigationRoot(
                             onDownloadsClick = {
                                 backStack.add(Route.Downloads)
                             },
+                            onPremiumClick = {
+                                backStack.add(Route.Subscription)
+                            },
                             onLoginClick = {
                                 backStack.add(Route.LoginWebView)
                             }
@@ -122,6 +126,14 @@ fun NavigationRoot(
                 is Route.Downloads -> {
                     NavEntry(key) {
                         DownloadsScreen(
+                            onBackClick = { backStack.remove(key) }
+                        )
+                    }
+                }
+
+                is Route.Subscription -> {
+                    NavEntry(key) {
+                        SubscriptionScreen(
                             onBackClick = { backStack.remove(key) }
                         )
                     }

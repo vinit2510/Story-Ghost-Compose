@@ -54,4 +54,27 @@
     <string name="mention_total_count">Total %1$d\nMention</string>
     <string name="highlights">Highlights of %1$s</string>
     <string name="show_highlights">Show\nHighlights</string>
+    <string name="upgrade_to_premium">Upgrade to Premium!</string>
+    <string name="get_more_from_story_ghost">Get more from Story Ghost</string>
+    <string name="monthly_plan">Monthly Plan</string>
+    <string name="ad_free_experience">Ad-Free Experience</string>
+    <string name="yearly_plan">Yearly Plan</string>
+    <string name="early_access_to_new_feature">Early Access to New Feature</string>
+    <string name="best_value">Best Value</string>
+    <string name="subscription_auto_renews_on_a_recurring_basis">Subscription auto-renews on a recurring basis</string>
+    <string name="cancel_anytime">Cancel anytime</string>
+    <string name="plan_activated">%1$s Plan Activated\nEnjoy Premium Plan</string>
+    <string name="continue_">Continue</string>
+    <string name="plan_active">Plan Active</string>
+    <string name="pre_unlock_the_mention_count_of_story">Pre-Unlock the Mention Count of Story</string>
+    <string name="effective_price_per_month">Effective price: %1$s per Month</string>
+    <string name="error_billing_service_disconnected">Can not connect to billing service</string>
+    <string name="error_billing_purchase_canceled">Purchase Canceled</string>
+    <string name="error_billing_unknown">Error while purchasing subscription</string>
+    <string name="subscribe_now">Subscribe Now</string>
+    <string name="error_billing_failed_to_get_subscriptions">Failed to get subscriptions</string>
+    <string name="price_per_month">%1$s/Month</string>
+    <string name="price_per_year">%1$s/Year</string>
+    <string name="monthly">Monthly</string>
+    <string name="yearly">Yearly</string>
 </resources>
