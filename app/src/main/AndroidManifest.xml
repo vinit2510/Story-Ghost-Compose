@@ -8,6 +8,7 @@
         android:name=".MyApplication"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -20,10 +21,11 @@
         <meta-data
             android:name="firebase_analytics_collection_enabled"
             android:value="${firebase_collection_enabled}" />
+
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="true"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|density"
+            android:exported="true"
             android:theme="@style/Theme.StoryGhostCompose">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

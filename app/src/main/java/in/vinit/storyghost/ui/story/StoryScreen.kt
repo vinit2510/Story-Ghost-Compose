@@ -3,7 +3,6 @@ package `in`.vinit.storyghost.ui.story
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -70,17 +69,12 @@ import org.koin.androidx.compose.koinViewModel
 fun StoryScreen(
     storyId: String,
     isHighlight: Boolean,
-    onBackClick: () -> Unit,
     onHighlightClick: (userId: String, userName: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StoryViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isPremium by viewModel.isPremium.collectAsStateWithLifecycle()
-
-    BackHandler {
-        onBackClick()
-    }
 
     LaunchedEffect(storyId) {
         viewModel.loadStories(storyId, isHighlight)
