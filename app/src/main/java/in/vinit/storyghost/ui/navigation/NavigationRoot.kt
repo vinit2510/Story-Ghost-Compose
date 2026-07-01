@@ -1,9 +1,17 @@
 package `in`.vinit.storyghost.ui.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.metadata
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
@@ -22,14 +30,28 @@ fun NavigationRoot(
     modifier: Modifier = Modifier
 ) {
     val backStack = rememberNavBackStack(initialRoute)
+    val popBackStack: () -> Unit = { backStack.removeLastOrNull() }
 
     NavDisplay(
         modifier = modifier,
         backStack = backStack,
+        onBack = popBackStack,
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
         ),
+        transitionSpec = {
+            slideInHorizontally(initialOffsetX = { it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { -it })
+        },
+        popTransitionSpec = {
+            slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { it })
+        },
+        predictivePopTransitionSpec = { _ ->
+            slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { it })
+        },
         entryProvider = { key ->
             when (key) {
                 is Route.Onboarding -> {
@@ -47,11 +69,10 @@ fun NavigationRoot(
                 }
 
                 is Route.LoginWebView -> {
-                    NavEntry(key) {
+                    NavEntry(key, metadata = slideUpTransitionMetadata) {
                         LoginWebViewScreen(
                             onLoginSuccess = {
-                                backStack.remove(key)
-                                backStack.remove(Route.Onboarding)
+                                backStack.clear()
                                 backStack.add(Route.Home)
                             }
                         )
@@ -87,11 +108,10 @@ fun NavigationRoot(
                 }
 
                 is Route.Story -> {
-                    NavEntry(key) {
+                    NavEntry(key, metadata = slideUpTransitionMetadata) {
                         StoryScreen(
                             storyId = key.storyId,
                             isHighlight = key.isHighlight,
-                            onBackClick = { backStack.remove(key) },
                             onHighlightClick = { userId, userName ->
                                 backStack.add(Route.Highlight(userId, userName))
                             }
@@ -100,11 +120,11 @@ fun NavigationRoot(
                 }
 
                 is Route.Highlight -> {
-                    NavEntry(key) {
+                    NavEntry(key, metadata = slideUpTransitionMetadata) {
                         HighlightScreen(
                             userId = key.userId,
                             userName = key.userName,
-                            onBackClick = { backStack.remove(key) },
+                            onBackClick = popBackStack,
                             onHighlightClick = { highlightId ->
                                 backStack.add(
                                     Route.Story(
@@ -126,15 +146,15 @@ fun NavigationRoot(
                 is Route.Downloads -> {
                     NavEntry(key) {
                         DownloadsScreen(
-                            onBackClick = { backStack.remove(key) }
+                            onBackClick = popBackStack
                         )
                     }
                 }
 
                 is Route.Subscription -> {
-                    NavEntry(key) {
+                    NavEntry(key, metadata = slideUpTransitionMetadata) {
                         SubscriptionScreen(
-                            onBackClick = { backStack.remove(key) }
+                            onBackClick = popBackStack
                         )
                     }
                 }
@@ -144,4 +164,19 @@ fun NavigationRoot(
 
         }
     )
+}
+
+private val slideUpTransitionMetadata = metadata {
+    put(NavDisplay.TransitionKey) {
+        slideInVertically(initialOffsetY = { it }) togetherWith
+                ExitTransition.KeepUntilTransitionsFinished
+    }
+    put(NavDisplay.PopTransitionKey) {
+        EnterTransition.None togetherWith
+                slideOutVertically(targetOffsetY = { it })
+    }
+    put(NavDisplay.PredictivePopTransitionKey) { _ ->
+        EnterTransition.None togetherWith
+                slideOutVertically(targetOffsetY = { it })
+    }
 }
