@@ -7,7 +7,6 @@ import `in`.vinit.storyghost.data.local.DownloadsRepository
 import `in`.vinit.storyghost.data.local.DownloadsRepositoryImpl
 import `in`.vinit.storyghost.data.local.LocalDataSource
 import `in`.vinit.storyghost.data.remote.auth.LoginInterceptor
-import `in`.vinit.storyghost.data.remote.auth.LogoutAuthenticator
 import `in`.vinit.storyghost.data.remote.billing.BillingRepository
 import `in`.vinit.storyghost.data.remote.billing.BillingRepositoryImpl
 import `in`.vinit.storyghost.data.remote.config.FirebaseRemoteConfigImpl
@@ -73,7 +72,8 @@ val appModule = module {
     single {
         val client = OkHttpClient.Builder().apply {
             addInterceptor(LoginInterceptor(get(), get()))
-            authenticator(LogoutAuthenticator(get()))
+            followRedirects(false)
+            followSslRedirects(false)
             if (BuildConfig.DEBUG) {
                 addInterceptor(
                     HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)

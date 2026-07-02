@@ -1,5 +1,6 @@
 package `in`.vinit.storyghost.util
 
+import com.google.gson.stream.MalformedJsonException
 import `in`.vinit.storyghost.R
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.UiText
@@ -19,6 +20,8 @@ suspend fun <T> makeApiCall(call: suspend () -> T): UiState<T> {
             else -> R.string.error_unexpected
         }
         UiState.Error(UiText.StringResource(messageRes), e.code(), e)
+    } catch (e: MalformedJsonException) {
+        UiState.Error(UiText.StringResource(R.string.error_unexpected), null, e)
     } catch (e: IOException) {
         UiState.Error(UiText.StringResource(R.string.error_network), null, e)
     } catch (e: CancellationException) {
