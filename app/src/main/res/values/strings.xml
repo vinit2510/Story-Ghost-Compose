@@ -4,7 +4,7 @@
     <string name="error_not_found">Error Not Found</string>
     <string name="error_server">Error Server Issue</string>
     <string name="error_unexpected">Unexpected Error</string>
-    <string name="error_network">Network Error</string>
+    <string name="error_network">Network error. Please try again.</string>
 
     <string name="skip">Skip</string>
     <string name="onboarding_text_1">View anyone’s story without getting into their viewer list 🙈</string>

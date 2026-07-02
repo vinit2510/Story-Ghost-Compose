@@ -23,7 +23,13 @@ class LoginInterceptor(
         csrfToken?.let { requestBuilder.addHeader("X-Csrftoken", it.sanitizeHeader()) }
         requestBuilder.addHeader("User-Agent", userAgent.sanitizeHeader())
 
-        return chain.proceed(requestBuilder.build())
+        val response = chain.proceed(requestBuilder.build())
+
+        if (response.code == 401 || response.code == 403 || response.code == 302 || response.isRedirect) {
+            runBlocking { localDataSource.clearAuthentication() }
+        }
+
+        return response
     }
 
     private fun String.sanitizeHeader(): String {
