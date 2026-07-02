@@ -12,8 +12,8 @@ espressoCore = "3.7.0"
 kotlinxSerializationJson = "1.11.0"
 lifecycleRuntimeKtx = "2.11.0"
 activityCompose = "1.13.0"
-composeBom = "2026.06.00"
-navigation3 = "1.1.3"
+composeBom = "2026.06.01"
+navigation3 = "1.1.4"
 okhttp = "5.4.0"
 retrofit = "3.0.0"
 googleGmsGoogleServices = "4.5.0"
@@ -23,6 +23,7 @@ coil = "3.5.0"
 media3 = "1.10.1"
 billing = "9.1.0"
 onesignal = "5.9.5"
+appUpdate = "2.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -66,6 +67,7 @@ coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version
 coil-video = { module = "io.coil-kt.coil3:coil-video", version.ref = "coil" }
 play-billing = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
 onesignal = { group = "com.onesignal", name = "OneSignal", version.ref = "onesignal" }
+play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "appUpdate" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
