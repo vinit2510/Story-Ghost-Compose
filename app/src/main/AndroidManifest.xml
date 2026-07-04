@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StoryGhostCompose">
 
-    <meta-data
+        <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="${firebase_collection_enabled}" />
         <meta-data
