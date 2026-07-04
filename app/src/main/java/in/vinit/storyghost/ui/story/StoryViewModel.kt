@@ -1,5 +1,6 @@
 package `in`.vinit.storyghost.ui.story
 
+import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.vinit.storyghost.data.local.DownloadsRepository
@@ -7,6 +8,7 @@ import `in`.vinit.storyghost.data.local.LocalDataSource
 import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import `in`.vinit.storyghost.data.remote.story.StoryRepository
 import `in`.vinit.storyghost.ui.UiState
+import `in`.vinit.storyghost.util.InterstitialAdManager
 import `in`.vinit.storyghost.util.Logger
 import `in`.vinit.storyghost.util.makeApiCall
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +25,8 @@ class StoryViewModel(
     private val storyRepository: StoryRepository,
     private val downloadsRepository: DownloadsRepository,
     localDataSource: LocalDataSource,
-    private val logger: Logger
+    private val logger: Logger,
+    private val interstitialAdManager: InterstitialAdManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<List<Item>>>(UiState.Loading)
@@ -35,6 +38,14 @@ class StoryViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = false
         )
+
+    fun loadAd() {
+        interstitialAdManager.loadAd()
+    }
+
+    fun showAd(activity: Activity) {
+        interstitialAdManager.showAd(activity)
+    }
 
     fun downloadStory(item: Item, onSuccess: () -> Unit) {
         downloadsRepository.downloadFile(item, onSuccess)

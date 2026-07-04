@@ -1,5 +1,6 @@
 package `in`.vinit.storyghost.ui.story
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
@@ -76,6 +77,10 @@ fun StoryScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isPremium by viewModel.isPremium.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.loadAd()
+    }
+
     LaunchedEffect(storyId) {
         viewModel.loadStories(storyId, isHighlight)
     }
@@ -116,7 +121,8 @@ fun StoryScreen(
                             initialPage = viewModel.currentPageIndex,
                             onPageChanged = { viewModel.currentPageIndex = it },
                             onHighlightClick = onHighlightClick,
-                            onDownloadClick = viewModel::downloadStory
+                            onDownloadClick = viewModel::downloadStory,
+                            onShowAd = viewModel::showAd
                         )
                     }
                 }
@@ -134,6 +140,7 @@ fun StoryContent(
     onPageChanged: (Int) -> Unit,
     onHighlightClick: (userId: String, userName: String) -> Unit,
     onDownloadClick: (Item, () -> Unit) -> Unit,
+    onShowAd: (Activity) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(
@@ -169,7 +176,8 @@ fun StoryContent(
                     isPremium = isPremium,
                     isActive = pagerState.currentPage == page,
                     onHighlightClick = onHighlightClick,
-                    onDownloadClick = onDownloadClick
+                    onDownloadClick = onDownloadClick,
+                    onShowAd = onShowAd
                 )
             }
         }
@@ -222,6 +230,7 @@ fun StoryPage(
     isActive: Boolean,
     onHighlightClick: (userId: String, userName: String) -> Unit,
     onDownloadClick: (Item, () -> Unit) -> Unit,
+    onShowAd: (Activity) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -411,6 +420,7 @@ fun StoryPage(
                     verticalArrangement = Arrangement.spacedBy(5.dp),
                     modifier = Modifier.clickable {
                         if (!isDownloaded) {
+                            (context as? Activity)?.let { onShowAd(it) }
                             onDownloadClick(data) {
                                 isDownloaded = true
                             }
@@ -496,6 +506,7 @@ fun StoryPage(
                     verticalArrangement = Arrangement.spacedBy(5.dp),
                     modifier = Modifier.clickable {
                         if (isShimmeringMentions) return@clickable
+                        (context as? Activity)?.let { onShowAd(it) }
                         if (mentionList.isEmpty()) {
                             isShimmeringMentions = true
                             coroutineScope.launch {
@@ -602,7 +613,8 @@ fun StoryPagePreview() {
             isPremium = false,
             isActive = true,
             onHighlightClick = { _, _ -> },
-            onDownloadClick = { _, _ -> }
+            onDownloadClick = { _, _ -> },
+            onShowAd = {}
         )
     }
 }

@@ -103,6 +103,9 @@ dependencies {
     implementation(libs.play.billing)
     implementation(libs.onesignal)
     implementation(libs.play.app.update.ktx)
+    implementation(libs.androidx.lifecycle.process)
+    implementation(libs.admob.next.gen)
+    implementation(libs.facebook.audience.network)
 
     // Media3 Playback & UI
     implementation(libs.androidx.media3.exoplayer)

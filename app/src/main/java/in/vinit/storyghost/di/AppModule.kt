@@ -27,8 +27,11 @@ import `in`.vinit.storyghost.ui.onboarding.OnboardingViewModel
 import `in`.vinit.storyghost.ui.story.HighlightViewModel
 import `in`.vinit.storyghost.ui.story.StoryViewModel
 import `in`.vinit.storyghost.ui.subscription.SubscriptionViewModel
+import `in`.vinit.storyghost.util.AdStateManager
 import `in`.vinit.storyghost.util.AnalyticsLogger
+import `in`.vinit.storyghost.util.AppOpenAdManager
 import `in`.vinit.storyghost.util.FirebaseAnalyticsLogger
+import `in`.vinit.storyghost.util.InterstitialAdManager
 import `in`.vinit.storyghost.util.Logger
 import `in`.vinit.storyghost.util.TimberLoggerImpl
 import okhttp3.OkHttpClient
@@ -117,6 +120,11 @@ val appModule = module {
     single<BillingRepository> {
         BillingRepositoryImpl(androidContext(), get(), get())
     }
+
+    // Ad Managers
+    single { AdStateManager(get()) }
+    single { AppOpenAdManager(get(), get()) }
+    single { InterstitialAdManager(androidContext(), get(), get()) }
 
     // ViewModel
     viewModelOf(::StartupViewModel)
