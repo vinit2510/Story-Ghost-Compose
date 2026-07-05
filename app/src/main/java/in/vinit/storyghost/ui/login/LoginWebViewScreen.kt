@@ -91,7 +91,7 @@ fun LoginWebViewContent(
                     override fun onPageFinished(view: WebView?, url: String?) {
                         super.onPageFinished(view, url)
                         val cookie = CookieManager.getInstance().getCookie(url)
-                        onPageFinished(view, cookie)
+                        onPageFinished(url, cookie)
                     }
                 }
                 loadUrl(loginUrl)
