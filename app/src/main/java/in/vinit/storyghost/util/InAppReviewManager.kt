@@ -30,10 +30,21 @@ class InAppReviewManager(
     }
 
     fun show(activity: Activity) {
+        if (activity.isFinishing || activity.isDestroyed) {
+            logger.w(TAG, "show: Skipped because activity is finishing or destroyed")
+            return
+        }
         logger.d(TAG, "show: Initiating Play In-App Review Flow request")
         val manager = ReviewManagerFactory.create(activity)
         val request = manager.requestReviewFlow()
         request.addOnCompleteListener { task ->
+            if (activity.isFinishing || activity.isDestroyed) {
+                logger.w(
+                    TAG,
+                    "show: Skipped launch because activity is finishing or destroyed after request completion"
+                )
+                return@addOnCompleteListener
+            }
             if (task.isSuccessful) {
                 logger.d(TAG, "show: Play In-App Review request successful, launching flow")
                 val reviewInfo = task.result
