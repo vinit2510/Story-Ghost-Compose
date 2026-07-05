@@ -26,6 +26,7 @@ onesignal = "5.9.5"
 appUpdate = "2.1.0"
 admobNextGen = "1.2.1"
 facebookAudienceNetwork = "6.+"
+playReview = "2.0.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -73,6 +74,7 @@ onesignal = { group = "com.onesignal", name = "OneSignal", version.ref = "onesig
 play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "appUpdate" }
 admob-next-gen = { group = "com.google.android.libraries.ads.mobile.sdk", name = "ads-mobile-sdk", version.ref = "admobNextGen" }
 facebook-audience-network = { group = "com.facebook.android", name = "audience-network-sdk", version.ref = "facebookAudienceNetwork" }
+play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "playReview" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

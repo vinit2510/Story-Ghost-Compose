@@ -76,9 +76,13 @@ fun StoryScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isPremium by viewModel.isPremium.collectAsStateWithLifecycle()
-
+    val context = LocalContext.current
+ 
     LaunchedEffect(Unit) {
         viewModel.loadAd()
+        (context as? Activity)?.let { activity ->
+            viewModel.showReviewDialogIfEligible(activity)
+        }
     }
 
     LaunchedEffect(storyId) {

@@ -8,6 +8,7 @@ import `in`.vinit.storyghost.data.local.LocalDataSource
 import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import `in`.vinit.storyghost.data.remote.story.StoryRepository
 import `in`.vinit.storyghost.ui.UiState
+import `in`.vinit.storyghost.util.InAppReviewManager
 import `in`.vinit.storyghost.util.InterstitialAdManager
 import `in`.vinit.storyghost.util.Logger
 import `in`.vinit.storyghost.util.makeApiCall
@@ -26,7 +27,8 @@ class StoryViewModel(
     private val downloadsRepository: DownloadsRepository,
     localDataSource: LocalDataSource,
     private val logger: Logger,
-    private val interstitialAdManager: InterstitialAdManager
+    private val interstitialAdManager: InterstitialAdManager,
+    private val inAppReviewManager: InAppReviewManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<List<Item>>>(UiState.Loading)
@@ -77,6 +79,12 @@ class StoryViewModel(
                 )
             }
             _uiState.update { result }
+        }
+    }
+
+    fun showReviewDialogIfEligible(activity: Activity) {
+        viewModelScope.launch {
+            inAppReviewManager.showDialogAfterDays(activity)
         }
     }
 }
