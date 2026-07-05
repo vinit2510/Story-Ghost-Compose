@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.ui.story
+package `in`.vinit.storyghost.ui.component
 
 import androidx.annotation.OptIn
 import androidx.compose.animation.core.LinearEasing
@@ -91,9 +91,11 @@ fun VideoPlayer(
 
     val presentationState = rememberPresentationState(exoPlayer)
 
-    Box(modifier = modifier
-        .fillMaxSize()
-        .clipToBounds()) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .clipToBounds()
+    ) {
         // We use SURFACE_TYPE_TEXTURE_VIEW to allow proper Compose layout clipToBounds() / transformations
         // and to completely avoid SurfaceSyncGroup synchronization timeouts on API 34+ when swiping.
         PlayerSurface(

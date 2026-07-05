@@ -63,6 +63,7 @@ import `in`.vinit.storyghost.core.common.TimeUtils
 import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.ErrorPlaceholder
+import `in`.vinit.storyghost.ui.component.VideoPlayer
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

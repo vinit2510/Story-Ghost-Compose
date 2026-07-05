@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.ui.story
+package `in`.vinit.storyghost.ui.highlight
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

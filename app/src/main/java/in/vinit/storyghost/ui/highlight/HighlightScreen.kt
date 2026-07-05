@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.ui.story
+package `in`.vinit.storyghost.ui.highlight
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues

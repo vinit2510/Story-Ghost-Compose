@@ -82,8 +82,8 @@ import `in`.vinit.storyghost.data.model.StoryListResponse.Data.User.FeedReelsTra
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.ErrorPlaceholder
 import `in`.vinit.storyghost.ui.component.MediaGridItem
-import `in`.vinit.storyghost.ui.dialog.LoginDialog
-import `in`.vinit.storyghost.ui.dialog.LogoutDialog
+import `in`.vinit.storyghost.ui.login.LoginDialog
+import `in`.vinit.storyghost.ui.login.LogoutDialog
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

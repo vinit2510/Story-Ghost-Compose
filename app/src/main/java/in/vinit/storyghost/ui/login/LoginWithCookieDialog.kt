@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.ui.dialog
+package `in`.vinit.storyghost.ui.login
 
 import android.content.Context
 import android.content.Intent
@@ -47,7 +47,6 @@ import `in`.vinit.storyghost.constant.AnalyticsEvent
 import `in`.vinit.storyghost.core.analytics.LocalAnalyticsLogger
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.PrimaryButton
-import `in`.vinit.storyghost.ui.onboarding.LoginViewModel
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
