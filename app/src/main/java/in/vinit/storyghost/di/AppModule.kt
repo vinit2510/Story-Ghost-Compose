@@ -63,7 +63,7 @@ val appModule = module {
     }
 
     // Remote config
-    single<RemoteConfigRepository> {
+    single<RemoteConfigRepository>(createdAtStart = true) {
         FirebaseRemoteConfigImpl(get())
     }
 
