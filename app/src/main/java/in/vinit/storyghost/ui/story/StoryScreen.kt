@@ -57,10 +57,12 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import `in`.vinit.storyghost.R
+import `in`.vinit.storyghost.constant.AnalyticsEvent
 import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.ErrorPlaceholder
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
+import `in`.vinit.storyghost.util.LocalAnalyticsLogger
 import `in`.vinit.storyghost.util.TimeUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -77,6 +79,7 @@ fun StoryScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isPremium by viewModel.isPremium.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val analyticsLogger = LocalAnalyticsLogger.current
  
     LaunchedEffect(Unit) {
         viewModel.loadAd()
@@ -125,7 +128,10 @@ fun StoryScreen(
                             initialPage = viewModel.currentPageIndex,
                             onPageChanged = { viewModel.currentPageIndex = it },
                             onHighlightClick = onHighlightClick,
-                            onDownloadClick = viewModel::downloadStory,
+                            onDownloadClick = { item, onSuccess ->
+                                analyticsLogger.logEvent(AnalyticsEvent.STORY_DOWNLOAD)
+                                viewModel.downloadStory(item, onSuccess)
+                            },
                             onShowAd = viewModel::showAd
                         )
                     }
@@ -239,6 +245,17 @@ fun StoryPage(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val analyticsLogger = LocalAnalyticsLogger.current
+
+    LaunchedEffect(isActive) {
+        if (isActive) {
+            if (isHighlight) {
+                analyticsLogger.logEvent(AnalyticsEvent.HIGHLIGHT_WATCH)
+            } else {
+                analyticsLogger.logEvent(AnalyticsEvent.STORY_WATCH)
+            }
+        }
+    }
 
     var isDownloaded by remember(data) { mutableStateOf(false) }
     var lastShownIndex by remember(data) { mutableIntStateOf(-1) }
@@ -381,6 +398,7 @@ fun StoryPage(
                                 selectedMentionIndex.intValue = -1
                             },
                             onClick = {
+                                analyticsLogger.logEvent(AnalyticsEvent.OPEN_ACCOUNT)
                                 openInstagramAccount(context, mention.username ?: "")
                             }
                         )
@@ -510,6 +528,7 @@ fun StoryPage(
                     verticalArrangement = Arrangement.spacedBy(5.dp),
                     modifier = Modifier.clickable {
                         if (isShimmeringMentions) return@clickable
+                        analyticsLogger.logEvent(AnalyticsEvent.HIDDEN_MENTION)
                         (context as? Activity)?.let { onShowAd(it) }
                         if (mentionList.isEmpty()) {
                             isShimmeringMentions = true

@@ -31,10 +31,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            manifestPlaceholders["firebase_collection_enabled"] = "true"
+            manifestPlaceholders["is_release_build"] = "true"
         }
         debug {
-            manifestPlaceholders["firebase_collection_enabled"] = "false"
+            manifestPlaceholders["is_release_build"] = "false"
         }
     }
     compileOptions {

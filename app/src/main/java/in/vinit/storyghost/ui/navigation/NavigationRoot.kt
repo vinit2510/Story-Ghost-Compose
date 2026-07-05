@@ -8,6 +8,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
@@ -23,6 +24,7 @@ import `in`.vinit.storyghost.ui.onboarding.OnboardingScreen
 import `in`.vinit.storyghost.ui.story.HighlightScreen
 import `in`.vinit.storyghost.ui.story.StoryScreen
 import `in`.vinit.storyghost.ui.subscription.SubscriptionScreen
+import `in`.vinit.storyghost.util.LocalAnalyticsLogger
 
 @Composable
 fun NavigationRoot(
@@ -31,6 +33,14 @@ fun NavigationRoot(
 ) {
     val backStack = rememberNavBackStack(initialRoute)
     val popBackStack: () -> Unit = { backStack.removeLastOrNull() }
+    val analyticsLogger = LocalAnalyticsLogger.current
+
+    val currentRoute = backStack.lastOrNull()
+
+    LaunchedEffect(currentRoute) {
+        val route = currentRoute as? Route ?: return@LaunchedEffect
+        analyticsLogger.logScreenView(route.analyticsScreenName)
+    }
 
     NavDisplay(
         modifier = modifier,
