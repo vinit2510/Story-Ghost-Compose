@@ -2,10 +2,10 @@ package `in`.vinit.storyghost.ui.downloads
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.data.local.DownloadsRepository
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.UiText
-import `in`.vinit.storyghost.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

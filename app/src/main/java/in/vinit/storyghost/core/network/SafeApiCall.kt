@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.util
+package `in`.vinit.storyghost.core.network
 
 import com.google.gson.stream.MalformedJsonException
 import `in`.vinit.storyghost.R

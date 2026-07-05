@@ -16,6 +16,7 @@ import androidx.navigation3.runtime.metadata
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import `in`.vinit.storyghost.core.analytics.LocalAnalyticsLogger
 import `in`.vinit.storyghost.ui.downloads.DownloadsScreen
 import `in`.vinit.storyghost.ui.forceupdate.ForceUpdateScreen
 import `in`.vinit.storyghost.ui.home.HomeScreen
@@ -24,7 +25,6 @@ import `in`.vinit.storyghost.ui.onboarding.OnboardingScreen
 import `in`.vinit.storyghost.ui.story.HighlightScreen
 import `in`.vinit.storyghost.ui.story.StoryScreen
 import `in`.vinit.storyghost.ui.subscription.SubscriptionScreen
-import `in`.vinit.storyghost.util.LocalAnalyticsLogger
 
 @Composable
 fun NavigationRoot(

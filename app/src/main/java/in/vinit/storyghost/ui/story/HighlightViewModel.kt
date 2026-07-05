@@ -2,11 +2,11 @@ package `in`.vinit.storyghost.ui.story
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.vinit.storyghost.core.common.Logger
+import `in`.vinit.storyghost.core.network.makeApiCall
 import `in`.vinit.storyghost.data.model.HighlightsResponse.Data.User.EdgeHighlightReels.Edge
 import `in`.vinit.storyghost.data.remote.story.StoryRepository
 import `in`.vinit.storyghost.ui.UiState
-import `in`.vinit.storyghost.util.Logger
-import `in`.vinit.storyghost.util.makeApiCall
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

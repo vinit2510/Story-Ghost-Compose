@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.util
+package `in`.vinit.storyghost.core.ads
 
 import android.app.Activity
 import com.google.android.libraries.ads.mobile.sdk.appopen.AppOpenAd
@@ -8,6 +8,7 @@ import com.google.android.libraries.ads.mobile.sdk.common.AdRequest
 import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError
 import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
 import `in`.vinit.storyghost.BuildConfig
+import `in`.vinit.storyghost.core.common.Logger
 
 private const val TAG = "AppOpenAdManager"
 

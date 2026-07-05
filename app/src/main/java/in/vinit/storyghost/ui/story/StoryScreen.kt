@@ -58,12 +58,12 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import `in`.vinit.storyghost.R
 import `in`.vinit.storyghost.constant.AnalyticsEvent
+import `in`.vinit.storyghost.core.analytics.LocalAnalyticsLogger
+import `in`.vinit.storyghost.core.common.TimeUtils
 import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.ErrorPlaceholder
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
-import `in`.vinit.storyghost.util.LocalAnalyticsLogger
-import `in`.vinit.storyghost.util.TimeUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel

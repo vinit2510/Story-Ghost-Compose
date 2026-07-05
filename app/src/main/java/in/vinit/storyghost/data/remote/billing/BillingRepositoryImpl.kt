@@ -17,10 +17,10 @@ import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
 import com.android.billingclient.api.queryProductDetails
 import `in`.vinit.storyghost.R
+import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.data.local.LocalDataSource
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.UiText
-import `in`.vinit.storyghost.util.Logger
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

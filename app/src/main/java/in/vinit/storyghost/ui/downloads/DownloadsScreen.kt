@@ -44,11 +44,11 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import `in`.vinit.storyghost.R
+import `in`.vinit.storyghost.core.common.TimeUtils
+import `in`.vinit.storyghost.core.file.FileUtils
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.ErrorPlaceholder
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
-import `in`.vinit.storyghost.util.FileUtils
-import `in`.vinit.storyghost.util.TimeUtils
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
 

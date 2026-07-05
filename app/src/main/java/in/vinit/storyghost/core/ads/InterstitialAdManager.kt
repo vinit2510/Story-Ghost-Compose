@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.util
+package `in`.vinit.storyghost.core.ads
 
 import android.app.Activity
 import android.content.Context
@@ -11,6 +11,8 @@ import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
 import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAd
 import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdEventCallback
 import `in`.vinit.storyghost.BuildConfig
+import `in`.vinit.storyghost.core.common.Logger
+import `in`.vinit.storyghost.core.play.InAppReviewManager
 import com.facebook.ads.AdError as FANAdError
 import com.facebook.ads.RewardedInterstitialAd as FANRewardedInterstitialAd
 

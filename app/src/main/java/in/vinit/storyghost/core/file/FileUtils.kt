@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.util
+package `in`.vinit.storyghost.core.file
 
 import android.content.Context
 import android.content.Intent
