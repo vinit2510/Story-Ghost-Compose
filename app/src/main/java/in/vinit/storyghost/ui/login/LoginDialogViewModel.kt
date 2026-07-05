@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.ui.dialog
+package `in`.vinit.storyghost.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,6 +31,3 @@ class LoginDialogViewModel(
         }
     }
 }
-
-
-

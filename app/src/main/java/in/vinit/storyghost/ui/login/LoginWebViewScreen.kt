@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.ui.onboarding
+package `in`.vinit.storyghost.ui.login
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
@@ -91,7 +91,7 @@ fun LoginWebViewContent(
                     override fun onPageFinished(view: WebView?, url: String?) {
                         super.onPageFinished(view, url)
                         val cookie = CookieManager.getInstance().getCookie(url)
-                        onPageFinished(url, cookie)
+                        onPageFinished(view, cookie)
                     }
                 }
                 loadUrl(loginUrl)

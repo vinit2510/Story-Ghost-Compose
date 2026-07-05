@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.ui.onboarding
+package `in`.vinit.storyghost.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,16 +28,10 @@ class LoginViewModel(
     }
 
     fun loginWithCookie(cookie: String) {
-        logger.d(TAG, "loginWithCookie: $cookie")
         try {
             val sessionId = getCookieValue(cookie, "sessionid")
             val csrfToken = getCookieValue(cookie, "csrftoken")
             val userId = getCookieValue(cookie, "ds_user_id")
-
-            logger.d(TAG, "cookie     : $cookie")
-            logger.d(TAG, "sessionid  : $sessionId")
-            logger.d(TAG, "csrftoken  : $csrfToken")
-            logger.d(TAG, "ds_user_id : $userId")
 
             if (!sessionId.isNullOrEmpty() && !userId.isNullOrEmpty()) {
                 saveSession(cookie, sessionId, csrfToken, userId)
@@ -67,11 +61,6 @@ class LoginViewModel(
             val sessionId = getCookieValue(rawCookie, "sessionid")
             val csrfToken = getCookieValue(rawCookie, "csrftoken")
             val userId = getCookieValue(rawCookie, "ds_user_id")
-
-            logger.d(TAG, "cookie     : $rawCookie")
-            logger.d(TAG, "sessionid  : $sessionId")
-            logger.d(TAG, "csrftoken  : $csrfToken")
-            logger.d(TAG, "ds_user_id : $userId")
 
             if (!userId.isNullOrEmpty()) {
                 saveSession(rawCookie, sessionId, csrfToken, userId)

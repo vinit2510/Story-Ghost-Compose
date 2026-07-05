@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.ui.dialog
+package `in`.vinit.storyghost.ui.login
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
