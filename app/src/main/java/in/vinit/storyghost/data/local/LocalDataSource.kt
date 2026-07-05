@@ -21,6 +21,7 @@ class LocalDataSource(private val dataStore: DataStore<Preferences>) {
         val USER_ID = stringPreferencesKey("DS_USER_ID")
         val USER_DATA = stringPreferencesKey("USER_DATA")
         val IS_PREMIUM = booleanPreferencesKey("IS_PREMIUM")
+        val PLAN_ID = stringPreferencesKey("PLAN_ID")
         val INSTALL_TIME = longPreferencesKey("INSTALL_TIME")
         val REVIEW_TRIES = intPreferencesKey("REVIEW_TRIES")
     }
@@ -48,6 +49,15 @@ class LocalDataSource(private val dataStore: DataStore<Preferences>) {
 
     suspend fun setPremium(value: Boolean) = save(Keys.IS_PREMIUM, value)
     fun isPremium(): Flow<Boolean> = get(Keys.IS_PREMIUM, false)
+
+    suspend fun savePlanId(value: String?) {
+        dataStore.edit {
+            if (value != null) it[Keys.PLAN_ID] = value
+            else it.remove(Keys.PLAN_ID)
+        }
+    }
+
+    fun getPlanId(): Flow<String?> = getNullable(Keys.PLAN_ID)
 
     suspend fun saveInstallTime(value: Long) = save(Keys.INSTALL_TIME, value)
     fun getInstallTime(): Flow<Long> = get(Keys.INSTALL_TIME, 0L)
