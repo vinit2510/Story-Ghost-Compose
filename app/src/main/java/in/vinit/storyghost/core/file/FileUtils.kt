@@ -2,12 +2,12 @@ package `in`.vinit.storyghost.core.file
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import `in`.vinit.storyghost.BuildConfig
 import `in`.vinit.storyghost.R
+import timber.log.Timber
 import java.io.File
 
 object FileUtils {
@@ -60,7 +60,7 @@ object FileUtils {
 
             context.startActivity(intent)
         } catch (e: Exception) {
-            Log.e("TAG", "openFile: ", e)
+            Timber.e(e, "openFile: ")
             Toast.makeText(context, R.string.toast_failed_to_open_file, Toast.LENGTH_SHORT).show()
         }
     }
