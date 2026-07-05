@@ -260,6 +260,7 @@ fun HomeContent(
                     isHighlightMode = isHighlightMode,
                     profilePicUrl = profilePicUrl,
                     isPremium = isPremium,
+                    isSearchActive = displayList is UiState.Loading,
                     onHighlightToggle = onHighlightToggle,
                     onSearchQueryChange = onSearchQueryChange,
                     onSearchClick = onSearchClick,
@@ -320,6 +321,7 @@ fun HomeTopBar(
     isHighlightMode: Boolean,
     profilePicUrl: String?,
     isPremium: Boolean,
+    isSearchActive: Boolean,
     onHighlightToggle: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
     onSearchClick: () -> Unit,
@@ -472,7 +474,8 @@ fun HomeTopBar(
                     )
                 },
                 trailingIcon = {
-                    val isSearchClickable = searchState.text.trim().length >= SEARCH_THRESHOLD
+                    val isSearchClickable =
+                        searchState.text.trim().length >= SEARCH_THRESHOLD && !isSearchActive
                     IconButton(
                         onClick = {
                             keyboardController?.hide()
@@ -494,7 +497,7 @@ fun HomeTopBar(
                     imeAction = ImeAction.Search
                 ),
                 onKeyboardAction = {
-                    if (searchState.text.trim().length >= SEARCH_THRESHOLD) {
+                    if (searchState.text.trim().length >= SEARCH_THRESHOLD && !isSearchActive) {
                         keyboardController?.hide()
                         onSearchClick()
                     }

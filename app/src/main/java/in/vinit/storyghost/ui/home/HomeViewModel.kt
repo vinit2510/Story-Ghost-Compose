@@ -190,6 +190,7 @@ class HomeViewModel(
     }
 
     fun onSearchQueryChange(query: String) {
+        if (_searchQuery.value == query) return
         _searchQuery.update { query }
         _isRemoteSearchActive.update { false }
         _searchResults.update { UiState.Success(emptyList()) }

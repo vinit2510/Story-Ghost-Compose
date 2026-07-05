@@ -100,7 +100,8 @@ fun StoryScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(innerPadding),
+            contentAlignment = Alignment.Center
         ) {
             when (val state = uiState) {
                 is UiState.Loading -> {
