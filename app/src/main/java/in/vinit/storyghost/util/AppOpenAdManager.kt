@@ -61,6 +61,10 @@ class AppOpenAdManager(
     }
 
     fun showAd(activity: Activity) {
+        if (activity.isFinishing || activity.isDestroyed) {
+            logger.w(TAG, "showAd: Skipped because activity is finishing or destroyed")
+            return
+        }
         if (adStateManager.isPremium) {
             logger.d(TAG, "showAd: Skipped because user is premium")
             return
