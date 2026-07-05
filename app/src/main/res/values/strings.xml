@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Story Ghost</string>
+    <string name="app_name" translatable="false">Story Ghost</string>
     <string name="error_unauthorized">Please login to get data</string>
     <string name="error_not_found">Error Not Found</string>
     <string name="error_server">Error Server Issue</string>
