@@ -4,7 +4,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
 import `in`.vinit.storyghost.R
-import `in`.vinit.storyghost.util.Logger
+import `in`.vinit.storyghost.core.common.Logger
 
 
 private const val TAG = "RemoteConfigRepository"

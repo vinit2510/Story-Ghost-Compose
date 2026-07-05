@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.util
+package `in`.vinit.storyghost.core.ads
 
 import `in`.vinit.storyghost.data.local.LocalDataSource
 import kotlinx.coroutines.CoroutineScope

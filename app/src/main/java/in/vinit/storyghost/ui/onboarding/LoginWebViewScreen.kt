@@ -16,8 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import `in`.vinit.storyghost.constant.AnalyticsEvent
+import `in`.vinit.storyghost.core.analytics.LocalAnalyticsLogger
 import `in`.vinit.storyghost.ui.UiState
-import `in`.vinit.storyghost.util.LocalAnalyticsLogger
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

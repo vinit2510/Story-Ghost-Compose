@@ -11,10 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import `in`.vinit.storyghost.core.ads.AppOpenAdManager
+import `in`.vinit.storyghost.core.analytics.LocalAnalyticsLogger
+import `in`.vinit.storyghost.core.play.InAppUpdate
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
-import `in`.vinit.storyghost.util.AppOpenAdManager
-import `in`.vinit.storyghost.util.InAppUpdate
-import `in`.vinit.storyghost.util.LocalAnalyticsLogger
 import org.koin.android.ext.android.inject
 import org.koin.compose.koinInject
 

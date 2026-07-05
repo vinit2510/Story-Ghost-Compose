@@ -1,7 +1,8 @@
-package `in`.vinit.storyghost.util
+package `in`.vinit.storyghost.core.play
 
 import android.app.Activity
 import com.google.android.play.core.review.ReviewManagerFactory
+import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.data.local.LocalDataSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

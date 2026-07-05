@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.util
+package `in`.vinit.storyghost.core.analytics
 
 import android.os.Bundle
 import androidx.compose.runtime.staticCompositionLocalOf

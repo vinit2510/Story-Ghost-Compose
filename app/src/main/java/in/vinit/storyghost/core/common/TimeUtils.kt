@@ -1,4 +1,4 @@
-package `in`.vinit.storyghost.util
+package `in`.vinit.storyghost.core.common
 
 import java.text.SimpleDateFormat
 import java.time.Duration
