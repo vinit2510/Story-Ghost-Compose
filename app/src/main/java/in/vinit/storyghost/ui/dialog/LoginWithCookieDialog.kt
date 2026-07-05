@@ -43,10 +43,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import `in`.vinit.storyghost.R
+import `in`.vinit.storyghost.constant.AnalyticsEvent
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.PrimaryButton
 import `in`.vinit.storyghost.ui.onboarding.LoginViewModel
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
+import `in`.vinit.storyghost.util.LocalAnalyticsLogger
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -60,12 +62,18 @@ fun LoginWithCookieDialog(
     val context = LocalContext.current
     val loginSuccessfulText = stringResource(R.string.login_successful)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val analyticsLogger = LocalAnalyticsLogger.current
+
+    LaunchedEffect(Unit) {
+        analyticsLogger.logEvent(AnalyticsEvent.LOGIN_WITH_COOKIE)
+    }
 
     LaunchedEffect(uiState) {
         when (uiState) {
             is UiState.Success -> {
                 if ((uiState as UiState.Success<Boolean>).data) {
                     Toast.makeText(context, loginSuccessfulText, Toast.LENGTH_SHORT).show()
+                    analyticsLogger.logEvent(AnalyticsEvent.LOGIN_SUCCESS)
                     viewModel.resetUiState()
                     onLoginSuccess()
                 }

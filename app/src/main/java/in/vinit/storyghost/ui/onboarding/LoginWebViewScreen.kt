@@ -15,7 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import `in`.vinit.storyghost.constant.AnalyticsEvent
 import `in`.vinit.storyghost.ui.UiState
+import `in`.vinit.storyghost.util.LocalAnalyticsLogger
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -26,12 +28,19 @@ fun LoginWebViewScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val loginUrl = remember { viewModel.getInstagramLoginUrl() }
+    val analyticsLogger = LocalAnalyticsLogger.current
+
+    LaunchedEffect(Unit) {
+        analyticsLogger.logEvent(AnalyticsEvent.LOGIN_TRY)
+    }
+
     val context = LocalContext.current
 
     LaunchedEffect(uiState) {
         when (val state = uiState) {
             is UiState.Success -> {
                 if (state.data) {
+                    analyticsLogger.logEvent(AnalyticsEvent.LOGIN_SUCCESS)
                     viewModel.resetUiState()
                     onLoginSuccess()
                 }

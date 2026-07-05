@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -13,7 +14,9 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import `in`.vinit.storyghost.util.AppOpenAdManager
 import `in`.vinit.storyghost.util.InAppUpdate
+import `in`.vinit.storyghost.util.LocalAnalyticsLogger
 import org.koin.android.ext.android.inject
+import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
 
@@ -33,10 +36,12 @@ class MainActivity : ComponentActivity() {
         InAppUpdate.check(this, updateLauncher)
 
         setContent {
-            StoryGhostTheme {
-                App(
-                    modifier = Modifier.fillMaxSize()
-                )
+            CompositionLocalProvider(LocalAnalyticsLogger provides koinInject()) {
+                StoryGhostTheme {
+                    App(
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
         }
     }
