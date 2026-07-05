@@ -78,4 +78,11 @@
     <string name="price_per_year">%1$s/Year</string>
     <string name="monthly">Monthly</string>
     <string name="yearly">Yearly</string>
+    <string name="toast_download_url_not_found">Download URL not found</string>
+    <string name="toast_failed_to_download">Failed to download story</string>
+    <string name="toast_file_deleted">File deleted</string>
+    <string name="toast_no_mentions">This story does not have any mention</string>
+    <string name="toast_instagram_not_found">Instagram app not found</string>
+    <string name="toast_failed_to_open_file">Failed to open file</string>
+    <string name="toast_installing_update">Installing Update</string>
 </resources>

@@ -67,7 +67,7 @@ fun DownloadsScreen(
         onShareClick = { file -> FileUtils.shareFile(context, file) },
         onDeleteClick = { file ->
             viewModel.deleteDownload(file) {
-                Toast.makeText(context, "File deleted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.toast_file_deleted, Toast.LENGTH_SHORT).show()
             }
         },
         onItemClick = { file -> FileUtils.openFile(context, file) },

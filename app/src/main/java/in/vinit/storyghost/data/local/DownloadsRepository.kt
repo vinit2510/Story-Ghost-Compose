@@ -58,7 +58,8 @@ class DownloadsRepositoryImpl(
             }
 
             if (url == null) {
-                Toast.makeText(context, "Download url not found", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.toast_download_url_not_found, Toast.LENGTH_SHORT)
+                    .show()
                 return
             }
 
@@ -87,7 +88,7 @@ class DownloadsRepositoryImpl(
             onSuccess()
         } catch (e: Exception) {
             logger.e(TAG, "downloadStory: Failed to enqueue download request", e)
-            Toast.makeText(context, "Failed to download story", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.toast_failed_to_download, Toast.LENGTH_SHORT).show()
         }
     }
 }

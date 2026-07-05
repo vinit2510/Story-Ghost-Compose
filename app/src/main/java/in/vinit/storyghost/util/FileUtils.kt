@@ -7,6 +7,7 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import `in`.vinit.storyghost.BuildConfig
+import `in`.vinit.storyghost.R
 import java.io.File
 
 object FileUtils {
@@ -60,7 +61,7 @@ object FileUtils {
             context.startActivity(intent)
         } catch (e: Exception) {
             Log.e("TAG", "openFile: ", e)
-            Toast.makeText(context, "Failed to open file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.toast_failed_to_open_file, Toast.LENGTH_SHORT).show()
         }
     }
 }

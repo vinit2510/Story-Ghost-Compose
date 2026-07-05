@@ -537,7 +537,7 @@ fun StoryPage(
                                 isShimmeringMentions = false
                                 Toast.makeText(
                                     context,
-                                    "This story does not have any mention",
+                                    R.string.toast_no_mentions,
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 selectedMentionIndex.intValue = -2
@@ -599,7 +599,7 @@ private fun openInstagramAccount(context: Context, username: String) {
     try {
         context.startActivity(intent)
     } catch (_: Exception) {
-        Toast.makeText(context, "Instagram app not found", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.toast_instagram_not_found, Toast.LENGTH_SHORT).show()
     }
 }
 

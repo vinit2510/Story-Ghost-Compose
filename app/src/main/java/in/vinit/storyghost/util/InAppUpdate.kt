@@ -11,6 +11,8 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 
+import `in`.vinit.storyghost.R
+
 object InAppUpdate {
 
     fun check(
@@ -21,7 +23,7 @@ object InAppUpdate {
 
         val appUpdatedListener = InstallStateUpdatedListener { installState ->
             if (installState.installStatus() == InstallStatus.DOWNLOADED) {
-                Toast.makeText(context, "Installing Update", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.toast_installing_update, Toast.LENGTH_SHORT).show()
                 appUpdateManager.completeUpdate()
             }
         }
