@@ -171,6 +171,7 @@ class BillingRepositoryImpl(
                                 }
                             } else {
                                 localDataSource.setPremium(false)
+                                localDataSource.savePlanId(null)
                             }
                         }
                     } else {
@@ -240,6 +241,7 @@ class BillingRepositoryImpl(
             if (purchase.isAcknowledged) {
                 scope.launch {
                     localDataSource.setPremium(true)
+                    localDataSource.savePlanId(purchase.products.firstOrNull())
                     _billingEvents.emit(BillingEvent.PurchaseSuccess)
                 }
             } else {
@@ -259,6 +261,7 @@ class BillingRepositoryImpl(
                 logger.d(TAG, "Purchase acknowledged successfully")
                 scope.launch {
                     localDataSource.setPremium(true)
+                    localDataSource.savePlanId(purchase.products.firstOrNull())
                     _billingEvents.emit(BillingEvent.PurchaseSuccess)
                 }
             } else {
