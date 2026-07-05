@@ -103,6 +103,7 @@ dependencies {
     implementation(libs.play.billing)
     implementation(libs.onesignal)
     implementation(libs.play.app.update.ktx)
+    implementation(libs.play.review.ktx)
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.admob.next.gen)
     implementation(libs.facebook.audience.network)

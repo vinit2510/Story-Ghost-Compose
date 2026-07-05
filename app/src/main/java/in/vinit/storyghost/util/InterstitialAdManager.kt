@@ -19,7 +19,8 @@ private const val TAG = "InterstitialAdManager"
 class InterstitialAdManager(
     private val context: Context,
     private val logger: Logger,
-    private val adStateManager: AdStateManager
+    private val adStateManager: AdStateManager,
+    private val inAppReviewManager: InAppReviewManager
 ) {
 
     private var admobInterstitialAd: InterstitialAd? = null
@@ -159,7 +160,7 @@ class InterstitialAdManager(
             fanRewardedInterstitialAd?.show()
         } else {
             logger.w(TAG, "showAd: No ad loaded, fallback to InAppReview")
-            // TODO: InAppReview.show(activity) once InAppReview utility is migrated.
+            inAppReviewManager.show(activity)
         }
     }
 }

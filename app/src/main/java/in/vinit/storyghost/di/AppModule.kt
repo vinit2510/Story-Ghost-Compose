@@ -31,6 +31,7 @@ import `in`.vinit.storyghost.util.AdStateManager
 import `in`.vinit.storyghost.util.AnalyticsLogger
 import `in`.vinit.storyghost.util.AppOpenAdManager
 import `in`.vinit.storyghost.util.FirebaseAnalyticsLogger
+import `in`.vinit.storyghost.util.InAppReviewManager
 import `in`.vinit.storyghost.util.InterstitialAdManager
 import `in`.vinit.storyghost.util.Logger
 import `in`.vinit.storyghost.util.TimberLoggerImpl
@@ -124,7 +125,8 @@ val appModule = module {
     // Ad Managers
     single { AdStateManager(get()) }
     single { AppOpenAdManager(get(), get()) }
-    single { InterstitialAdManager(androidContext(), get(), get()) }
+    single { InterstitialAdManager(androidContext(), get(), get(), get()) }
+    single(createdAtStart = true) { InAppReviewManager(get(), get()) }
 
     // ViewModel
     viewModelOf(::StartupViewModel)

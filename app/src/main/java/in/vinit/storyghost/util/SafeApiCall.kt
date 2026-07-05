@@ -22,6 +22,8 @@ suspend fun <T> makeApiCall(call: suspend () -> T): UiState<T> {
         UiState.Error(UiText.StringResource(messageRes), e.code(), e)
     } catch (e: MalformedJsonException) {
         UiState.Error(UiText.StringResource(R.string.error_unexpected), null, e)
+    } catch (e: javax.net.ssl.SSLException) {
+        UiState.Error(UiText.StringResource(R.string.error_ssl), null, e)
     } catch (e: IOException) {
         UiState.Error(UiText.StringResource(R.string.error_network), null, e)
     } catch (e: CancellationException) {
@@ -30,4 +32,3 @@ suspend fun <T> makeApiCall(call: suspend () -> T): UiState<T> {
         UiState.Error(UiText.StringResource(R.string.error_unexpected), null, e)
     }
 }
-
