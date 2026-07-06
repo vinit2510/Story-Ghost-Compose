@@ -7,14 +7,15 @@ import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback
 import com.google.android.libraries.ads.mobile.sdk.common.AdRequest
 import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError
 import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
-import `in`.vinit.storyghost.BuildConfig
 import `in`.vinit.storyghost.core.common.Logger
+import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 
 private const val TAG = "AppOpenAdManager"
 
 class AppOpenAdManager(
     private val logger: Logger,
-    private val adStateManager: AdStateManager
+    private val adStateManager: AdStateManager,
+    private val remoteConfigRepository: RemoteConfigRepository
 ) {
     private var appOpenAd: AppOpenAd? = null
     private var isAdLoading = false
@@ -41,7 +42,8 @@ class AppOpenAdManager(
         isAdLoading = true
         logger.d(TAG, "loadAd: Starting to load App Open Ad")
 
-        val adRequest = AdRequest.Builder(BuildConfig.ADMOB_APP_OPEN_AD_ID).build()
+        val admobAppOpenAdId = remoteConfigRepository.getAdmobAppOpenAdId()
+        val adRequest = AdRequest.Builder(admobAppOpenAdId).build()
 
         AppOpenAd.load(
             adRequest,

@@ -13,6 +13,7 @@ import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdEv
 import `in`.vinit.storyghost.BuildConfig
 import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.core.play.InAppReviewManager
+import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import com.facebook.ads.AdError as FANAdError
 import com.facebook.ads.RewardedInterstitialAd as FANRewardedInterstitialAd
 
@@ -22,7 +23,8 @@ class InterstitialAdManager(
     private val context: Context,
     private val logger: Logger,
     private val adStateManager: AdStateManager,
-    private val inAppReviewManager: InAppReviewManager
+    private val inAppReviewManager: InAppReviewManager,
+    private val remoteConfigRepository: RemoteConfigRepository
 ) {
 
     private var admobInterstitialAd: InterstitialAd? = null
@@ -55,7 +57,8 @@ class InterstitialAdManager(
         logger.d(TAG, "loadAdmobAd: Starting to load Admob Interstitial")
         isAdLoading = true
 
-        val adRequest = AdRequest.Builder(BuildConfig.ADMOB_INTERSTITIAL_AD_ID).build()
+        val admobInterstitialAdId = remoteConfigRepository.getAdmobInterstitialAdId()
+        val adRequest = AdRequest.Builder(admobInterstitialAdId).build()
 
         InterstitialAd.load(
             adRequest,

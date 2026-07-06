@@ -134,7 +134,14 @@ fun StoryScreen(
                                 analyticsLogger.logEvent(AnalyticsEvent.STORY_DOWNLOAD)
                                 viewModel.downloadStory(item, onSuccess)
                             },
-                            onShowAd = viewModel::showAd
+                            onShowAd = viewModel::showAd,
+                            onMentionClick = { username ->
+                                openInstagramAccount(
+                                    context,
+                                    username,
+                                    viewModel.getInstagramAccountUrl()
+                                )
+                            }
                         )
                     }
                 }
@@ -153,6 +160,7 @@ fun StoryContent(
     onHighlightClick: (userId: String, userName: String) -> Unit,
     onDownloadClick: (Item, () -> Unit) -> Unit,
     onShowAd: (Activity) -> Unit,
+    onMentionClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(
@@ -189,7 +197,8 @@ fun StoryContent(
                     isActive = pagerState.currentPage == page,
                     onHighlightClick = onHighlightClick,
                     onDownloadClick = onDownloadClick,
-                    onShowAd = onShowAd
+                    onShowAd = onShowAd,
+                    onMentionClick = onMentionClick
                 )
             }
         }
@@ -243,6 +252,7 @@ fun StoryPage(
     onHighlightClick: (userId: String, userName: String) -> Unit,
     onDownloadClick: (Item, () -> Unit) -> Unit,
     onShowAd: (Activity) -> Unit,
+    onMentionClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -401,7 +411,7 @@ fun StoryPage(
                             },
                             onClick = {
                                 analyticsLogger.logEvent(AnalyticsEvent.OPEN_ACCOUNT)
-                                openInstagramAccount(context, mention.username ?: "")
+                                onMentionClick(mention.username ?: "")
                             }
                         )
                     }
@@ -594,11 +604,11 @@ fun StoryPage(
     }
 }
 
-private fun openInstagramAccount(context: Context, username: String) {
-    val intent = Intent(Intent.ACTION_VIEW)
-    val url = "https://www.instagram.com/$username/"
-    intent.data = url.toUri()
+private fun openInstagramAccount(context: Context, username: String, accountUrlTemplate: String) {
     try {
+        val intent = Intent(Intent.ACTION_VIEW)
+        val url = String.format(accountUrlTemplate, username)
+        intent.data = url.toUri()
         context.startActivity(intent)
     } catch (_: Exception) {
         Toast.makeText(context, R.string.toast_instagram_not_found, Toast.LENGTH_SHORT).show()
@@ -639,7 +649,8 @@ fun StoryPagePreview() {
             isActive = true,
             onHighlightClick = { _, _ -> },
             onDownloadClick = { _, _ -> },
-            onShowAd = {}
+            onShowAd = {},
+            onMentionClick = {}
         )
     }
 }

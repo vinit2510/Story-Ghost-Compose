@@ -10,6 +10,7 @@ import `in`.vinit.storyghost.core.play.InAppReviewManager
 import `in`.vinit.storyghost.data.local.DownloadsRepository
 import `in`.vinit.storyghost.data.local.LocalDataSource
 import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
+import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.data.remote.story.StoryRepository
 import `in`.vinit.storyghost.ui.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,8 +29,11 @@ class StoryViewModel(
     localDataSource: LocalDataSource,
     private val logger: Logger,
     private val interstitialAdManager: InterstitialAdManager,
-    private val inAppReviewManager: InAppReviewManager
+    private val inAppReviewManager: InAppReviewManager,
+    private val remoteConfigRepository: RemoteConfigRepository
 ) : ViewModel() {
+
+    var currentPageIndex = 0
 
     private val _uiState = MutableStateFlow<UiState<List<Item>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<Item>>> = _uiState.asStateFlow()
@@ -52,8 +56,6 @@ class StoryViewModel(
     fun downloadStory(item: Item, onSuccess: () -> Unit) {
         downloadsRepository.downloadFile(item, onSuccess)
     }
-
-    var currentPageIndex = 0
 
     fun loadStories(id: String, isHighlight: Boolean) {
         if (_uiState.value is UiState.Success) {
@@ -86,5 +88,9 @@ class StoryViewModel(
         viewModelScope.launch {
             inAppReviewManager.showDialogAfterDays(activity)
         }
+    }
+
+    fun getInstagramAccountUrl(): String {
+        return remoteConfigRepository.getInstagramAccountUrl()
     }
 }
