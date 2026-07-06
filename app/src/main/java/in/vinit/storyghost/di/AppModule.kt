@@ -124,8 +124,8 @@ val appModule = module {
 
     // Ad Managers
     single { AdStateManager(get()) }
-    single { AppOpenAdManager(get(), get()) }
-    single { InterstitialAdManager(androidContext(), get(), get(), get()) }
+    single { AppOpenAdManager(get(), get(), get()) }
+    single { InterstitialAdManager(androidContext(), get(), get(), get(), get()) }
     single(createdAtStart = true) { InAppReviewManager(get(), get()) }
 
     // ViewModel
