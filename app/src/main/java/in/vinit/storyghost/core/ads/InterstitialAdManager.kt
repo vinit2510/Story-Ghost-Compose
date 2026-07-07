@@ -50,11 +50,20 @@ class InterstitialAdManager(
         }
 
         logger.d(TAG, "loadAd: Initiating ad load")
-        loadAdmobAd()
+        val priority =
+            remoteConfigRepository.getInterstitialFirstPriorityNetwork().trim().lowercase()
+        if (priority == "facebook") {
+            loadFanAd(fallbackToAdmob = true)
+        } else {
+            loadAdmobAd(fallbackToFan = true)
+        }
     }
 
-    private fun loadAdmobAd() {
-        logger.d(TAG, "loadAdmobAd: Starting to load Admob Interstitial")
+    private fun loadAdmobAd(fallbackToFan: Boolean) {
+        logger.d(
+            TAG,
+            "loadAdmobAd: Starting to load Admob Interstitial (fallbackToFan=$fallbackToFan)"
+        )
         isAdLoading = true
 
         val admobInterstitialAdId = remoteConfigRepository.getAdmobInterstitialAdId()
@@ -67,7 +76,11 @@ class InterstitialAdManager(
                     logger.e(TAG, "Admob onAdFailedToLoad: ${adError.message}")
                     isAdLoading = false
                     admobInterstitialAd = null
-                    loadFanAd()
+                    if (fallbackToFan) {
+                        loadFanAd(fallbackToAdmob = false)
+                    } else {
+                        adStateManager.onAdDismissed()
+                    }
                 }
 
                 override fun onAdLoaded(ad: InterstitialAd) {
@@ -79,8 +92,11 @@ class InterstitialAdManager(
         )
     }
 
-    private fun loadFanAd() {
-        logger.d(TAG, "loadFanAd: Starting to load FAN Rewarded Interstitial")
+    private fun loadFanAd(fallbackToAdmob: Boolean) {
+        logger.d(
+            TAG,
+            "loadFanAd: Starting to load FAN Rewarded Interstitial (fallbackToAdmob=$fallbackToAdmob)"
+        )
         isAdLoading = true
 
         fanRewardedInterstitialAd =
@@ -95,7 +111,11 @@ class InterstitialAdManager(
                     override fun onError(ad: Ad?, error: FANAdError?) {
                         logger.e(TAG, "FAN onError: ${error?.errorMessage}")
                         isAdLoading = false
-                        adStateManager.onAdDismissed()
+                        if (fallbackToAdmob) {
+                            loadAdmobAd(fallbackToFan = false)
+                        } else {
+                            adStateManager.onAdDismissed()
+                        }
                     }
 
                     override fun onAdLoaded(ad: Ad?) {

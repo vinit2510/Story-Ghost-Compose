@@ -17,6 +17,7 @@ private const val COOKIE_MIN_VERSION = "cookie_min_version"
 private const val ADMOB_APP_ID = "admob_app_id"
 private const val ADMOB_APP_OPEN_AD_ID = "admob_app_open_ad_id"
 private const val ADMOB_INTERSTITIAL_AD_ID = "admob_interstitial_ad_id"
+private const val INTERSTITIAL_FIRST_PRIORITY_NETWORK = "interstitial_first_priority_network"
 
 interface RemoteConfigRepository {
     fun getInstagramLoginUrl(): String
@@ -27,6 +28,7 @@ interface RemoteConfigRepository {
     fun getAdmobAppId(): String
     fun getAdmobAppOpenAdId(): String
     fun getAdmobInterstitialAdId(): String
+    fun getInterstitialFirstPriorityNetwork(): String
 }
 
 class FirebaseRemoteConfigImpl(
@@ -48,7 +50,8 @@ class FirebaseRemoteConfigImpl(
             COOKIE_MIN_VERSION to 1,
             ADMOB_APP_ID to BuildConfig.ADMOB_APP_ID,
             ADMOB_APP_OPEN_AD_ID to BuildConfig.ADMOB_APP_OPEN_AD_ID,
-            ADMOB_INTERSTITIAL_AD_ID to BuildConfig.ADMOB_INTERSTITIAL_AD_ID
+            ADMOB_INTERSTITIAL_AD_ID to BuildConfig.ADMOB_INTERSTITIAL_AD_ID,
+            INTERSTITIAL_FIRST_PRIORITY_NETWORK to "admob"
         )
         firebaseRemoteConfig.setDefaultsAsync(defaults)
 
@@ -82,5 +85,8 @@ class FirebaseRemoteConfigImpl(
 
     override fun getAdmobInterstitialAdId() =
         firebaseRemoteConfig.getString(ADMOB_INTERSTITIAL_AD_ID)
+
+    override fun getInterstitialFirstPriorityNetwork() =
+        firebaseRemoteConfig.getString(INTERSTITIAL_FIRST_PRIORITY_NETWORK)
 
 }
