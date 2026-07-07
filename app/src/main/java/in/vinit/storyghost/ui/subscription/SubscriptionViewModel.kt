@@ -66,7 +66,7 @@ class SubscriptionViewModel(
         }
     }
 
-    private fun loadProductDetails() {
+    fun loadProductDetails() {
         viewModelScope.launch {
             _productDetails.value = UiState.Loading
             _productDetails.value = billingRepository.queryProductDetails()

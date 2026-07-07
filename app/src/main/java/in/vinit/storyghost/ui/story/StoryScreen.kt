@@ -110,7 +110,8 @@ fun StoryScreen(
 
                 is UiState.Error -> {
                     ErrorPlaceholder(
-                        message = state.errorMsg.asString()
+                        message = state.errorMsg.asString(),
+                        onRetryClick = { viewModel.loadStories(storyId, isHighlight) }
                     )
                 }
 

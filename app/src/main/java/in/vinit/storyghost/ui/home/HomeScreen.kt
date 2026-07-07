@@ -174,6 +174,7 @@ fun HomeScreen(
                 showLoginDialog.value = true
             }
         },
+        onRetryClick = { viewModel.retry() },
         modifier = modifier
     )
 }
@@ -191,6 +192,7 @@ fun HomeContent(
     onDownloadsClick: () -> Unit,
     onPremiumClick: () -> Unit,
     onProfileClick: () -> Unit,
+    onRetryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val gridState = rememberLazyGridState()
@@ -278,7 +280,8 @@ fun HomeContent(
                 is UiState.Error -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         ErrorPlaceholder(
-                            message = displayList.errorMsg.asString()
+                            message = displayList.errorMsg.asString(),
+                            onRetryClick = onRetryClick
                         )
                     }
                 }
@@ -598,6 +601,7 @@ private fun HomeContentPreview() {
             onDownloadsClick = {},
             onPremiumClick = {},
             onProfileClick = {},
+            onRetryClick = {},
             modifier = Modifier.fillMaxSize()
         )
     }

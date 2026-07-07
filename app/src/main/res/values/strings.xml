@@ -85,4 +85,5 @@
     <string name="toast_instagram_not_found">Instagram app not found</string>
     <string name="toast_failed_to_open_file">Failed to open file</string>
     <string name="toast_installing_update">Installing Update</string>
+    <string name="retry">Retry</string>
 </resources>

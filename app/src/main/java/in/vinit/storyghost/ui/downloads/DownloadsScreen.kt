@@ -71,6 +71,7 @@ fun DownloadsScreen(
             }
         },
         onItemClick = { file -> FileUtils.openFile(context, file) },
+        onRetryClick = { viewModel.loadDownloads() },
         modifier = modifier
     )
 }
@@ -82,6 +83,7 @@ fun DownloadsContent(
     onShareClick: (File) -> Unit,
     onDeleteClick: (File) -> Unit,
     onItemClick: (File) -> Unit,
+    onRetryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -142,7 +144,8 @@ fun DownloadsContent(
                 ) {
                     ErrorPlaceholder(
                         message = uiState.errorMsg.asString(),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        onRetryClick = onRetryClick
                     )
                 }
             } else if (uiState is UiState.Success) {
@@ -343,7 +346,8 @@ private fun DownloadsContentPreview() {
             onBackClick = {},
             onShareClick = {},
             onDeleteClick = {},
-            onItemClick = {}
+            onItemClick = {},
+            onRetryClick = {}
         )
     }
 }
@@ -357,7 +361,8 @@ private fun DownloadsShimmerPreview() {
             onBackClick = {},
             onShareClick = {},
             onDeleteClick = {},
-            onItemClick = {}
+            onItemClick = {},
+            onRetryClick = {}
         )
     }
 }

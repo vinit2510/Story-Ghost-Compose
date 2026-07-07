@@ -214,4 +214,12 @@ class HomeViewModel(
         fetchUserDataIfMissing()
         loadStoryList()
     }
+
+    fun retry() {
+        if (_isRemoteSearchActive.value) {
+            performSearch()
+        } else {
+            loadStoryList()
+        }
+    }
 }
