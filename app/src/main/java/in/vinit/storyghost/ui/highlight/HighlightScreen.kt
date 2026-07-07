@@ -55,6 +55,7 @@ fun HighlightScreen(
         uiState = uiState,
         onBackClick = onBackClick,
         onHighlightClick = onHighlightClick,
+        onRetryClick = { viewModel.loadHighlights(userId) },
         modifier = modifier
     )
 }
@@ -66,6 +67,7 @@ fun HighlightContent(
     uiState: UiState<List<Edge>>,
     onBackClick: () -> Unit,
     onHighlightClick: (String) -> Unit,
+    onRetryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -115,7 +117,8 @@ fun HighlightContent(
                 is UiState.Error -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         ErrorPlaceholder(
-                            message = uiState.errorMsg.asString()
+                            message = uiState.errorMsg.asString(),
+                            onRetryClick = onRetryClick
                         )
                     }
                 }
@@ -153,7 +156,8 @@ fun HighlightScreenLoadingPreview() {
             userName = "johndoe",
             uiState = UiState.Loading,
             onBackClick = {},
-            onHighlightClick = {}
+            onHighlightClick = {},
+            onRetryClick = {}
         )
     }
 }
@@ -182,7 +186,8 @@ fun HighlightScreenSuccessPreview() {
             userName = "johndoe",
             uiState = UiState.Success(mockEdges),
             onBackClick = {},
-            onHighlightClick = {}
+            onHighlightClick = {},
+            onRetryClick = {}
         )
     }
 }

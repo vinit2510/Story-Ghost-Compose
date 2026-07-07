@@ -85,4 +85,5 @@
     <string name="toast_instagram_not_found">تطبيق إنستغرام غير موجود</string>
     <string name="toast_failed_to_open_file">فشل فتح الملف</string>
     <string name="toast_installing_update">جاري تثبيت التحديث</string>
+    <string name="retry">إعادة المحاولة</string>
 </resources>

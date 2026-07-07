@@ -85,4 +85,5 @@
     <string name="toast_instagram_not_found">Aplicación de Instagram no encontrada</string>
     <string name="toast_failed_to_open_file">Error al abrir el archivo</string>
     <string name="toast_installing_update">Instalando Actualización</string>
+    <string name="retry">Reintentar</string>
 </resources>

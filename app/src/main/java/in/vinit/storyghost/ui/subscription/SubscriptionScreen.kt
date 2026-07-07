@@ -107,6 +107,7 @@ fun SubscriptionScreen(
                 viewModel.subscribe(activity)
             }
         },
+        onRetryClick = { viewModel.loadProductDetails() },
         modifier = modifier
     )
 }
@@ -119,6 +120,7 @@ fun SubscriptionContent(
     onBackClick: () -> Unit,
     onPlanSelect: (SubscriptionViewModel.Plan) -> Unit,
     onSubscribeClick: () -> Unit,
+    onRetryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -175,7 +177,8 @@ fun SubscriptionContent(
                     is UiState.Error -> {
                         ErrorPlaceholder(
                             message = productDetailsState.errorMsg.asString(),
-                            modifier = Modifier.align(Alignment.Center)
+                            modifier = Modifier.align(Alignment.Center),
+                            onRetryClick = onRetryClick
                         )
                     }
 
@@ -437,7 +440,8 @@ fun SubscriptionScreenPreview() {
             productDetailsState = UiState.Success(emptyList()),
             onBackClick = {},
             onPlanSelect = {},
-            onSubscribeClick = {}
+            onSubscribeClick = {},
+            onRetryClick = {}
         )
     }
 }

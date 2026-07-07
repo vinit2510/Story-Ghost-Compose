@@ -85,4 +85,5 @@
     <string name="toast_instagram_not_found">Aplikasi Instagram tidak ditemukan</string>
     <string name="toast_failed_to_open_file">Gagal membuka berkas</string>
     <string name="toast_installing_update">Memasang Pembaruan</string>
+    <string name="retry">Coba lagi</string>
 </resources>
