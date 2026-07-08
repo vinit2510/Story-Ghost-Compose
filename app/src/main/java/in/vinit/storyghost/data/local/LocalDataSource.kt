@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 
 class LocalDataSource(private val dataStore: DataStore<Preferences>) {
 
-    private object Keys {
+    object Keys {
         val IS_ONBOARDED = booleanPreferencesKey("IS_ONBOARDED")
         val IS_LOGGED = booleanPreferencesKey("IS_LOGGED")
         val COOKIE = stringPreferencesKey("COOKIE")
