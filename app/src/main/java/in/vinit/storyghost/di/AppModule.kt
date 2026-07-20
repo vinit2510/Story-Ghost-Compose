@@ -79,7 +79,7 @@ val appModule = module {
 
     // Remote config
     single<RemoteConfigRepository>(createdAtStart = true) {
-        FirebaseRemoteConfigImpl(get())
+        FirebaseRemoteConfigImpl(androidContext(), get())
     }
 
     // Analytics Helper

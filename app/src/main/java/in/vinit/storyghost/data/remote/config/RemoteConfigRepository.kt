@@ -1,10 +1,12 @@
 package `in`.vinit.storyghost.data.remote.config
 
+import android.content.Context
 import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
 import `in`.vinit.storyghost.BuildConfig
 import `in`.vinit.storyghost.core.common.Logger
+import `in`.vinit.storyghost.core.common.UserAgentUtil
 
 
 private const val TAG = "RemoteConfigRepository"
@@ -32,6 +34,7 @@ interface RemoteConfigRepository {
 }
 
 class FirebaseRemoteConfigImpl(
+    private val context: Context,
     private val logger: Logger
 ) : RemoteConfigRepository {
 
@@ -46,7 +49,7 @@ class FirebaseRemoteConfigImpl(
             INSTAGRAM_LOGIN_URL to "https://www.instagram.com/accounts/login/",
             INSTAGRAM_ACCOUNT_URL to "https://www.instagram.com/%s/",
             FORCE_UPDATE_VERSION to 1,
-            USER_AGENT to "Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 105.0.0.11.118 (iPhone11,8; iOS 12_3_1; en_US; en-US; scale=2.00; 828x1792; 165586599)",
+            USER_AGENT to "",
             COOKIE_MIN_VERSION to 1,
             ADMOB_APP_ID to BuildConfig.ADMOB_APP_ID,
             ADMOB_APP_OPEN_AD_ID to BuildConfig.ADMOB_APP_OPEN_AD_ID,
@@ -75,7 +78,12 @@ class FirebaseRemoteConfigImpl(
     override fun getForceUpdateVersion() =
         firebaseRemoteConfig.getLong(FORCE_UPDATE_VERSION).toInt()
 
-    override fun getUserAgent() = firebaseRemoteConfig.getString(USER_AGENT)
+    override fun getUserAgent(): String {
+        val remoteAgent = firebaseRemoteConfig.getString(USER_AGENT)
+        return remoteAgent.ifBlank {
+            UserAgentUtil.generateInstagramUserAgent(context)
+        }
+    }
 
     override fun getCookieMinVersion() = firebaseRemoteConfig.getLong(COOKIE_MIN_VERSION).toInt()
 
