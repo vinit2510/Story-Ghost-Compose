@@ -58,8 +58,11 @@ fun LoginWebViewScreen(
         }
     }
 
+    val userAgent = remember { viewModel.getUserAgent() }
+
     LoginWebViewContent(
         loginUrl = loginUrl,
+        userAgent = userAgent,
         onPageFinished = { url, cookie -> viewModel.onPageFinished(url, cookie) },
         modifier = modifier
     )
@@ -69,6 +72,7 @@ fun LoginWebViewScreen(
 @Composable
 fun LoginWebViewContent(
     loginUrl: String,
+    userAgent: String,
     onPageFinished: (url: String?, cookie: String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -82,6 +86,7 @@ fun LoginWebViewContent(
                 )
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
+                settings.userAgentString = userAgent
 
                 // Clear cache and cookies on launch to force a fresh login screen
                 clearCache(true)

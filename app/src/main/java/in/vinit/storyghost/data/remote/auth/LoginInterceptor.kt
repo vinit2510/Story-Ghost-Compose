@@ -19,9 +19,9 @@ class LoginInterceptor(
         val csrfToken = runBlocking { localDataSource.getCsrfToken().firstOrNull() }
         val userAgent = remoteConfigRepository.getUserAgent()
 
-        cookie?.let { requestBuilder.addHeader("Cookie", it.sanitizeHeader()) }
-        csrfToken?.let { requestBuilder.addHeader("X-Csrftoken", it.sanitizeHeader()) }
-        requestBuilder.addHeader("User-Agent", userAgent.sanitizeHeader())
+        cookie?.let { requestBuilder.header("Cookie", it.sanitizeHeader()) }
+        csrfToken?.let { requestBuilder.header("X-Csrftoken", it.sanitizeHeader()) }
+        requestBuilder.header("User-Agent", userAgent.sanitizeHeader())
 
         val response = chain.proceed(requestBuilder.build())
 

@@ -27,6 +27,10 @@ class LoginViewModel(
         return remoteConfigRepository.getInstagramLoginUrl()
     }
 
+    fun getUserAgent(): String {
+        return remoteConfigRepository.getUserAgent()
+    }
+
     fun loginWithCookie(cookie: String) {
         try {
             val sessionId = getCookieValue(cookie, "sessionid")
