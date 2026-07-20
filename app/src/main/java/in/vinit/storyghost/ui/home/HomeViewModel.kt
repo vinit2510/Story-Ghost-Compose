@@ -59,7 +59,10 @@ class HomeViewModel(
             if (json.isNullOrBlank()) null
             else {
                 try {
-                    Gson().fromJson(json, UserInfoResponse::class.java)?.user?.profilePicUrl
+                    Gson().fromJson(
+                        json,
+                        UserInfoResponse::class.java
+                    )?.data?.userContainer?.reel?.user?.profilePicUrl
                 } catch (_: Exception) {
                     null
                 }

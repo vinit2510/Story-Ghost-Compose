@@ -121,12 +121,14 @@ fun LogoutDialogContent(
                 color = MaterialTheme.colorScheme.onSurface
             )
 
+            val displayUser = user?.data?.userContainer?.reel?.user
+
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(user?.user?.profilePicUrl)
+                    .data(displayUser?.profilePicUrl)
                     .crossfade(true)
                     .build(),
-                contentDescription = user?.user?.username,
+                contentDescription = displayUser?.username,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .padding(top = 20.dp)
@@ -137,18 +139,18 @@ fun LogoutDialogContent(
                 error = painterResource(R.drawable.avatar_instagram_user)
             )
 
-            if (!user?.user?.username.isNullOrBlank()) {
+            if (!displayUser?.username.isNullOrBlank()) {
                 Text(
-                    text = stringResource(R.string.insta_username, user.user.username),
+                    text = stringResource(R.string.insta_username, displayUser.username),
                     modifier = Modifier.padding(top = 10.dp),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
-            if (!user?.user?.fullName.isNullOrBlank()) {
+            if (!displayUser?.fullName.isNullOrBlank()) {
                 Text(
-                    text = user.user.fullName,
+                    text = displayUser.fullName,
                     modifier = Modifier.padding(top = 5.dp),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.tertiary
@@ -176,11 +178,17 @@ private fun LogoutDialogPreview() {
     StoryGhostTheme {
         LogoutDialogContent(
             user = UserInfoResponse(
-                user = UserInfoResponse.User(
-                    id = "1",
-                    username = "instagram",
-                    fullName = "Instagram User",
-                    profilePicUrl = ""
+                data = UserInfoResponse.Data(
+                    userContainer = UserInfoResponse.Data.UserContainer(
+                        reel = UserInfoResponse.Data.UserContainer.Reel(
+                            user = UserInfoResponse.Data.UserContainer.Reel.User(
+                                id = "1",
+                                username = "instagram",
+                                fullName = "Instagram User",
+                                profilePicUrl = ""
+                            )
+                        )
+                    )
                 )
             ),
             onLogoutClick = {},
