@@ -1,5 +1,6 @@
 package `in`.vinit.storyghost.data.remote.user
 
+import `in`.vinit.storyghost.BuildConfig
 import `in`.vinit.storyghost.data.model.SearchUserResponse
 import `in`.vinit.storyghost.data.model.UserInfoResponse
 
@@ -11,7 +12,8 @@ interface UserRepository {
 class UserRepositoryImpl(private val api: UserAPI) : UserRepository {
 
     override suspend fun getUserInfo(userId: String): UserInfoResponse {
-        return api.getUserInfo(userId)
+        val url = BuildConfig.API_USER_INFO.replace("{{userId}}", userId)
+        return api.getUserInfo(url)
     }
 
     override suspend fun searchUser(query: String): SearchUserResponse {
