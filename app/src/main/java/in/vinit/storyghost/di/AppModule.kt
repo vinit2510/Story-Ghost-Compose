@@ -11,6 +11,7 @@ import `in`.vinit.storyghost.core.analytics.AnalyticsLogger
 import `in`.vinit.storyghost.core.analytics.FirebaseAnalyticsLogger
 import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.core.common.TimberLoggerImpl
+import `in`.vinit.storyghost.core.network.MockInterceptor
 import `in`.vinit.storyghost.core.play.InAppReviewManager
 import `in`.vinit.storyghost.data.local.DownloadsRepository
 import `in`.vinit.storyghost.data.local.DownloadsRepositoryImpl
@@ -90,6 +91,9 @@ val appModule = module {
     // Retrofit instance
     single {
         val client = OkHttpClient.Builder().apply {
+            if (BuildConfig.IS_MOCK) {
+                addInterceptor(MockInterceptor(androidContext()))
+            }
             addInterceptor(LoginInterceptor(get(), get()))
             followRedirects(false)
             followSslRedirects(false)
@@ -101,7 +105,7 @@ val appModule = module {
         }.build()
 
         Retrofit.Builder()
-            .baseUrl("https://api-base/")
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

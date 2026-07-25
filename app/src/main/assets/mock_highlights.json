@@ -1,0 +1,28 @@
+{
+  "data": {
+    "user": {
+      "edge_highlight_reels": {
+        "edges": [
+          {
+            "node": {
+              "id": "highlight_111",
+              "title": "Adventures",
+              "cover_media": {
+                "thumbnail_src": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=150&h=150&q=80"
+              }
+            }
+          },
+          {
+            "node": {
+              "id": "highlight_222",
+              "title": "Scary Stuff",
+              "cover_media": {
+                "thumbnail_src": "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=150&h=150&q=80"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
