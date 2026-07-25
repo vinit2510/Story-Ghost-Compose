@@ -11,7 +11,6 @@
     <string name="onboarding_text_1">Mira la historia de cualquiera sin aparecer en su lista de visualizadores 🙈</string>
     <string name="onboarding_text_2">Muestra menciones ocultas de cualquier Historia 🤫</string>
     <string name="onboarding_text_3">Descarga cualquier historia con música en tu almacenamiento ⬇️</string>
-    <string name="login_warning"><![CDATA[<font color="#C93737">*</font> ¡No almacenamos, compartimos ni usamos tu información personal, incluyendo tu nombre, correo electrónico, nombre de usuario y contraseña!]]></string>
     <string name="login_with_ig">Iniciar sesión con IG</string>
     <string name="fake_account_login_msg">Inicia sesión con una cuenta secundaria si solo quieres ver historias de cuentas públicas.</string>
     <string name="fake10">fake10</string>
@@ -42,7 +41,6 @@
     <string name="instagram_account_is_required">Se requiere una cuenta de Instagram para obtener los datos de las historias</string>
     <string name="your_account">Tu Cuenta</string>
     <string name="logout">Cerrar sesión</string>
-    <string name="login_warning_plain">¡No almacenamos, compartimos ni usamos tu información personal, incluyendo tu nombre, correo electrónico, nombre de usuario y contraseña!</string>
     <string name="no_result_found">¡No se han encontrado resultados!</string>
     <string name="back_to_top">Volver arriba</string>
     <string name="buy_premium">Comprar Premium</string>
@@ -86,4 +84,7 @@
     <string name="toast_failed_to_open_file">Error al abrir el archivo</string>
     <string name="toast_installing_update">Instalando Actualización</string>
     <string name="retry">Reintentar</string>
+    <string name="open_source_title">Proyecto 100% Código Abierto</string>
+    <string name="open_source_desc">Story Ghost es de código abierto. Tus credenciales de inicio de sesión y cookies se procesan localmente en tu dispositivo y nunca se recopilan ni almacenan en ningún servidor.</string>
+    <string name="view_on_github">Ver código fuente en GitHub</string>
 </resources>

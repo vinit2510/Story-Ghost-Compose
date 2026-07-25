@@ -11,7 +11,6 @@
     <string name="onboarding_text_1">View anyone’s story without getting into their viewer list 🙈</string>
     <string name="onboarding_text_2">Show hidden mention of any Story 🤫</string>
     <string name="onboarding_text_3">Download any story with music into your storage ⬇️</string>
-    <string name="login_warning"><![CDATA[<font color="#C93737">*</font> We do not store, share or use your personal information including your name, email, username and password!]]></string>
     <string name="login_with_ig">Login with IG</string>
     <string name="fake_account_login_msg">Login with fake account if you want to see only story of public account.</string>
     <string name="fake10">fake10</string>
@@ -42,7 +41,6 @@
     <string name="instagram_account_is_required">Instagram account is required to get stories data</string>
     <string name="your_account">Your Account</string>
     <string name="logout">Logout</string>
-    <string name="login_warning_plain">We do not store, share or use your personal information including your name, email, username and password!</string>
     <string name="no_result_found">No result found!</string>
     <string name="back_to_top">Back to top</string>
     <string name="buy_premium">Buy Premium</string>
@@ -86,4 +84,8 @@
     <string name="toast_failed_to_open_file">Failed to open file</string>
     <string name="toast_installing_update">Installing Update</string>
     <string name="retry">Retry</string>
+    <string name="open_source_title">100% Open Source Project</string>
+    <string name="open_source_desc">Story Ghost is open source. Your login credentials &amp; cookies are processed locally on your device and are never collected or stored on any server.</string>
+    <string name="view_on_github">View Source Code on GitHub</string>
+    <string name="github_project_url" translatable="false">https://github.com/vinit2510/Story-Ghost-Compose</string>
 </resources>

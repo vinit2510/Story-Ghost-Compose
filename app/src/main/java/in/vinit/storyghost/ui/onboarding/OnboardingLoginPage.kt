@@ -24,14 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.fromHtml
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import `in`.vinit.storyghost.R
 import `in`.vinit.storyghost.ui.component.DashedDivider
+import `in`.vinit.storyghost.ui.component.OpenSourceNoticeCard
 import `in`.vinit.storyghost.ui.component.PrimaryButton
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 
@@ -119,14 +117,10 @@ fun OnboardingLoginPage(
             )
         }
 
-        Text(
-            text = AnnotatedString.fromHtml(stringResource(R.string.login_warning)),
+        OpenSourceNoticeCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 15.dp, bottom = 30.dp),
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.tertiary
+                .padding(top = 20.dp, bottom = 30.dp)
         )
 
     }

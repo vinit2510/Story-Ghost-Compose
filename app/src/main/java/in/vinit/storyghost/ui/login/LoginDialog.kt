@@ -35,10 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -46,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import `in`.vinit.storyghost.BuildConfig
 import `in`.vinit.storyghost.R
 import `in`.vinit.storyghost.ui.UiState
+import `in`.vinit.storyghost.ui.component.OpenSourceNoticeCard
 import `in`.vinit.storyghost.ui.component.PrimaryButton
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import org.koin.androidx.compose.koinViewModel
@@ -128,7 +126,7 @@ fun LoginDialogContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(IntrinsicSize.Min)
-                    .padding(top = 25.dp, bottom = 35.dp),
+                    .padding(top = 25.dp),
             ) {
                 Column(
                     modifier = Modifier.weight(1f),
@@ -186,23 +184,10 @@ fun LoginDialogContent(
                 }
             }
 
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = Color(0xFFC93737))) { append("* ") }
-                    append(stringResource(R.string.login_warning_plain))
-                },
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 5.dp),
-                textAlign = TextAlign.Center
-            )
-
             PrimaryButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 10.dp),
+                    .padding(top = 20.dp),
                 text = stringResource(R.string.login),
                 color = MaterialTheme.colorScheme.onPrimary,
                 onClick = {
@@ -246,6 +231,12 @@ fun LoginDialogContent(
                     )
                 }
             }
+
+            OpenSourceNoticeCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 15.dp)
+            )
         }
     }
 

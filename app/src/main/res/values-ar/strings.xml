@@ -11,7 +11,6 @@
     <string name="onboarding_text_1">عرض قصص أي شخص دون الظهور في قائمة المشاهدين 🙈</string>
     <string name="onboarding_text_2">إظهار الإشارات المخفية في أي قصة 🤫</string>
     <string name="onboarding_text_3">تحميل أي قصة مع الموسيقى إلى جهازك ⬇️</string>
-    <string name="login_warning"><![CDATA[<font color="#C93737">*</font> نحن لا نخزن أو نشارك أو نستخدم معلوماتك الشخصية بما في ذلك اسمك وبريدك الإلكتروني واسم المستخدم وكلمة المرور!]]></string>
     <string name="login_with_ig">تسجيل الدخول باستخدام إنستغرام</string>
     <string name="fake_account_login_msg">سجل الدخول باستخدام حساب وهمي إذا كنت ترغب فقط في رؤية قصص الحسابات العامة.</string>
     <string name="fake10">وهمي10</string>
@@ -42,7 +41,6 @@
     <string name="instagram_account_is_required">يلزم حساب إنستغرام للحصول على بيانات القصص</string>
     <string name="your_account">حسابك</string>
     <string name="logout">تسجيل الخروج</string>
-    <string name="login_warning_plain">نحن لا نخزن أو نشارك أو نستخدم معلوماتك الشخصية بما في ذلك اسمك وبريدك الإلكتروني واسم المستخدم وكلمة المرور!</string>
     <string name="no_result_found">لم يتم العثور على نتائج!</string>
     <string name="back_to_top">العودة إلى الأعلى</string>
     <string name="buy_premium">شراء النسخة المميزة</string>
@@ -86,4 +84,7 @@
     <string name="toast_failed_to_open_file">فشل فتح الملف</string>
     <string name="toast_installing_update">جاري تثبيت التحديث</string>
     <string name="retry">إعادة المحاولة</string>
+    <string name="open_source_title">مشروع مفتوح المصدر 100%</string>
+    <string name="open_source_desc">ستوري غوست تطبيق مفتوح المصدر. بياناتك وملفات الكوكيز تعالج محلياً على جهازك ولا يتم جمعها أو تخزينها على أي خادم.</string>
+    <string name="view_on_github">عرض الكود المصدري على GitHub</string>
 </resources>
