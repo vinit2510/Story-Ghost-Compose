@@ -1,0 +1,35 @@
+{
+  "data": {
+    "user": {
+      "id": "123456",
+      "profile_pic_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&h=150&q=80",
+      "username": "mock_ghost_user",
+      "feed_reels_tray": {
+        "edge_reels_tray_to_reel": {
+          "edges": [
+            {
+              "node": {
+                "id": "111111",
+                "user": {
+                  "id": "111111",
+                  "profile_pic_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
+                  "username": "ghost_hunter"
+                }
+              }
+            },
+            {
+              "node": {
+                "id": "222222",
+                "user": {
+                  "id": "222222",
+                  "profile_pic_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80",
+                  "username": "spooky_stories"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

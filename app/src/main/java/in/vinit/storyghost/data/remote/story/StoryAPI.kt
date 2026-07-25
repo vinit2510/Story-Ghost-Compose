@@ -1,23 +1,34 @@
 package `in`.vinit.storyghost.data.remote.story
 
-import `in`.vinit.storyghost.BuildConfig
 import `in`.vinit.storyghost.data.model.HighlightsResponse
 import `in`.vinit.storyghost.data.model.StoryListResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
 import retrofit2.http.GET
-import retrofit2.http.Url
+import retrofit2.http.Query
 
 interface StoryAPI {
 
-    @GET(BuildConfig.API_STORY_LIST)
-    suspend fun getStoryList(): StoryListResponse
+    @GET("graphql/query/")
+    suspend fun getStoryList(
+        @Query("query_hash") queryHash: String,
+        @Query("variables") variables: String
+    ): StoryListResponse
 
-    @GET
-    suspend fun getUserStory(@Url url: String): UserStoryResponse
+    @GET("graphql/query/")
+    suspend fun getUserStory(
+        @Query("query_hash") queryHash: String,
+        @Query("variables") variables: String
+    ): UserStoryResponse
 
-    @GET
-    suspend fun getHighlights(@Url url: String): HighlightsResponse
+    @GET("graphql/query/")
+    suspend fun getHighlights(
+        @Query("query_hash") queryHash: String,
+        @Query("variables") variables: String
+    ): HighlightsResponse
 
-    @GET
-    suspend fun getUserHighlights(@Url url: String): UserStoryResponse
+    @GET("graphql/query/")
+    suspend fun getUserHighlights(
+        @Query("query_hash") queryHash: String,
+        @Query("variables") variables: String
+    ): UserStoryResponse
 }

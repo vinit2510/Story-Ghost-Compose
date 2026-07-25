@@ -26,18 +26,27 @@ def createGoogleServicesJson(String base64String) {
 
 android {
     defaultConfig {
-        buildConfigField "String", "API_USER_INFO", "\"${getEnvValue('API_USER_INFO')}\""
-        buildConfigField "String", "API_STORY_LIST", "\"${getEnvValue('API_STORY_LIST')}\""
-        buildConfigField "String", "API_USER_STORY", "\"${getEnvValue('API_USER_STORY')}\""
-        buildConfigField "String", "API_SEARCH_USER", "\"${getEnvValue('API_SEARCH_USER')}\""
-        buildConfigField "String", "API_HIGHLIGHT_LIST", "\"${getEnvValue('API_HIGHLIGHT_LIST')}\""
-        buildConfigField "String", "API_HIGHLIGHT_STORY", "\"${getEnvValue('API_HIGHLIGHT_STORY')}\""
+        buildConfigField "String", "BASE_URL", "\"${getEnvValue('BASE_URL')}\""
+        buildConfigField "Boolean", "IS_MOCK", "${getEnvValue('IS_MOCK')}"
+        buildConfigField "String", "QH_USER_INFO", "\"${getEnvValue('QH_USER_INFO')}\""
+        buildConfigField "String", "QH_HIGHLIGHT_LIST", "\"${getEnvValue('QH_HIGHLIGHT_LIST')}\""
+        buildConfigField "String", "QH_STORY_LIST", "\"${getEnvValue('QH_STORY_LIST')}\""
+        buildConfigField "String", "QH_USER_STORY", "\"${getEnvValue('QH_USER_STORY')}\""
+        buildConfigField "String", "QH_HIGHLIGHT_STORY", "\"${getEnvValue('QH_HIGHLIGHT_STORY')}\""
         buildConfigField "String", "ONESIGNAL_APP_ID", "\"${getEnvValue('ONESIGNAL_APP_ID')}\""
         buildConfigField "String", "FAN_REWARDED_INTERSTITIAL_AD_ID", "\"${getEnvValue('FAN_REWARDED_INTERSTITIAL_AD_ID')}\""
         buildConfigField "String", "ADMOB_REWARDED_INTERSTITIAL_AD_ID", "\"${getEnvValue('ADMOB_REWARDED_INTERSTITIAL_AD_ID')}\""
         buildConfigField "String", "ADMOB_INTERSTITIAL_AD_ID", "\"${getEnvValue('ADMOB_INTERSTITIAL_AD_ID')}\""
         buildConfigField "String", "ADMOB_APP_OPEN_AD_ID", "\"${getEnvValue('ADMOB_APP_OPEN_AD_ID')}\""
         buildConfigField "String", "ADMOB_APP_ID", "\"${getEnvValue('ADMOB_APP_ID')}\""
+    }
+
+    sourceSets {
+        main {
+            if (getEnvValue('IS_MOCK') == 'false') {
+                assets.exclude('**/mock_*.json')
+            }
+        }
     }
 }
 
