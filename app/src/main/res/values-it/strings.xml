@@ -11,7 +11,6 @@
     <string name="onboarding_text_1">Guarda le storie di chiunque senza apparire nella lista dei visualizzatori 🙈</string>
     <string name="onboarding_text_2">Mostra le menzioni nascoste di qualsiasi Storia 🤫</string>
     <string name="onboarding_text_3">Scarica qualsiasi storia con musica sul tuo dispositivo ⬇️</string>
-    <string name="login_warning"><![CDATA[<font color="#C93737">*</font> Non memorizziamo, condividiamo o utilizziamo le tue informazioni personali, inclusi nome, email, nome utente e password!]]></string>
     <string name="login_with_ig">Accedi con IG</string>
     <string name="fake_account_login_msg">Accedi con un account secondario se desideri visualizzare solo le storie di profili pubblici.</string>
     <string name="fake10">fake10</string>
@@ -42,7 +41,6 @@
     <string name="instagram_account_is_required">È necessario un account Instagram per ottenere i dati delle storie</string>
     <string name="your_account">Il Tuo Account</string>
     <string name="logout">Esci</string>
-    <string name="login_warning_plain">Non memorizziamo, condividiamo o utilizziamo le tue informazioni personali, inclusi nome, email, nome utente e password!</string>
     <string name="no_result_found">Nessun risultato trovato!</string>
     <string name="back_to_top">Torna in alto</string>
     <string name="buy_premium">Acquista Premium</string>
@@ -86,4 +84,7 @@
     <string name="toast_failed_to_open_file">Impossibile aprire il file</string>
     <string name="toast_installing_update">Installazione Aggiornamento</string>
     <string name="retry">Riprova</string>
+    <string name="open_source_title">Progetto 100% Open Source</string>
+    <string name="open_source_desc">Story Ghost è open source. Le tue credenziali di accesso e i cookie vengono elaborati localmente sul tuo dispositivo e non vengono mai raccolti o memorizzati su alcun server.</string>
+    <string name="view_on_github">Vedi il codice sorgente su GitHub</string>
 </resources>

@@ -11,7 +11,6 @@
     <string name="onboarding_text_1">Lihat cerita siapa pun tanpa masuk ke daftar pemirsa mereka 🙈</string>
     <string name="onboarding_text_2">Tampilkan sebutan tersembunyi dari Cerita apa pun 🤫</string>
     <string name="onboarding_text_3">Unduh cerita apa pun dengan musik ke penyimpanan Anda ⬇️</string>
-    <string name="login_warning"><![CDATA[<font color="#C93737">*</font> Kami tidak menyimpan, membagikan, atau menggunakan informasi pribadi Anda termasuk nama, email, username, dan kata sandi Anda!]]></string>
     <string name="login_with_ig">Login dengan IG</string>
     <string name="fake_account_login_msg">Login dengan akun palsu jika Anda hanya ingin melihat cerita dari akun publik.</string>
     <string name="fake10">palsu10</string>
@@ -42,7 +41,6 @@
     <string name="instagram_account_is_required">Akun Instagram diperlukan untuk mendapatkan data cerita</string>
     <string name="your_account">Akun Anda</string>
     <string name="logout">Logout</string>
-    <string name="login_warning_plain">Kami tidak menyimpan, membagikan, atau menggunakan informasi pribadi Anda termasuk nama, email, username, dan kata sandi Anda!</string>
     <string name="no_result_found">Hasil tidak ditemukan!</string>
     <string name="back_to_top">Kembali ke atas</string>
     <string name="buy_premium">Beli Premium</string>
@@ -86,4 +84,7 @@
     <string name="toast_failed_to_open_file">Gagal membuka berkas</string>
     <string name="toast_installing_update">Memasang Pembaruan</string>
     <string name="retry">Coba lagi</string>
+    <string name="open_source_title">Proyek 100% Sumber Terbuka</string>
+    <string name="open_source_desc">Story Ghost adalah aplikasi sumber terbuka (open source). Kredensial dan cookie Anda diproses secara lokal di perangkat Anda dan tidak pernah dikumpulkan atau disimpan di server mana pun.</string>
+    <string name="view_on_github">Lihat Kode Sumber di GitHub</string>
 </resources>
