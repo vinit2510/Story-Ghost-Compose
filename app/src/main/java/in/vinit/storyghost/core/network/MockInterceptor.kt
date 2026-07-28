@@ -36,6 +36,22 @@ class MockInterceptor(private val context: Context) : Interceptor {
         }
 
         if (mockFileName != null) {
+            val cookieHeader = request.header("Cookie")
+            val isValidCookie = !cookieHeader.isNullOrEmpty() &&
+                    cookieHeader.contains("sessionid=") &&
+                    cookieHeader.contains("ds_user_id=")
+
+            if (!isValidCookie) {
+                val unauthorizedJson = """{"message":"Please log in to get data","status":"fail"}"""
+                return Response.Builder()
+                    .request(request)
+                    .protocol(Protocol.HTTP_1_1)
+                    .code(401)
+                    .message("Unauthorized")
+                    .body(unauthorizedJson.toResponseBody("application/json".toMediaTypeOrNull()))
+                    .build()
+            }
+
             val jsonContent = try {
                 context.assets.open(mockFileName).bufferedReader().use { it.readText() }
             } catch (e: IOException) {
