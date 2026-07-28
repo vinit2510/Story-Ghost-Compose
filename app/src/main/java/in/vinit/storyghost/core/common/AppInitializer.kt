@@ -10,12 +10,14 @@ import `in`.vinit.storyghost.BuildConfig
 import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class AppInitializer(
     private val context: Context,
-    private val remoteConfigRepository: RemoteConfigRepository
+    private val remoteConfigRepository: RemoteConfigRepository,
+    private val externalScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) {
     fun initializeAll() {
         // 1. Timber Logging
@@ -32,8 +34,8 @@ class AppInitializer(
         // 4. Facebook Audience Network
         AudienceNetworkAds.initialize(context)
 
-        // 5. Next-Gen AdMob SDK (Background thread)
-        CoroutineScope(Dispatchers.IO).launch {
+        // 5. Next-Gen AdMob SDK (Background thread with SupervisorJob exception safety)
+        externalScope.launch {
             val admobAppId = remoteConfigRepository.getAdmobAppId()
             MobileAds.initialize(
                 context,
