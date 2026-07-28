@@ -1,7 +1,13 @@
 def getEnvValue(String key) {
     def envFile = file("${rootProject.projectDir}/.env")
     if (!envFile.exists()) {
-        throw new GradleException(".env file not found at the root of the project")
+        def exampleFile = file("${rootProject.projectDir}/.env.example")
+        if (exampleFile.exists()) {
+            envFile.text = exampleFile.text
+            println(".env file not found, created automatically from .env.example")
+        } else {
+            throw new GradleException(".env file not found at the root of the project")
+        }
     }
 
     def props = new Properties()

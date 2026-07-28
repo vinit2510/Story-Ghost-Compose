@@ -34,9 +34,6 @@ class MyApplication : Application() {
 
         // Initialize OneSignal
         OneSignal.initWithContext(this, BuildConfig.ONESIGNAL_APP_ID)
-        if (BuildConfig.DEBUG) {
-            OneSignal.User.addEmail("testuser@testdomain.com")
-        }
 
         // Initialize Facebook Audience Network
         AudienceNetworkAds.initialize(this)

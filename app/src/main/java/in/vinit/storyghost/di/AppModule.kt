@@ -91,10 +91,10 @@ val appModule = module {
     // Retrofit instance
     single {
         val client = OkHttpClient.Builder().apply {
+            addInterceptor(LoginInterceptor(get(), get()))
             if (BuildConfig.IS_MOCK) {
                 addInterceptor(MockInterceptor(androidContext()))
             }
-            addInterceptor(LoginInterceptor(get(), get()))
             followRedirects(false)
             followSslRedirects(false)
             if (BuildConfig.DEBUG) {
