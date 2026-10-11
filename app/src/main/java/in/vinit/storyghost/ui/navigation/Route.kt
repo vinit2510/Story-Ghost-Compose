@@ -1,7 +1,7 @@
 package `in`.vinit.storyghost.ui.navigation
 
 import androidx.navigation3.runtime.NavKey
-import `in`.vinit.storyghost.constant.AnalyticsScreen
+import `in`.vinit.storyghost.core.analytics.AnalyticsScreen
 import kotlinx.serialization.Serializable
 
 @Serializable

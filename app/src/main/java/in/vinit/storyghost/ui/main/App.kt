@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.navigation.NavigationRoot
-import `in`.vinit.storyghost.ui.navigation.StartupViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

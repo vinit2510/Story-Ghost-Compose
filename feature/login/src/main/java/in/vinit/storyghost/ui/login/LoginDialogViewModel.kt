@@ -1,0 +1,46 @@
+package `in`.vinit.storyghost.ui.login
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import `in`.vinit.storyghost.core.common.Logger
+import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
+import `in`.vinit.storyghost.ui.UiState
+import `in`.vinit.storyghost.ui.UiText
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+private const val TAG = "LoginDialogViewModel"
+
+class LoginDialogViewModel(
+    private val remoteConfigRepository: RemoteConfigRepository,
+    private val logger: Logger
+) : ViewModel() {
+
+    private val _cookieMinVersion = MutableStateFlow<UiState<Int>>(UiState.Loading)
+    val cookieMinVersion: StateFlow<UiState<Int>> = _cookieMinVersion.asStateFlow()
+
+    init {
+        loadCookieMinVersion()
+    }
+
+    private fun loadCookieMinVersion() {
+        viewModelScope.launch {
+            try {
+                val version = remoteConfigRepository.getCookieMinVersion()
+                _cookieMinVersion.update { UiState.Success(version) }
+            } catch (e: Exception) {
+                logger.e(TAG, "loadCookieMinVersion: Failed to load cookie min version", e)
+                _cookieMinVersion.update {
+                    UiState.Error(
+                        UiText.DynamicString(
+                            e.message ?: "Failed to load version"
+                        )
+                    )
+                }
+            }
+        }
+    }
+}

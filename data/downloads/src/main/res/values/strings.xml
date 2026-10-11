@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name" translatable="false">Story Ghost</string>
+    <string name="toast_download_url_not_found">Download URL not found</string>
+    <string name="toast_failed_to_download">Failed to download story</string>
+</resources>
