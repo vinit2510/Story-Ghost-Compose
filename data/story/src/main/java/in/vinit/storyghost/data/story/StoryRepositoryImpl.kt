@@ -2,6 +2,7 @@ package `in`.vinit.storyghost.data.story
 
 import com.google.gson.Gson
 import `in`.vinit.storyghost.config.AppConfig
+import `in`.vinit.storyghost.data.model.FollowingResponse
 import `in`.vinit.storyghost.data.model.HighlightsResponse
 import `in`.vinit.storyghost.data.model.StoryListResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
@@ -15,6 +16,12 @@ class StoryRepositoryImpl(
     private val appConfig: AppConfig
 ) : StoryRepository {
 
+    override suspend fun getFollowing(userId: String, maxId: String?): FollowingResponse {
+        return api.getFollowing(userId, maxId)
+    }
+
+    @Deprecated("Deprecated by Instagram GraphQL changes. Use getFollowing instead.")
+    @Suppress("DEPRECATION")
     override suspend fun getStoryFromFeed(): StoryListResponse {
         val queryHash = appConfig.qhStoryList
         val vars = mapOf(

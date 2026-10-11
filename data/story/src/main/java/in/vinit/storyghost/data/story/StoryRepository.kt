@@ -1,5 +1,6 @@
 package `in`.vinit.storyghost.data.story
 
+import `in`.vinit.storyghost.data.model.FollowingResponse
 import `in`.vinit.storyghost.data.model.HighlightsResponse
 import `in`.vinit.storyghost.data.model.StoryListResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
@@ -10,10 +11,20 @@ import `in`.vinit.storyghost.data.model.UserStoryResponse
 interface StoryRepository {
 
     /**
+     * Fetches the following list for a user containing active 24-hour story timestamps.
+     *
+     * @param userId The target user ID.
+     * @param maxId Optional pagination cursor.
+     * @return [FollowingResponse] containing followed users.
+     */
+    suspend fun getFollowing(userId: String, maxId: String? = null): FollowingResponse
+
+    /**
      * Fetches story feed reels tray for the logged-in user.
      *
      * @return [StoryListResponse] containing active feed story items.
      */
+    @Deprecated("Deprecated by Instagram GraphQL changes. Use getFollowing instead.")
     suspend fun getStoryFromFeed(): StoryListResponse
 
     /**

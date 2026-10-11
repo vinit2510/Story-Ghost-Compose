@@ -1,6 +1,7 @@
 package `in`.vinit.storyghost.data.remote.story
 
 import `in`.vinit.storyghost.config.AppConfig
+import `in`.vinit.storyghost.data.model.FollowingResponse
 import `in`.vinit.storyghost.data.model.HighlightsResponse
 import `in`.vinit.storyghost.data.model.StoryListResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
@@ -25,6 +26,19 @@ class StoryRepositoryTest {
         repository = StoryRepositoryImpl(api, appConfig)
     }
 
+    @Test
+    fun `getFollowing delegates to API with expected params`() = runTest {
+        val expected = FollowingResponse()
+        coEvery { api.getFollowing("123", "cursor_1") } returns expected
+
+        val result = repository.getFollowing("123", "cursor_1")
+
+        assertNotNull(result)
+        assertEquals(expected, result)
+        coVerify(exactly = 1) { api.getFollowing("123", "cursor_1") }
+    }
+
+    @Suppress("DEPRECATION")
     @Test
     fun `getStoryFromFeed delegates to API with expected params`() = runTest {
         val expected = StoryListResponse()

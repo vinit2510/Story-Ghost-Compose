@@ -28,7 +28,7 @@ val networkModule = module {
 
         if (appConfig.isDebug) {
             val loggingInterceptor = HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
+                level = HttpLoggingInterceptor.Level.BASIC
             }
             builder.addInterceptor(loggingInterceptor)
         }

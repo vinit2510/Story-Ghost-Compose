@@ -41,6 +41,7 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -105,6 +106,7 @@ fun HomeScreen(
     val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
     val isPremium by viewModel.isPremium.collectAsStateWithLifecycle()
     val showLoginDialogTrigger by viewModel.showLoginDialogTrigger.collectAsStateWithLifecycle()
+    val isPaginating by viewModel.isPaginating.collectAsStateWithLifecycle()
 
     val showLoginDialog = remember { mutableStateOf(false) }
     val showLogoutDialog = remember { mutableStateOf(false) }
@@ -159,6 +161,7 @@ fun HomeScreen(
         isHighlightMode = isHighlightMode,
         profilePicUrl = profilePicUrl,
         isPremium = isPremium,
+        isPaginating = isPaginating,
         onHighlightToggle = viewModel::toggleHighlightMode,
         onSearchQueryChange = viewModel::onSearchQueryChange,
         onSearchClick = viewModel::performSearch,
@@ -173,6 +176,7 @@ fun HomeScreen(
             }
         },
         onRetryClick = { viewModel.retry() },
+        onLoadMore = viewModel::loadNextPage,
         modifier = modifier
     )
 }
@@ -183,6 +187,7 @@ fun HomeContent(
     isHighlightMode: Boolean,
     profilePicUrl: String?,
     isPremium: Boolean,
+    isPaginating: Boolean = false,
     onHighlightToggle: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
     onSearchClick: () -> Unit,
@@ -191,6 +196,7 @@ fun HomeContent(
     onPremiumClick: () -> Unit,
     onProfileClick: () -> Unit,
     onRetryClick: () -> Unit,
+    onLoadMore: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val gridState = rememberLazyGridState()
@@ -199,6 +205,21 @@ fun HomeContent(
     val showButton by remember {
         derivedStateOf {
             gridState.firstVisibleItemIndex > 0 || gridState.firstVisibleItemScrollOffset > displayHeight
+        }
+    }
+
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            val layoutInfo = gridState.layoutInfo
+            val totalItems = layoutInfo.totalItemsCount
+            val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            totalItems > 0 && lastVisibleItemIndex >= totalItems - 4
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore) {
+        if (shouldLoadMore) {
+            onLoadMore()
         }
     }
 
@@ -309,6 +330,23 @@ fun HomeContent(
                                 },
                                 prefixUsername = true
                             )
+                        }
+
+                        if (isPaginating) {
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(28.dp),
+                                        color = MaterialTheme.colorScheme.primary,
+                                        strokeWidth = 2.dp
+                                    )
+                                }
+                            }
                         }
                     }
                 }

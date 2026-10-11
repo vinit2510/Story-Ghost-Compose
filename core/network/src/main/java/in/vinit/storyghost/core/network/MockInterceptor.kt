@@ -35,6 +35,7 @@ class MockInterceptor(
             }
 
             path.contains("web/search/topsearch") -> "mock_search_user.json"
+            path.contains("friendships") && path.contains("following") -> "mock_following.json"
             else -> null
         }
 

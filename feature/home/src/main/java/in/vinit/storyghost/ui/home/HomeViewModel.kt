@@ -53,6 +53,13 @@ class HomeViewModel(
     private val _showLoginDialogTrigger = MutableStateFlow(false)
     val showLoginDialogTrigger = _showLoginDialogTrigger.asStateFlow()
 
+    private var nextMaxId: String? = null
+    private var hasMoreFollowings: Boolean = true
+    private var isLoadingFollowing: Boolean = false
+    private val _isPaginating = MutableStateFlow(false)
+    val isPaginating = _isPaginating.asStateFlow()
+    private val storyDataset = mutableListOf<Edge>()
+
     fun onLoginDialogTriggerHandled() {
         _showLoginDialogTrigger.update { false }
     }
@@ -118,29 +125,120 @@ class HomeViewModel(
         fetchUserDataIfMissing()
     }
 
-    fun loadStoryList() {
+    fun loadStoryList(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _storyList.update { UiState.Loading }
-            val result = makeApiCall { storyRepository.getStoryFromFeed() }
+            val userId = localStorage.getUserId().first()
+            if (userId.isNullOrBlank()) {
+                _showLoginDialogTrigger.update { true }
+                _storyList.update { UiState.Success(emptyList()) }
+                return@launch
+            }
+
+            if (isRefresh) {
+                nextMaxId = null
+                hasMoreFollowings = true
+                storyDataset.clear()
+                _storyList.update { UiState.Loading }
+            }
+
+            if (isLoadingFollowing || (!hasMoreFollowings && !isRefresh)) return@launch
+            isLoadingFollowing = true
+
+            if (storyDataset.isEmpty() && !isRefresh) {
+                _storyList.update { UiState.Loading }
+            }
+
+            val result = makeApiCall { storyRepository.getFollowing(userId, nextMaxId) }
+            isLoadingFollowing = false
+
             result.fold(
                 onSuccess = { response ->
-                    val edges = response.data?.user?.feedReelsTray?.edgeReelsTrayToReel?.edges
-                        ?: emptyList()
-                    _storyList.update { UiState.Success(edges) }
+                    nextMaxId = response.nextMaxId
+                    hasMoreFollowings = response.hasMore == true && !nextMaxId.isNullOrEmpty()
+
+                    val newActiveStories = response.users
+                        ?.filter { (it.latestReelMedia ?: 0L) != 0L }
+                        ?.map { user ->
+                            Edge(
+                                node = Edge.Node(
+                                    id = user.id ?: user.pkId?.toString(),
+                                    user = Edge.Node.ReelUser(
+                                        id = user.id ?: user.pkId?.toString(),
+                                        username = user.username,
+                                        profilePicUrl = user.profilePicUrl
+                                    )
+                                )
+                            )
+                        } ?: emptyList()
+
+                    storyDataset.addAll(newActiveStories)
+                    _storyList.update { UiState.Success(storyDataset.toList()) }
+
+                    if (storyDataset.size < 6 && hasMoreFollowings) {
+                        loadStoryList(isRefresh = false)
+                    }
                 },
                 onFailure = { ex ->
                     if (ex is ApiException && ex.httpCode == 401) {
                         _showLoginDialogTrigger.update { true }
                     }
-                    logger.e(TAG, "loadStoryList: Failed to load story list", ex)
-                    _storyList.update { result.map { emptyList<Edge>() }.toUiState() }
+                    logger.e(TAG, "loadStoryList: Failed to load following story list", ex)
+                    if (storyDataset.isEmpty()) {
+                        _storyList.update { result.map { emptyList<Edge>() }.toUiState() }
+                    }
+                }
+            )
+        }
+    }
+
+    fun loadNextPage() {
+        val currentQuery = _searchQuery.value.trim()
+        if (currentQuery.isNotEmpty() || _isRemoteSearchActive.value || isLoadingFollowing || !hasMoreFollowings) {
+            return
+        }
+
+        viewModelScope.launch {
+            val userId = localStorage.getUserId().first() ?: return@launch
+
+            isLoadingFollowing = true
+            _isPaginating.update { true }
+
+            val result = makeApiCall { storyRepository.getFollowing(userId, nextMaxId) }
+            isLoadingFollowing = false
+            _isPaginating.update { false }
+
+            result.fold(
+                onSuccess = { response ->
+                    nextMaxId = response.nextMaxId
+                    hasMoreFollowings = response.hasMore == true && !nextMaxId.isNullOrEmpty()
+
+                    val newActiveStories = response.users
+                        ?.filter { (it.latestReelMedia ?: 0L) != 0L }
+                        ?.map { user ->
+                            Edge(
+                                node = Edge.Node(
+                                    id = user.id ?: user.pkId?.toString(),
+                                    user = Edge.Node.ReelUser(
+                                        id = user.id ?: user.pkId?.toString(),
+                                        username = user.username,
+                                        profilePicUrl = user.profilePicUrl
+                                    )
+                                )
+                            )
+                        } ?: emptyList()
+
+                    storyDataset.addAll(newActiveStories)
+                    _storyList.update { UiState.Success(storyDataset.toList()) }
+                },
+                onFailure = { ex ->
+                    logger.e(TAG, "loadNextPage: Failed to load next page", ex)
                 }
             )
         }
     }
 
     fun retry() {
-        loadStoryList()
+        loadStoryList(isRefresh = true)
     }
 
     private fun fetchUserDataIfMissing() {
@@ -220,6 +318,9 @@ class HomeViewModel(
     fun logout() {
         viewModelScope.launch {
             localStorage.clearAuthentication()
+            nextMaxId = null
+            hasMoreFollowings = true
+            storyDataset.clear()
             _searchQuery.update { "" }
             _isRemoteSearchActive.update { false }
             _searchResults.update { UiState.Success(emptyList()) }
@@ -229,6 +330,6 @@ class HomeViewModel(
 
     fun reloadAfterLogin() {
         fetchUserDataIfMissing()
-        loadStoryList()
+        loadStoryList(isRefresh = true)
     }
 }
