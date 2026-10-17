@@ -110,7 +110,8 @@ class StoryViewModel(
             val result = makeApiCall { storyRepository.getHighlightStoryByReelId(highlightId) }
             result.fold(
                 onSuccess = { data ->
-                    val items = data.data?.reelsMedia?.firstOrNull()?.items ?: emptyList()
+                    val items =
+                        data.data?.reelsMedia?.firstOrNull()?.items?.reversed() ?: emptyList()
                     _uiState.update { UiState.Success(items) }
                 },
                 onFailure = { ex ->

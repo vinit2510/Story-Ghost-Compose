@@ -176,4 +176,31 @@ class StoryViewModelTest {
             // Verify still exactly 1
             coVerify(exactly = 1) { storyRepository.getHighlightStoryByReelId(highlightId) }
         }
+
+    @Test
+    fun `loadStories with isHighlight true reverses items to match chronological order`() =
+        runTest {
+            val highlightId = "highlight_999"
+            val item1 = Item(id = "item_1", typename = "GraphStoryImage")
+            val item2 = Item(id = "item_2", typename = "GraphStoryVideo")
+            val item3 = Item(id = "item_3", typename = "GraphStoryImage")
+            val mockResponse = UserStoryResponse(
+                data = UserStoryResponse.Data(
+                    reelsMedia = arrayListOf(
+                        UserStoryResponse.Data.ReelsMedia(
+                            items = arrayListOf(item1, item2, item3)
+                        )
+                    )
+                )
+            )
+            coEvery { storyRepository.getHighlightStoryByReelId(highlightId) } returns mockResponse
+
+            viewModel.loadStories(highlightId, isHighlight = true)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val state = viewModel.uiState.value
+            assertTrue(state is UiState.Success)
+            assertEquals(listOf(item3, item2, item1), (state as UiState.Success).data)
+        }
 }
+
