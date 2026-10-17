@@ -37,7 +37,8 @@ import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 fun OnboardingLoginPage(
     isCookieLoginEnabled: Boolean,
     onLoginClick: () -> Unit,
-    onCookieLoginClick: () -> Unit
+    onCookieLoginClick: () -> Unit,
+    openSourceUrl: String = ""
 ) {
     Column(
         modifier = Modifier
@@ -117,11 +118,14 @@ fun OnboardingLoginPage(
             )
         }
 
-        OpenSourceNoticeCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp, bottom = 30.dp)
-        )
+        if (openSourceUrl.isNotBlank()) {
+            OpenSourceNoticeCard(
+                githubUrl = openSourceUrl,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp, bottom = 30.dp)
+            )
+        }
 
     }
 
@@ -176,6 +180,7 @@ private fun OnboardingLoginPagePreview() {
     StoryGhostTheme {
         OnboardingLoginPage(
             isCookieLoginEnabled = true,
+            openSourceUrl = "https://github.com/username/project",
             onLoginClick = {},
             onCookieLoginClick = {}
         )

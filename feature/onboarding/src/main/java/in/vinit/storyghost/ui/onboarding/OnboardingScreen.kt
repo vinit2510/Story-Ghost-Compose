@@ -45,6 +45,7 @@ fun OnboardingScreen(
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
     val isCookieLoginEnabled = remember { viewModel.isCookieLoginEnabled() }
+    val openSourceUrl = remember { viewModel.getOpenSourceContributionUrl() }
     var showCookieDialog by remember { mutableStateOf(false) }
 
     if (showCookieDialog) {
@@ -59,6 +60,7 @@ fun OnboardingScreen(
 
     OnboardingContent(
         isCookieLoginEnabled = isCookieLoginEnabled,
+        openSourceUrl = openSourceUrl,
         onComplete = { viewModel.completeOnboarding { onboardingComplete() } },
         onLoginClick = onLoginClick,
         onCookieLoginClick = { showCookieDialog = true },
@@ -72,6 +74,7 @@ fun OnboardingContent(
     onComplete: () -> Unit,
     onLoginClick: () -> Unit,
     onCookieLoginClick: () -> Unit,
+    openSourceUrl: String = "",
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
@@ -105,7 +108,8 @@ fun OnboardingContent(
                     3 -> OnboardingLoginPage(
                         isCookieLoginEnabled = isCookieLoginEnabled,
                         onLoginClick = onLoginClick,
-                        onCookieLoginClick = onCookieLoginClick
+                        onCookieLoginClick = onCookieLoginClick,
+                        openSourceUrl = openSourceUrl
                     )
                 }
             }

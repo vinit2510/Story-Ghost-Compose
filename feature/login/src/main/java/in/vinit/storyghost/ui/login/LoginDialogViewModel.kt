@@ -43,4 +43,8 @@ class LoginDialogViewModel(
             }
         }
     }
+
+    fun getOpenSourceContributionUrl(): String {
+        return remoteConfigRepository.getOpenSourceContributionUrl()
+    }
 }

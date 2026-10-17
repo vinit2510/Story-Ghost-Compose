@@ -20,6 +20,7 @@ private const val ADMOB_APP_ID = "admob_app_id"
 private const val ADMOB_APP_OPEN_AD_ID = "admob_app_open_ad_id"
 private const val ADMOB_INTERSTITIAL_AD_ID = "admob_interstitial_ad_id"
 private const val INTERSTITIAL_FIRST_PRIORITY_NETWORK = "interstitial_first_priority_network"
+private const val OPEN_SOURCE_CONTRIBUTION_URL = "open_source_contribution_url"
 
 class FirebaseRemoteConfigImpl(
     private val context: Context,
@@ -43,7 +44,8 @@ class FirebaseRemoteConfigImpl(
             ADMOB_APP_ID to appConfig.admobAppId,
             ADMOB_APP_OPEN_AD_ID to appConfig.admobAppOpenAdId,
             ADMOB_INTERSTITIAL_AD_ID to appConfig.admobInterstitialAdId,
-            INTERSTITIAL_FIRST_PRIORITY_NETWORK to "admob"
+            INTERSTITIAL_FIRST_PRIORITY_NETWORK to "admob",
+            OPEN_SOURCE_CONTRIBUTION_URL to ""
         )
         firebaseRemoteConfig.setDefaultsAsync(defaults)
 
@@ -85,4 +87,7 @@ class FirebaseRemoteConfigImpl(
 
     override fun getInterstitialFirstPriorityNetwork() =
         firebaseRemoteConfig.getString(INTERSTITIAL_FIRST_PRIORITY_NETWORK)
+
+    override fun getOpenSourceContributionUrl(): String =
+        firebaseRemoteConfig.getString(OPEN_SOURCE_CONTRIBUTION_URL)
 }

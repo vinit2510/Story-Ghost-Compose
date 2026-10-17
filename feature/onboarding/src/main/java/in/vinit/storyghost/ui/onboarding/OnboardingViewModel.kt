@@ -24,6 +24,10 @@ class OnboardingViewModel(
         return appConfig.versionCode >= remoteConfigRepository.getCookieMinVersion()
     }
 
+    fun getOpenSourceContributionUrl(): String {
+        return remoteConfigRepository.getOpenSourceContributionUrl()
+    }
+
     fun completeOnboarding(onComplete: () -> Unit) {
         viewModelScope.launch {
             localStorage.setOnboarded(true)

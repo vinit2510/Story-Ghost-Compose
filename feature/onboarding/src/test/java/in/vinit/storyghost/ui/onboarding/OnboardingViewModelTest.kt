@@ -72,4 +72,21 @@ class OnboardingViewModelTest {
         coVerify(exactly = 1) { localStorage.setOnboarded(true) }
         assertTrue(callbackCalled)
     }
+
+    @Test
+    fun `getOpenSourceContributionUrl returns empty string when not received from server`() {
+        every { remoteConfigRepository.getOpenSourceContributionUrl() } returns ""
+
+        assertEquals("", viewModel.getOpenSourceContributionUrl())
+    }
+
+    @Test
+    fun `getOpenSourceContributionUrl returns url when received from server`() {
+        every { remoteConfigRepository.getOpenSourceContributionUrl() } returns "https://github.com/vinit2510/Story-Ghost-Compose"
+
+        assertEquals(
+            "https://github.com/vinit2510/Story-Ghost-Compose",
+            viewModel.getOpenSourceContributionUrl()
+        )
+    }
 }

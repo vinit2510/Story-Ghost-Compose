@@ -10,4 +10,5 @@ interface RemoteConfigRepository {
     fun getAdmobAppOpenAdId(): String
     fun getAdmobInterstitialAdId(): String
     fun getInterstitialFirstPriorityNetwork(): String
+    fun getOpenSourceContributionUrl(): String
 }

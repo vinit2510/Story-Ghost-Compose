@@ -4,6 +4,7 @@ import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.ui.UiState
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -57,5 +58,26 @@ class LoginDialogViewModelTest {
 
         val state = viewModel.cookieMinVersion.value
         assertTrue(state is UiState.Error)
+    }
+
+    @Test
+    fun `getOpenSourceContributionUrl returns empty string when not received from server`() {
+        every { remoteConfigRepository.getOpenSourceContributionUrl() } returns ""
+
+        viewModel = LoginDialogViewModel(remoteConfigRepository, logger)
+
+        assertEquals("", viewModel.getOpenSourceContributionUrl())
+    }
+
+    @Test
+    fun `getOpenSourceContributionUrl returns url when received from server`() {
+        every { remoteConfigRepository.getOpenSourceContributionUrl() } returns "https://github.com/vinit2510/Story-Ghost-Compose"
+
+        viewModel = LoginDialogViewModel(remoteConfigRepository, logger)
+
+        assertEquals(
+            "https://github.com/vinit2510/Story-Ghost-Compose",
+            viewModel.getOpenSourceContributionUrl()
+        )
     }
 }

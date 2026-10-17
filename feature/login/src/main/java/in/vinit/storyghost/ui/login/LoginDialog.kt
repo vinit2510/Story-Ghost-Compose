@@ -54,9 +54,11 @@ fun LoginDialog(
     onLoginClick: () -> Unit,
     onCookieLoginSuccess: () -> Unit,
     onDismissRequest: () -> Unit,
-    viewModel: LoginDialogViewModel = koinViewModel()
+    viewModel: LoginDialogViewModel = koinViewModel(),
+    appConfig: AppConfig = koinInject()
 ) {
     val cookieMinVersionState by viewModel.cookieMinVersion.collectAsStateWithLifecycle()
+    val openSourceUrl = remember { viewModel.getOpenSourceContributionUrl() }
 
     Dialog(
         onDismissRequest = onDismissRequest
@@ -65,9 +67,11 @@ fun LoginDialog(
             is UiState.Success -> state.data
             else -> 1
         }
+        val isCookieLoginEnabled = appConfig.versionCode >= cookieMinVersion
 
         LoginDialogContent(
-            cookieMinVersion = cookieMinVersion,
+            isCookieLoginEnabled = isCookieLoginEnabled,
+            openSourceUrl = openSourceUrl,
             onLoginClick = onLoginClick,
             onCookieLoginSuccess = {
                 onDismissRequest()
@@ -80,14 +84,14 @@ fun LoginDialog(
 
 @Composable
 fun LoginDialogContent(
-    cookieMinVersion: Int,
+    isCookieLoginEnabled: Boolean,
     onLoginClick: () -> Unit,
     onCookieLoginSuccess: () -> Unit,
     onDismissRequest: () -> Unit,
+    openSourceUrl: String = "",
     modifier: Modifier = Modifier
 ) {
     val showCookieDialog = remember { mutableStateOf(false) }
-    val appConfig: AppConfig = koinInject()
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -198,7 +202,7 @@ fun LoginDialogContent(
                 }
             )
 
-            if (appConfig.versionCode >= cookieMinVersion) {
+            if (isCookieLoginEnabled) {
                 Column(
                     modifier = Modifier.padding(top = 15.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -234,11 +238,14 @@ fun LoginDialogContent(
                 }
             }
 
-            OpenSourceNoticeCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 15.dp)
-            )
+            if (openSourceUrl.isNotBlank()) {
+                OpenSourceNoticeCard(
+                    githubUrl = openSourceUrl,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 15.dp)
+                )
+            }
         }
     }
 
@@ -258,7 +265,8 @@ fun LoginDialogContent(
 private fun LoginDialogPreview() {
     StoryGhostTheme {
         LoginDialogContent(
-            cookieMinVersion = 1,
+            isCookieLoginEnabled = true,
+            openSourceUrl = "https://github.com/vinit2510/Story-Ghost-Compose",
             onLoginClick = {},
             onCookieLoginSuccess = {},
             onDismissRequest = {}
