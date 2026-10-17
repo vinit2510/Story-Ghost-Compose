@@ -1,9 +1,12 @@
 {
-  "users": [
+  "status": "ok",
+  "list": [
     {
       "position": 0,
       "user": {
         "id": "111111",
+        "pk": "111111",
+        "pk_id": "111111",
         "username": "ghost_hunter",
         "full_name": "Ghost Hunter Pro",
         "is_private": false,
@@ -22,6 +25,50 @@
       "position": 1,
       "user": {
         "id": "222222",
+        "pk": "222222",
+        "pk_id": "222222",
+        "username": "spooky_stories",
+        "full_name": "Spooky Stories Daily",
+        "is_private": true,
+        "profile_pic_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80",
+        "latest_reel_media": 1784643920,
+        "is_verified": false,
+        "friendship_status": {
+          "following": false,
+          "is_private": true,
+          "incoming_request": false,
+          "outgoing_request": false
+        }
+      }
+    }
+  ],
+  "users": [
+    {
+      "position": 0,
+      "user": {
+        "id": "111111",
+        "pk": "111111",
+        "pk_id": "111111",
+        "username": "ghost_hunter",
+        "full_name": "Ghost Hunter Pro",
+        "is_private": false,
+        "profile_pic_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
+        "latest_reel_media": 1784643920,
+        "is_verified": true,
+        "friendship_status": {
+          "following": false,
+          "is_private": false,
+          "incoming_request": false,
+          "outgoing_request": false
+        }
+      }
+    },
+    {
+      "position": 1,
+      "user": {
+        "id": "222222",
+        "pk": "222222",
+        "pk_id": "222222",
         "username": "spooky_stories",
         "full_name": "Spooky Stories Daily",
         "is_private": true,

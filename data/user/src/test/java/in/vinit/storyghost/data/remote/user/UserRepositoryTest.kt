@@ -41,14 +41,20 @@ class UserRepositoryTest {
     @Test
     fun `searchUsersByQuery delegates to API with query string`() = runTest {
         val query = "test_user"
-        val expectedResponse = SearchUserResponse(users = arrayListOf())
+        val expectedResponse = SearchUserResponse(list = emptyList())
 
-        coEvery { api.searchUsersByQuery(query) } returns expectedResponse
+        coEvery {
+            api.searchUsersByQuery(
+                query,
+                "blended",
+                "top_search_page"
+            )
+        } returns expectedResponse
 
         val result = repository.searchUsersByQuery(query)
 
         assertNotNull(result)
         assertEquals(expectedResponse, result)
-        coVerify(exactly = 1) { api.searchUsersByQuery(query) }
+        coVerify(exactly = 1) { api.searchUsersByQuery(query, "blended", "top_search_page") }
     }
 }

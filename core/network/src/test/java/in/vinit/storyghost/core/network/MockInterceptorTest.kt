@@ -26,12 +26,12 @@ class MockInterceptorTest {
 
     @Test
     fun `intercept returns mock response for search topsearch endpoint when valid cookie present`() {
-        val mockJson = """{"users": []}"""
+        val mockJson = """{"list": []}"""
         every { context.assets.open("mock_search_user.json") } returns ByteArrayInputStream(mockJson.toByteArray())
 
         val chain = mockk<Interceptor.Chain>()
         val request = Request.Builder()
-            .url("https://example.com/web/search/topsearch/?query=test")
+            .url("https://example.com/api/v1/fbsearch/topsearch_flat/?query=test&context=blended&search_surface=top_search_page")
             .header("Cookie", "sessionid=test_123; ds_user_id=test_456")
             .build()
 
@@ -48,7 +48,7 @@ class MockInterceptorTest {
     fun `intercept returns 401 unauthorized response when cookie is missing or invalid`() {
         val chain = mockk<Interceptor.Chain>()
         val request = Request.Builder()
-            .url("https://example.com/web/search/topsearch/?query=test")
+            .url("https://example.com/api/v1/fbsearch/topsearch_flat/?query=test&context=blended&search_surface=top_search_page")
             .build()
 
         every { chain.request() } returns request

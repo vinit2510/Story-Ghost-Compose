@@ -39,10 +39,11 @@ class LoginInterceptor(
             requestBuilder.header("X-Csrftoken", csrfToken.sanitizeHeader())
         }
         requestBuilder.header("User-Agent", userAgent.sanitizeHeader())
+        requestBuilder.header("X-IG-App-ID", "936619743392459")
 
         val response = chain.proceed(requestBuilder.build())
 
-        if (response.code == 401 || response.code == 403) {
+        if (response.code == 401 || response.code == 403 || response.code == 302 || response.isRedirect) {
             runBlocking {
                 try {
                     localStorage.clearAuthentication()

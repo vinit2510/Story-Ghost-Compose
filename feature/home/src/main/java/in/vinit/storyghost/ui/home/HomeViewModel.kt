@@ -179,7 +179,7 @@ class HomeViewModel(
                     }
                 },
                 onFailure = { ex ->
-                    if (ex is ApiException && ex.httpCode == 401) {
+                    if (ex is ApiException && (ex.httpCode == 401 || ex.httpCode == 302)) {
                         _showLoginDialogTrigger.update { true }
                     }
                     logger.e(TAG, "loadStoryList: Failed to load following story list", ex)
@@ -279,19 +279,20 @@ class HomeViewModel(
             _searchResults.update { UiState.Loading }
             val result = makeApiCall {
                 val response = userRepository.searchUsersByQuery(query)
-                response.users?.mapNotNull { data ->
+                response.allUsers.mapNotNull { data ->
                     val user = data.user ?: return@mapNotNull null
+                    val userId = user.userId ?: return@mapNotNull null
                     Edge(
                         node = Edge.Node(
-                            id = user.id,
+                            id = userId,
                             user = Edge.Node.ReelUser(
-                                id = user.id,
+                                id = userId,
                                 username = user.username,
                                 profilePicUrl = user.profilePicUrl
                             )
                         )
                     )
-                } ?: emptyList()
+                }
             }
             if (result.isFailure) {
                 logger.e(

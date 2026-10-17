@@ -34,7 +34,7 @@ class MockInterceptor(
                 }
             }
 
-            path.contains("web/search/topsearch") -> "mock_search_user.json"
+            path.contains("api/v1/fbsearch/topsearch_flat") || path.contains("web/search/topsearch") -> "mock_search_user.json"
             path.contains("friendships") && path.contains("following") -> "mock_following.json"
             else -> null
         }

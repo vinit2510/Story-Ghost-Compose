@@ -29,6 +29,10 @@ class UserRepositoryImpl(
     }
 
     override suspend fun searchUsersByQuery(query: String): SearchUserResponse {
-        return api.searchUsersByQuery(query)
+        return api.searchUsersByQuery(
+            query = query,
+            context = "blended",
+            searchSurface = "top_search_page"
+        )
     }
 }

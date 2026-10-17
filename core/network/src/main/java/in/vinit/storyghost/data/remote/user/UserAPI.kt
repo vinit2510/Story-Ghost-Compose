@@ -27,8 +27,14 @@ interface UserAPI {
      * Searches users matching a query string via Instagram top search endpoint.
      *
      * @param query The search query string (username or name).
+     * @param context The search context, defaults to "blended".
+     * @param searchSurface The search surface, defaults to "top_search_page".
      * @return [SearchUserResponse] containing matching user search results.
      */
-    @GET("web/search/topsearch/")
-    suspend fun searchUsersByQuery(@Query("query") query: String): SearchUserResponse
+    @GET("api/v1/fbsearch/topsearch_flat/")
+    suspend fun searchUsersByQuery(
+        @Query("query") query: String,
+        @Query("context") context: String = "blended",
+        @Query("search_surface") searchSurface: String = "top_search_page"
+    ): SearchUserResponse
 }
