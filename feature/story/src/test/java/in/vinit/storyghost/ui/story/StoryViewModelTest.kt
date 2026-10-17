@@ -202,5 +202,51 @@ class StoryViewModelTest {
             assertTrue(state is UiState.Success)
             assertEquals(listOf(item3, item2, item1), (state as UiState.Success).data)
         }
+
+    @Test
+    fun `loadAd calls interstitialAdManager loadAd`() {
+        viewModel.loadAd()
+        coVerify(exactly = 1) { interstitialAdManager.loadAd() }
+    }
+
+    @Test
+    fun `showAd delegates to interstitialAdManager`() {
+        val mockActivity: android.app.Activity = mockk(relaxed = true)
+        viewModel.showAd(mockActivity)
+        coVerify(exactly = 1) { interstitialAdManager.showAd(mockActivity, any()) }
+    }
+
+    @Test
+    fun `showReviewDialogIfEligible calls inAppReviewManager`() = runTest {
+        val mockActivity: android.app.Activity = mockk(relaxed = true)
+        viewModel.showReviewDialogIfEligible(mockActivity)
+        testDispatcher.scheduler.advanceUntilIdle()
+        coVerify(exactly = 1) { inAppReviewManager.showDialogAfterDays(mockActivity) }
+    }
+
+    @Test
+    fun `getInstagramAccountUrl returns url from remoteConfigRepository`() {
+        io.mockk.every { remoteConfigRepository.getInstagramAccountUrl() } returns "https://instagram.com/test"
+        assertEquals("https://instagram.com/test", viewModel.getInstagramAccountUrl())
+    }
+
+    @Test
+    fun `downloadStory delegates to downloadsRepository`() {
+        val item = Item(id = "item_1", typename = "GraphStoryImage")
+        val onSuccess: () -> Unit = {}
+        viewModel.downloadStory(item, onSuccess)
+        coVerify(exactly = 1) { downloadsRepository.downloadFile(item, onSuccess) }
+    }
+
+    @Test
+    fun `loadHighlightStory failure updates uiState with error`() = runTest {
+        val highlightId = "highlight_fail"
+        coEvery { storyRepository.getHighlightStoryByReelId(highlightId) } throws RuntimeException("Network failure")
+
+        viewModel.loadStories(highlightId, isHighlight = true)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value is UiState.Error)
+    }
 }
 

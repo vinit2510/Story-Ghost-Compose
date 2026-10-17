@@ -4,6 +4,7 @@ import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.core.common.storage.LocalStorage
 import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.ui.UiState
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -66,5 +67,56 @@ class LoginViewModelTest {
 
         val currentState = viewModel.uiState.value
         assertTrue(currentState is UiState.Error)
+    }
+
+    @Test
+    fun `resetUiState resets state to Success false`() = runTest {
+        viewModel.loginWithCookie("sessionid=123; ds_user_id=456")
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertTrue(viewModel.uiState.value is UiState.Success)
+
+        viewModel.resetUiState()
+        val state = viewModel.uiState.value
+        assertTrue(state is UiState.Success)
+        assertEquals(false, (state as UiState.Success).data)
+    }
+
+    @Test
+    fun `onPageFinished parses cookie if present`() = runTest {
+        val validCookie = "sessionid=test_session; ds_user_id=test_user"
+        viewModel.onPageFinished("https://instagram.com", validCookie)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify(exactly = 1) { localStorage.saveSessionId("test_session") }
+        coVerify(exactly = 1) { localStorage.saveUserId("test_user") }
+    }
+
+    @Test
+    fun `onPageFinished does nothing if cookie is null or empty`() = runTest {
+        viewModel.onPageFinished("https://instagram.com", null)
+        viewModel.onPageFinished("https://instagram.com", "")
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify(exactly = 0) { localStorage.saveSessionId(any()) }
+    }
+
+    @Test
+    fun `getInstagramLoginUrl and getUserAgent delegate to remoteConfigRepository`() {
+        io.mockk.every { remoteConfigRepository.getInstagramLoginUrl() } returns "https://login.url"
+        io.mockk.every { remoteConfigRepository.getUserAgent() } returns "CustomUserAgent"
+
+        assertEquals("https://login.url", viewModel.getInstagramLoginUrl())
+        assertEquals("CustomUserAgent", viewModel.getUserAgent())
+    }
+
+    @Test
+    fun `saveSession handles storage exception and emits Error`() = runTest {
+        coEvery { localStorage.saveCookie(any()) } throws RuntimeException("Disk full")
+
+        viewModel.loginWithCookie("sessionid=123; ds_user_id=456")
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertTrue(state is UiState.Error)
     }
 }
