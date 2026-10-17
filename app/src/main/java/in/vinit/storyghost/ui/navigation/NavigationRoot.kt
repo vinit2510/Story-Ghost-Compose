@@ -28,6 +28,18 @@ import `in`.vinit.storyghost.ui.onboarding.OnboardingScreen
 import `in`.vinit.storyghost.ui.story.StoryScreen
 import `in`.vinit.storyghost.ui.subscription.SubscriptionScreen
 
+/**
+ * Root navigation host managing the type-safe backstack using AndroidX Navigation 3.
+ *
+ * Handles:
+ * - Backstack state preservation with [rememberSaveableStateHolderNavEntryDecorator] and [rememberViewModelStoreNavEntryDecorator].
+ * - Screen tracking and analytics logging via [LocalAnalyticsLogger].
+ * - Animated horizontal and vertical slide transitions between destinations.
+ * - Routing between all feature screens: Home, Story, Highlight, Downloads, Subscription, Login, and Onboarding.
+ *
+ * @param initialRoute The initial destination calculated at startup (e.g., Home, Onboarding, or ForceUpdate).
+ * @param modifier The layout modifier for the navigation display container.
+ */
 @Composable
 fun NavigationRoot(
     initialRoute: Route,

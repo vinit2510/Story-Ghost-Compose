@@ -18,6 +18,15 @@ import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import org.koin.android.ext.android.inject
 import org.koin.compose.koinInject
 
+/**
+ * Single-activity host for the Story Ghost Compose UI.
+ *
+ * Responsibilities:
+ * - Enables Android edge-to-edge drawing for immersive UI.
+ * - Manages process lifecycle observation for Google Mobile Ads [AppOpenAdManager].
+ * - Checks for flexible Google Play in-app updates via [InAppUpdateManager].
+ * - Sets the root Jetpack Compose content with [StoryGhostTheme] and [LocalAnalyticsLogger].
+ */
 class MainActivity : ComponentActivity() {
 
     private val appOpenAdManager: AppOpenAdManager by inject()

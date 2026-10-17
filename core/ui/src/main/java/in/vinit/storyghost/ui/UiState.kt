@@ -5,9 +5,22 @@ import `in`.vinit.storyghost.core.ui.R
 import java.io.IOException
 import javax.net.ssl.SSLException
 
+/**
+ * Represents the state of a UI screen or component in Unidirectional Data Flow.
+ *
+ * @param T The type of data contained within the [Success] state.
+ */
 sealed class UiState<out T> {
+    /** Indicates an operation is in progress and placeholder/shimmer UI should be displayed. */
     object Loading : UiState<Nothing>()
+
+    /** Indicates the operation succeeded with the resulting [data]. */
     data class Success<T>(val data: T) : UiState<T>()
+
+    /**
+     * Indicates an operation failed with a user-facing [errorMsg], optional [httpCode],
+     * and underlying [cause].
+     */
     data class Error(
         val errorMsg: UiText,
         val httpCode: Int? = null,

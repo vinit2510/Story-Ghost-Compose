@@ -9,6 +9,21 @@ import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import java.io.IOException
 
+/**
+ * OkHttp [Interceptor] that intercepts outgoing API requests and serves pre-recorded
+ * JSON fixture responses from the application's `raw` assets when mock mode is enabled.
+ *
+ * Essential for:
+ * - Offline development and UI testing without hitting live Instagram servers.
+ * - Reproducible automated unit and integration tests.
+ *
+ * Matches incoming GraphQL query hashes and REST endpoints to specific JSON assets:
+ * - Story list: `mock_story_list.json`
+ * - User stories: `mock_user_story.json`
+ * - Highlights: `mock_highlights.json`
+ * - Search: `mock_search_user.json`
+ * - Following feed: `mock_following.json`
+ */
 class MockInterceptor(
     private val context: Context,
     private val appConfig: AppConfig

@@ -4,10 +4,20 @@ import android.app.Activity
 import `in`.vinit.storyghost.core.model.SubscriptionPlan
 import kotlinx.coroutines.flow.SharedFlow
 
+/**
+ * Sealed interface representing one-off Google Play Billing Client lifecycle events.
+ */
 sealed interface BillingEvent {
+    /** The billing client disconnected from Google Play Services. */
     object ServiceDisconnected : BillingEvent
+
+    /** The user dismissed the Google Play purchase flow without completing payment. */
     object PurchaseCanceled : BillingEvent
+
+    /** The purchase completed successfully and entitlement has been acknowledged. */
     object PurchaseSuccess : BillingEvent
+
+    /** A purchase failure occurred with an explanation [message]. */
     data class PurchaseError(val message: String) : BillingEvent
 }
 

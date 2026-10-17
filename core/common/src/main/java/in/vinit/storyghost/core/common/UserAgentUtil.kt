@@ -3,13 +3,25 @@ package `in`.vinit.storyghost.core.common
 import android.content.Context
 import android.os.Build
 import android.webkit.WebSettings
+import `in`.vinit.storyghost.core.common.UserAgentUtil.FALLBACK_USER_AGENT
 import java.util.Locale
 
+/**
+ * Utility for synthesizing realistic Instagram Android app and browser User-Agent strings.
+ *
+ * Essential for GraphQL and feed API requests to prevent bot detection and challenge interstitials.
+ */
 object UserAgentUtil {
 
     private const val FALLBACK_USER_AGENT =
         "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
 
+    /**
+     * Synthesizes a valid Instagram Mobile user agent string reflecting the host device's
+     * screen metrics, brand, model, CPU hardware, and Android SDK version.
+     *
+     * Falls back to [FALLBACK_USER_AGENT] if context resolution fails.
+     */
     fun generateInstagramUserAgent(context: Context): String {
         return try {
             val defaultAgent = WebSettings.getDefaultUserAgent(context)

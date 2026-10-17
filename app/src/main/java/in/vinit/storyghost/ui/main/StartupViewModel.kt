@@ -16,6 +16,15 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "StartupViewModel"
 
+/**
+ * Startup ViewModel responsible for calculating the initial navigation destination.
+ *
+ * Evaluation order:
+ * 1. Checks [RemoteConfigRepository.getForceUpdateVersion] against [BuildConfig.VERSION_CODE].
+ *    If a mandatory update is pending, routes to [Route.ForceUpdate].
+ * 2. Checks [LocalDataSource.isOnboarded]. If false, routes to [Route.Onboarding].
+ * 3. Otherwise routes to [Route.Home].
+ */
 class StartupViewModel(
     private val localRepository: LocalDataSource,
     private val remoteConfigRepository: RemoteConfigRepository,

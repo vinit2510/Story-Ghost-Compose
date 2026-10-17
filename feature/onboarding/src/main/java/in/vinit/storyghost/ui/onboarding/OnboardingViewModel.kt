@@ -7,6 +7,13 @@ import `in`.vinit.storyghost.core.common.storage.LocalStorage
 import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel managing the first-time user onboarding carousel.
+ *
+ * Responsibilities:
+ * - Checks remote config minimum version constraints to conditionally enable Cookie login.
+ * - Marks the onboarding process as complete in [LocalStorage].
+ */
 class OnboardingViewModel(
     private val localStorage: LocalStorage,
     private val remoteConfigRepository: RemoteConfigRepository,

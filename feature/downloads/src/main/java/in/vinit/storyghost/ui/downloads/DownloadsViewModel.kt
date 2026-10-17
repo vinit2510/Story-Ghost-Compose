@@ -14,6 +14,14 @@ import java.io.File
 
 private const val TAG = "DownloadsViewModel"
 
+/**
+ * ViewModel managing the offline Downloads gallery screen.
+ *
+ * Responsibilities:
+ * - Scans device downloads directory via [DownloadsRepository] on initialization and refresh.
+ * - Handles file deletion requests and updates the local state list.
+ * - Drives loading, empty list, and populated grid states in [DownloadsScreen].
+ */
 class DownloadsViewModel(
     private val downloadsRepository: DownloadsRepository,
     private val logger: Logger

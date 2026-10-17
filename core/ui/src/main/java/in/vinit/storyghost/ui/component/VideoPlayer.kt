@@ -36,6 +36,19 @@ import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import androidx.media3.ui.compose.modifiers.resizeWithContentScale
 import androidx.media3.ui.compose.state.rememberPresentationState
 
+/**
+ * Hardware-accelerated video player Composable backed by AndroidX Media3 [ExoPlayer].
+ *
+ * Features:
+ * - Plays H.264/MP4 video streams with looping playback enabled.
+ * - Manages ExoPlayer lifecycle bound to the Android lifecycle (pauses on backgrounding, resumes on return).
+ * - Displays a shimmering placeholder animation while the video is buffering.
+ * - Uses [SURFACE_TYPE_TEXTURE_VIEW] and [resizeWithContentScale] for smooth Compose rendering.
+ *
+ * @param videoUrl Remote or local URI string of the video media.
+ * @param isActive Flag controlling playback; player only plays when true, pausing when scrolled off-screen.
+ * @param modifier The layout modifier for the player container.
+ */
 @OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(

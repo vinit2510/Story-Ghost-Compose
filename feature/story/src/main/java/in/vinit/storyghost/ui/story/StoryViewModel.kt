@@ -24,6 +24,16 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "StoryViewModel"
 
+/**
+ * ViewModel managing the fullscreen story viewer and highlight media browser.
+ *
+ * Responsibilities:
+ * - Loads 24-hour stories for a user ID or highlight reel media for a highlight ID.
+ * - Enforces chronological sorting for highlight stories (reversing API responses).
+ * - Caches already loaded story sets to prevent redundant network fetches when navigating between stories and highlights.
+ * - Coordinates media downloads through [DownloadsRepository].
+ * - Handles interstitial ad display and in-app review prompts for non-premium users.
+ */
 class StoryViewModel(
     private val storyRepository: StoryRepository,
     private val downloadsRepository: DownloadsRepository,

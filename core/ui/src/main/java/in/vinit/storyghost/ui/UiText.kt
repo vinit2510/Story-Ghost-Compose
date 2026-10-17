@@ -5,11 +5,20 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 
+/**
+ * Abstraction for text in ViewModels that can either be a raw string or an Android string resource ID.
+ *
+ * Allows ViewModels to prepare localized error/info messages without holding a reference to [Context],
+ * and resolve them later either in a Composable via [asString()] or with an Android [Context] via [asString(context)].
+ */
 sealed class UiText {
+    /** A raw runtime string. */
     data class DynamicString(val value: String) : UiText()
+
+    /** A localized Android string resource with optional format arguments. */
     data class StringResource(
-        @param:StringRes val
-        resId: Int, val args: List<Any> = emptyList()
+        @param:StringRes val resId: Int,
+        val args: List<Any> = emptyList()
     ) : UiText()
 
     fun asString(context: Context): String {

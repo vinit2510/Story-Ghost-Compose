@@ -20,6 +20,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel managing the in-app subscription screen and Google Play Billing flows.
+ *
+ * Responsibilities:
+ * - Queries subscription pricing tiers (Monthly and Yearly) via [BillingRepository.queryProductDetails].
+ * - Observes hot [BillingEvent] streams (success, cancellation, errors) from Google Play.
+ * - Handles user plan selection and launches purchase flows via [BillingRepository.purchaseProduct].
+ */
 class SubscriptionViewModel(
     private val billingRepository: BillingRepository
 ) : ViewModel() {

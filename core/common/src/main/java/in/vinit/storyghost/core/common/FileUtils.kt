@@ -11,8 +11,16 @@ import java.text.DecimalFormat
 import kotlin.math.log10
 import kotlin.math.pow
 
+/**
+ * Utility functions for file system interactions, MIME type resolution,
+ * sharing via system intents, and formatting file sizes.
+ */
 object FileUtils {
 
+    /**
+     * Launches a system intent chooser to open the given [file] with an external viewer.
+     * Uses [FileProvider] to grant secure, temporary read access.
+     */
     fun openFile(context: Context, file: File) {
         try {
             val uri = FileProvider.getUriForFile(
@@ -37,6 +45,10 @@ object FileUtils {
         }
     }
 
+    /**
+     * Launches a system intent chooser to share the given [file] with other apps.
+     * Uses [FileProvider] with [Intent.ACTION_SEND] and [Intent.FLAG_GRANT_READ_URI_PERMISSION].
+     */
     fun shareFile(context: Context, file: File) {
         try {
             val uri = FileProvider.getUriForFile(
@@ -61,6 +73,9 @@ object FileUtils {
         }
     }
 
+    /**
+     * Formats raw byte count into human-readable strings (e.g., "1.4 MB", "350 KB").
+     */
     fun getReadableFileSize(file: File): String {
         val size = file.length()
         if (size <= 0) return "0 B"

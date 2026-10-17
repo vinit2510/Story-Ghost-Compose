@@ -24,6 +24,9 @@ import `in`.vinit.storyghost.ui.subscription.subscriptionFeatureModule
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
+/**
+ * Bridges Gradle `BuildConfig` variables into a decoupled, framework-free [AppConfig] data class.
+ */
 val appConfigModule = module {
     single {
         AppConfig(
@@ -51,6 +54,9 @@ val appViewModelModule = module {
     viewModelOf(::StartupViewModel)
 }
 
+/**
+ * Root Koin module consolidating all Core, Data, and Feature dependency injection graphs.
+ */
 val appModule = module {
     includes(
         appConfigModule,

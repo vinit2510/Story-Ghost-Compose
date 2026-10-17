@@ -15,6 +15,15 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "LoginViewModel"
 
+/**
+ * ViewModel managing user authentication via In-App WebView and direct Session Cookie entry.
+ *
+ * Responsibilities:
+ * - Extracts session cookies (`sessionid`, `ds_user_id`, `csrftoken`) from WebView URL hooks.
+ * - Parses and validates pasted cookie strings to ensure necessary credentials exist.
+ * - Saves session parameters into [LocalStorage] and marks the account as logged-in and onboarded.
+ * - Provides Instagram login URL and user-agent strings from [RemoteConfigRepository].
+ */
 class LoginViewModel(
     private val localStorage: LocalStorage,
     private val remoteConfigRepository: RemoteConfigRepository,

@@ -31,6 +31,18 @@ import kotlinx.coroutines.launch
 private const val TAG = "HomeViewModel"
 const val SEARCH_THRESHOLD = 3
 
+/**
+ * ViewModel governing the primary Home screen feed and user search experience.
+ *
+ * Responsibilities:
+ * - Initiates subscription verification on startup via [BillingRepository].
+ * - Automatically loads and paginates stories from the user's following list via [StoryRepository].
+ * - Implements dual-mode search:
+ *   - Local instant filtering for short queries or when browsing cached followings.
+ *   - Remote query execution with 500ms debounce when search query length >= [SEARCH_THRESHOLD].
+ * - Supports toggling between Story and Highlight viewing modes ([isHighlightMode]).
+ * - Manages session authentication state and initiates logout.
+ */
 @OptIn(FlowPreview::class)
 class HomeViewModel(
     private val storyRepository: StoryRepository,

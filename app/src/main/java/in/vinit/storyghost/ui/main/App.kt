@@ -12,6 +12,16 @@ import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.navigation.NavigationRoot
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Top-level root Composable of the application.
+ *
+ * Observes the startup destination calculated by [StartupViewModel] (evaluating
+ * force update flags, onboarding completion, and login state) and conditionally renders
+ * the main [NavigationRoot] with the resolved initial route.
+ *
+ * @param modifier The layout modifier applied to the root container.
+ * @param viewModel Injected [StartupViewModel] handling application startup logic.
+ */
 @Composable
 fun App(
     modifier: Modifier = Modifier,

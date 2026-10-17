@@ -16,6 +16,14 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "HighlightViewModel"
 
+/**
+ * ViewModel managing the highlight reels screen for an individual user profile.
+ *
+ * Responsibilities:
+ * - Fetches highlight collections and covers via [StoryRepository.getHighlightReelsByUserId].
+ * - Avoids duplicate network calls if the highlights list is already populated in [_uiState].
+ * - Emits [UiState.Loading], [UiState.Success], or [UiState.Error] to drive Compose UI states.
+ */
 class HighlightViewModel(
     private val storyRepository: StoryRepository,
     private val logger: Logger

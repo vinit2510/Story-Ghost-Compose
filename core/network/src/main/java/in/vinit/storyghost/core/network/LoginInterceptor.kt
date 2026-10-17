@@ -8,6 +8,15 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 
+/**
+ * OkHttp [Interceptor] that injects authenticated session headers into outgoing network requests.
+ *
+ * Responsibilities:
+ * - Injects the active session cookie (`Cookie`), CSRF token (`X-Csrftoken`), and generated Instagram `User-Agent`.
+ * - Sets the official Instagram Web App ID header (`X-IG-App-ID`).
+ * - Sanitizes headers against non-ASCII characters to prevent OkHttp IllegalArgumentExceptions.
+ * - Detects unauthorized or redirect responses (401, 403, 302) and automatically clears local session data.
+ */
 class LoginInterceptor(
     private val localStorage: LocalStorage,
     private val context: Context
