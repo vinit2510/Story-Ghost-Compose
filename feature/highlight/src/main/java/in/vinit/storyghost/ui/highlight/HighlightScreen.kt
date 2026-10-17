@@ -1,11 +1,11 @@
 package `in`.vinit.storyghost.ui.highlight
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
@@ -21,6 +21,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -96,41 +97,51 @@ fun HighlightContent(
             )
         }
     ) { innerPadding ->
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding()),
-            contentPadding = PaddingValues(
-                start = 15.dp,
-                end = 15.dp,
-                bottom = innerPadding.calculateBottomPadding() + 10.dp
-            ),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            when (uiState) {
-                is UiState.Loading -> {
-                    storyGridShimmerItems()
+        when (uiState) {
+            is UiState.Error -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ErrorPlaceholder(
+                        message = uiState.errorMsg.asString(),
+                        onRetryClick = onRetryClick
+                    )
                 }
+            }
 
-                is UiState.Error -> {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        ErrorPlaceholder(
-                            message = uiState.errorMsg.asString(),
-                            onRetryClick = onRetryClick
-                        )
-                    }
+            is UiState.Success if uiState.data.isEmpty() -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ErrorPlaceholder(
+                        message = "This user does not have any highlights"
+                    )
                 }
+            }
 
-                is UiState.Success -> {
-                    if (uiState.data.isEmpty()) {
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            ErrorPlaceholder(
-                                message = "This user does not have any highlights"
-                            )
-                        }
-                    } else {
+            else -> {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = innerPadding.calculateTopPadding()),
+                    contentPadding = PaddingValues(
+                        start = 15.dp,
+                        end = 15.dp,
+                        bottom = innerPadding.calculateBottomPadding() + 10.dp
+                    ),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    if (uiState is UiState.Loading) {
+                        storyGridShimmerItems()
+                    } else if (uiState is UiState.Success) {
                         items(uiState.data) { edge ->
                             val node = edge.node
                             if (node != null) {
@@ -155,6 +166,20 @@ fun HighlightScreenLoadingPreview() {
         HighlightContent(
             userName = "johndoe",
             uiState = UiState.Loading,
+            onBackClick = {},
+            onHighlightClick = {},
+            onRetryClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HighlightScreenEmptyPreview() {
+    StoryGhostTheme {
+        HighlightContent(
+            userName = "johndoe",
+            uiState = UiState.Success(emptyList()),
             onBackClick = {},
             onHighlightClick = {},
             onRetryClick = {}
