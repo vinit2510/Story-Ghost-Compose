@@ -71,6 +71,9 @@ class StoryViewModel(
     }
 
     fun loadStories(storyId: String, isHighlight: Boolean) {
+        if (_uiState.value is UiState.Success) {
+            return
+        }
         if (isHighlight) {
             loadHighlightStory(storyId)
         } else {
@@ -78,7 +81,7 @@ class StoryViewModel(
         }
     }
 
-    fun loadUserStories(userId: String) {
+    private fun loadUserStories(userId: String) {
         viewModelScope.launch {
             _uiState.update { UiState.Loading }
             val result = makeApiCall { storyRepository.getStoryByUserId(userId) }
@@ -101,7 +104,7 @@ class StoryViewModel(
         }
     }
 
-    fun loadHighlightStory(highlightId: String) {
+    private fun loadHighlightStory(highlightId: String) {
         viewModelScope.launch {
             _uiState.update { UiState.Loading }
             val result = makeApiCall { storyRepository.getHighlightStoryByReelId(highlightId) }
