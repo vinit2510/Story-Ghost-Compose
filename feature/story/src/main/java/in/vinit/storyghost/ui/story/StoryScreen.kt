@@ -634,7 +634,7 @@ fun StoryPagePreview() {
             username = "johndoe"
         ),
         displayUrl = "https://example.com/story.jpg",
-        tappableObjects = arrayListOf(
+        tappableObjects = listOf(
             Item.TappableObject(
                 typename = "GraphTappableMention",
                 x = 0.5,

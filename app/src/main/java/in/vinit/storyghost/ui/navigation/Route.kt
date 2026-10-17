@@ -1,5 +1,6 @@
 package `in`.vinit.storyghost.ui.navigation
 
+import androidx.compose.runtime.Immutable
 import androidx.navigation3.runtime.NavKey
 import `in`.vinit.storyghost.core.analytics.AnalyticsScreen
 import kotlinx.serialization.Serializable
@@ -10,6 +11,7 @@ import kotlinx.serialization.Serializable
  * Implements [NavKey] for compatibility with AndroidX Navigation 3 and provides
  * an [analyticsScreenName] for automatic screen view event tracking.
  */
+@Immutable
 @Serializable
 sealed interface Route : NavKey {
     /**

@@ -58,7 +58,7 @@ class HighlightViewModelTest {
             data = HighlightsResponse.Data(
                 user = HighlightsResponse.Data.User(
                     edgeHighlightReels = HighlightsResponse.Data.User.EdgeHighlightReels(
-                        edges = arrayListOf(mockEdge)
+                        edges = listOf(mockEdge)
                     )
                 )
             )
@@ -82,7 +82,7 @@ class HighlightViewModelTest {
             data = HighlightsResponse.Data(
                 user = HighlightsResponse.Data.User(
                     edgeHighlightReels = HighlightsResponse.Data.User.EdgeHighlightReels(
-                        edges = arrayListOf()
+                        edges = emptyList()
                     )
                 )
             )

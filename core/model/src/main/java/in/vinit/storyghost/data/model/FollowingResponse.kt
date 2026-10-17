@@ -1,7 +1,9 @@
 package `in`.vinit.storyghost.data.model
 
+import androidx.compose.runtime.Immutable
 import com.google.gson.annotations.SerializedName
 
+@Immutable
 data class FollowingResponse(
     @SerializedName("users") val users: List<User>? = null,
     @SerializedName("big_list") val bigList: Boolean? = null,
@@ -10,6 +12,7 @@ data class FollowingResponse(
     @SerializedName("has_more") val hasMore: Boolean? = null,
     @SerializedName("status") val status: String? = null
 ) {
+    @Immutable
     data class User(
         @SerializedName("pk") val pk: Long? = null,
         @SerializedName("pk_id") val pkId: Long? = null,

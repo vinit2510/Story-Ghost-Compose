@@ -190,7 +190,7 @@ fun HighlightScreenEmptyPreview() {
 @Preview(showBackground = true)
 @Composable
 fun HighlightScreenSuccessPreview() {
-    val mockEdges = arrayListOf(
+    val mockEdges = listOf(
         Edge(
             node = Edge.Node(
                 id = "h1",

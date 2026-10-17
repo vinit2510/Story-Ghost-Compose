@@ -63,12 +63,12 @@ class StoryViewModelTest {
     @Test
     fun `loadStories fetches user stories when called first time`() = runTest {
         val userId = "12345"
-        val mockItems = arrayListOf(
+        val mockItems = listOf(
             Item(id = "item_1", typename = "GraphStoryImage")
         )
         val mockResponse = UserStoryResponse(
             data = UserStoryResponse.Data(
-                reelsMedia = arrayListOf(
+                reelsMedia = listOf(
                     UserStoryResponse.Data.ReelsMedia(
                         items = mockItems
                     )
@@ -90,12 +90,12 @@ class StoryViewModelTest {
     fun `loadStories does not re-fetch when returning with same storyId and isHighlight`() =
         runTest {
             val userId = "12345"
-            val mockItems = arrayListOf(
+            val mockItems = listOf(
                 Item(id = "item_1", typename = "GraphStoryImage")
             )
             val mockResponse = UserStoryResponse(
                 data = UserStoryResponse.Data(
-                    reelsMedia = arrayListOf(
+                    reelsMedia = listOf(
                         UserStoryResponse.Data.ReelsMedia(
                             items = mockItems
                         )
@@ -125,9 +125,9 @@ class StoryViewModelTest {
         val userId = "12345"
         val mockResponse = UserStoryResponse(
             data = UserStoryResponse.Data(
-                reelsMedia = arrayListOf(
+                reelsMedia = listOf(
                     UserStoryResponse.Data.ReelsMedia(
-                        items = arrayListOf<Item>()
+                        items = emptyList()
                     )
                 )
             )
@@ -156,9 +156,9 @@ class StoryViewModelTest {
             val highlightId = "highlight_999"
             val mockResponse = UserStoryResponse(
                 data = UserStoryResponse.Data(
-                    reelsMedia = arrayListOf(
+                    reelsMedia = listOf(
                         UserStoryResponse.Data.ReelsMedia(
-                            items = arrayListOf<Item>()
+                            items = emptyList()
                         )
                     )
                 )
@@ -186,9 +186,9 @@ class StoryViewModelTest {
             val item3 = Item(id = "item_3", typename = "GraphStoryImage")
             val mockResponse = UserStoryResponse(
                 data = UserStoryResponse.Data(
-                    reelsMedia = arrayListOf(
+                    reelsMedia = listOf(
                         UserStoryResponse.Data.ReelsMedia(
-                            items = arrayListOf(item1, item2, item3)
+                            items = listOf(item1, item2, item3)
                         )
                     )
                 )

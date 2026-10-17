@@ -1,5 +1,7 @@
 package `in`.vinit.storyghost.ui
 
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import `in`.vinit.storyghost.core.common.network.ApiException
 import `in`.vinit.storyghost.core.ui.R
 import java.io.IOException
@@ -8,19 +10,25 @@ import javax.net.ssl.SSLException
 /**
  * Represents the state of a UI screen or component in Unidirectional Data Flow.
  *
+ * Annotated with [Stable] and [Immutable] to enable Compose compiler smart recomposition skipping.
+ *
  * @param T The type of data contained within the [Success] state.
  */
+@Stable
 sealed class UiState<out T> {
     /** Indicates an operation is in progress and placeholder/shimmer UI should be displayed. */
+    @Immutable
     object Loading : UiState<Nothing>()
 
     /** Indicates the operation succeeded with the resulting [data]. */
+    @Immutable
     data class Success<T>(val data: T) : UiState<T>()
 
     /**
      * Indicates an operation failed with a user-facing [errorMsg], optional [httpCode],
      * and underlying [cause].
      */
+    @Immutable
     data class Error(
         val errorMsg: UiText,
         val httpCode: Int? = null,
