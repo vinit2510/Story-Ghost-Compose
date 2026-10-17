@@ -41,7 +41,6 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -333,20 +332,8 @@ fun HomeContent(
                         }
 
                         if (isPaginating) {
-                            item(span = { GridItemSpan(maxLineSpan) }) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(28.dp),
-                                        color = MaterialTheme.colorScheme.primary,
-                                        strokeWidth = 2.dp
-                                    )
-                                }
-                            }
+                            val shimmerCount = displayList.data.size % 2 + 2
+                            storyGridShimmerItems(count = shimmerCount)
                         }
                     }
                 }
