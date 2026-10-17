@@ -85,7 +85,7 @@
     <string name="toast_installing_update">Installing Update</string>
     <string name="retry">Retry</string>
     <string name="open_source_title">Open Source</string>
-    <string name="open_source_tag">GitHub</string>
+    <string name="open_source_tag" translatable="false">GitHub</string>
     <string name="open_source_desc">Your credentials and cookies stay strictly on this device. Inspect the source code or contribute.</string>
     <string name="view_on_github">View on GitHub</string>
     <string name="no_highlights_found">This user does not have any highlights</string>
