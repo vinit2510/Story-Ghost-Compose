@@ -87,4 +87,18 @@
     <string name="open_source_title">Proyecto 100% Código Abierto</string>
     <string name="open_source_desc">Story Ghost es de código abierto. Tus credenciales de inicio de sesión y cookies se procesan localmente en tu dispositivo y nunca se recopilan ni almacenan en ningún servidor.</string>
     <string name="view_on_github">Ver código fuente en GitHub</string>
+    <string name="no_highlights_found">Este usuario no tiene historias destacadas</string>
+    <string name="no_downloads_found">¡No se han encontrado descargas!</string>
+    <string name="highlight_not_available">Historia destacada no disponible en este momento</string>
+    <string name="story_not_available">Historia no disponible en este momento</string>
+    <string name="watching_secretly">Viendo en secreto</string>
+
+    <plurals name="time_minutes_ago">
+        <item quantity="one">hace %1$d minuto</item>
+        <item quantity="other">hace %1$d minutos</item>
+    </plurals>
+    <plurals name="time_hours_ago">
+        <item quantity="one">hace %1$d hora</item>
+        <item quantity="other">hace %1$d horas</item>
+    </plurals>
 </resources>

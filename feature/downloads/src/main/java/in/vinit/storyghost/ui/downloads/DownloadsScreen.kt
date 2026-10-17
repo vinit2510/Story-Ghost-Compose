@@ -160,7 +160,7 @@ fun DownloadsContent(
                         contentAlignment = Alignment.Center
                     ) {
                         ErrorPlaceholder(
-                            message = "No downloads found!",
+                            message = stringResource(R.string.no_downloads_found),
                             modifier = Modifier.fillMaxWidth()
                         )
                     }

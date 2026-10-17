@@ -120,7 +120,7 @@ fun HighlightContent(
                     contentAlignment = Alignment.Center
                 ) {
                     ErrorPlaceholder(
-                        message = "This user does not have any highlights"
+                        message = stringResource(R.string.no_highlights_found)
                     )
                 }
             }

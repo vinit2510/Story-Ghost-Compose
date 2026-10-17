@@ -123,9 +123,9 @@ fun StoryScreen(
                     if (state.data.isEmpty()) {
                         ErrorPlaceholder(
                             message = if (isHighlight)
-                                "Highlight not available at this moment"
+                                stringResource(R.string.highlight_not_available)
                             else
-                                "Story not available at this moment"
+                                stringResource(R.string.story_not_available)
                         )
                     } else {
                         StoryContent(
@@ -236,7 +236,7 @@ fun StoryContent(
                         modifier = Modifier.size(18.dp)
                     )
                     Text(
-                        text = "Watching Secretly",
+                        text = stringResource(R.string.watching_secretly),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary
                     )

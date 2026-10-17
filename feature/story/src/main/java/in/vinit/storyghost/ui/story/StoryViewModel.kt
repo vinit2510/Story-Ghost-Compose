@@ -13,7 +13,7 @@ import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.data.story.StoryRepository
 import `in`.vinit.storyghost.ui.UiState
-import `in`.vinit.storyghost.ui.UiText
+import `in`.vinit.storyghost.ui.toUiError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -92,13 +92,7 @@ class StoryViewModel(
                 },
                 onFailure = { ex ->
                     logger.e(TAG, "loadUserStories: Failed to load stories for user $userId", ex)
-                    _uiState.update {
-                        UiState.Error(
-                            UiText.DynamicString(
-                                ex.message ?: "Failed to load stories"
-                            ), cause = ex
-                        )
-                    }
+                    _uiState.update { ex.toUiError() }
                 }
             )
         }
@@ -116,13 +110,7 @@ class StoryViewModel(
                 },
                 onFailure = { ex ->
                     logger.e(TAG, "loadHighlightStory: Failed to load highlight $highlightId", ex)
-                    _uiState.update {
-                        UiState.Error(
-                            UiText.DynamicString(
-                                ex.message ?: "Failed to load highlight"
-                            ), cause = ex
-                        )
-                    }
+                    _uiState.update { ex.toUiError() }
                 }
             )
         }

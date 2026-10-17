@@ -88,6 +88,11 @@
     <string name="open_source_desc">Story Ghost is open source. Your login credentials &amp; cookies are processed locally on your device and are never collected or stored on any server.</string>
     <string name="view_on_github">View Source Code on GitHub</string>
     <string name="github_project_url" translatable="false">https://github.com/vinit2510/Story-Ghost-Compose</string>
+    <string name="no_highlights_found">This user does not have any highlights</string>
+    <string name="no_downloads_found">No downloads found!</string>
+    <string name="highlight_not_available">Highlight not available at this moment</string>
+    <string name="story_not_available">Story not available at this moment</string>
+    <string name="watching_secretly">Watching Secretly</string>
 
     <plurals name="time_minutes_ago">
         <item quantity="one">%1$d minute ago</item>

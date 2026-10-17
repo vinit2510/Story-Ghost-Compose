@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.core.common.storage.LocalStorage
 import `in`.vinit.storyghost.core.network.makeApiCall
+import `in`.vinit.storyghost.core.ui.R
 import `in`.vinit.storyghost.data.model.UserInfoResponse
 import `in`.vinit.storyghost.data.user.UserRepository
 import `in`.vinit.storyghost.ui.UiState
@@ -38,7 +39,13 @@ class LogoutDialogViewModel(
                 localStorage.getUserData().first()
             } catch (e: Exception) {
                 logger.e(TAG, "loadUserData: Failed to load user details from localStorage", e)
-                _uiState.value = UiState.Error(UiText.DynamicString(e.message ?: "Unknown error"))
+                _uiState.value = UiState.Error(
+                    if (!e.message.isNullOrBlank()) {
+                        UiText.DynamicString(e.message!!)
+                    } else {
+                        UiText.StringResource(R.string.error_unexpected)
+                    }
+                )
                 return@launch
             }
 
@@ -56,8 +63,13 @@ class LogoutDialogViewModel(
                     localStorage.getUserId().first()
                 } catch (e: Exception) {
                     logger.e(TAG, "loadUserData: Failed to load user ID from localStorage", e)
-                    _uiState.value =
-                        UiState.Error(UiText.DynamicString(e.message ?: "Unknown error"))
+                    _uiState.value = UiState.Error(
+                        if (!e.message.isNullOrBlank()) {
+                            UiText.DynamicString(e.message!!)
+                        } else {
+                            UiText.StringResource(R.string.error_unexpected)
+                        }
+                    )
                     return@launch
                 }
 

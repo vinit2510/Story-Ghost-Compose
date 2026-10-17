@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.core.common.storage.LocalStorage
+import `in`.vinit.storyghost.core.ui.R
 import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.UiText
@@ -107,9 +108,11 @@ class LoginViewModel(
             } catch (e: Exception) {
                 logger.e(TAG, "Failed to save session", e)
                 _uiState.value = UiState.Error(
-                    errorMsg = UiText.DynamicString(
-                        e.localizedMessage ?: "Failed to save login session"
-                    ),
+                    errorMsg = if (!e.localizedMessage.isNullOrBlank()) {
+                        UiText.DynamicString(e.localizedMessage!!)
+                    } else {
+                        UiText.StringResource(R.string.failed_to_login)
+                    },
                     cause = e
                 )
             }
