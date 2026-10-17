@@ -9,6 +9,7 @@ architecture.
 [![Jetpack Compose](https://img.shields.io/badge/Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
+![Story Ghost Features Showcase](.github/assets/banner.png)
 ---
 
 ## Why Story Ghost?
@@ -41,8 +42,8 @@ Story Ghost gives you a clean, private, and ad-minimal way to:
   directly. Your credentials stay strictly on your device.
 - **Offline Downloads Gallery**: View and manage all your saved media inside the app with quick
   options to share or delete.
-- **8+ Languages**: Fully localized in English, Spanish, Hindi, French, German, Portuguese, Arabic,
-  and Japanese.
+- **Multilingual Support**: Fully localized in English, Spanish, Portuguese, Italian, Indonesian,
+  and Arabic — with community contributions for additional languages welcome!
 - **Material 3 UI**: Clean dark theme with edge-to-edge support and smooth Compose animations.
 
 ---
@@ -219,14 +220,109 @@ To run the full unit test suite across all modules:
 
 ## Contributing
 
-Contributions, bug reports, and suggestions are very welcome!
+Contributions, bug reports, and translations are very welcome! Whether you are fixing a bug, adding
+a new Compose component, optimizing architecture, or translating into your native language, your
+help makes Story Ghost better for everyone.
 
-1. Fork the repo (`https://github.com/vinit2510/Story-Ghost-Compose`)
-2. Create your feature branch (`git checkout -b feature/my-feature`)
-3. Commit your changes (`git commit -m "Add my feature"`)
-4. Make sure tests pass (`./gradlew testDebugUnitTest`)
-5. Push to the branch (`git push origin feature/my-feature`)
-6. Open a Pull Request
+### Branching Model
+
+To keep our commit history clean and prevent broken release builds, we use a two-branch workflow:
+
+- **`dev` (Default branch)**: All active development happens here. All community Pull Requests must
+  target `dev`.
+- **`master` (Production branch)**: Production-ready code only. Changes are merged from `dev` to
+  `master` only when cutting an official release.
+
+```mermaid
+flowchart LR
+    subgraph Development ["Development Flow"]
+        dev["dev (Default Branch)"]
+        feat["feat/my-feature"]
+        dev -->|"branch out"| feat
+        feat -->|"Pull Request (Squash & Merge)"| dev
+    end
+    subgraph Release ["Release Flow"]
+        master["master (Production)"]
+        tag["Tag: v1.0.0"]
+        ghRelease["GitHub Release (Signed APK)"]
+        dev -->|"Merge on Release"| master
+        master -->|"Git Tag"| tag
+        tag -->|"GitHub Actions"| ghRelease
+    end
+```
+
+> [!IMPORTANT]
+> **Always target `dev`** when submitting a Pull Request. Pull Requests opened against `master` will
+> be requested to re-target `dev`.
+
+---
+
+### Local Development (Zero Credentials Needed)
+
+You do **not** need an active Instagram account or developer credentials to contribute to Story
+Ghost:
+
+- Set `IS_MOCK=true` in your root `.env` file (the default for local development).
+- The built-in `MockInterceptor` intercepts requests and serves realistic mock JSON responses for
+  story feeds, user profiles, video reels, and highlights.
+- You can freely build, run, and test UI components, animations, and feature logic completely
+  offline.
+
+---
+
+### Pull Request Workflow
+
+1. **Fork the repository** on GitHub:
+   [https://github.com/vinit2510/Story-Ghost-Compose](https://github.com/vinit2510/Story-Ghost-Compose)
+2. **Clone your fork** and branch off `dev`:
+   ```bash
+   git checkout dev
+   git pull origin dev
+   git checkout -b feat/your-feature-name
+   ```
+3. **Make your changes** following our code style and architecture patterns.
+4. **Follow Conventional Commits** for clear and readable commit messages:
+    - `feat: add story duration badge`
+    - `fix: resolve crash on null thumbnail`
+    - `refactor: extract video controls composable`
+    - `docs: update setup guide in README`
+    - `test: add unit tests for StoryViewModel`
+5. **Run tests** and verify everything builds cleanly:
+   ```bash
+   ./gradlew testDebugUnitTest
+   ```
+6. **Push to your fork** and open a Pull Request targeting the **`dev`** branch.
+7. PRs will be reviewed and merged into `dev` using **Squash and Merge** to maintain a clean linear
+   commit history.
+
+---
+
+### Localization & Translations
+
+Help bring Story Ghost to more users worldwide! All strings are centralized in the `:core:ui`
+module:
+
+- Source strings: `core/ui/src/main/res/values/strings.xml`
+- Locale strings: `core/ui/src/main/res/values-<locale>/strings.xml` (e.g. `values-es`, `values-ar`,
+  `values-pt-rBR`)
+
+To add a new language:
+
+1. Create a new directory `core/ui/src/main/res/values-<language-code>/`
+2. Copy `strings.xml` into it and translate the string values.
+3. Submit a PR titled `feat(i18n): add <Language> translations`.
+
+---
+
+### Releases & Direct APK Downloads
+
+In addition to Google Play Store releases, production builds are automatically published on GitHub:
+
+- When a new release tag (e.g., `v1.0.0`) is pushed to `master`, GitHub Actions automatically
+  builds, signs, and publishes a new **GitHub Release** with the production APK.
+- Users and testers can download and install updates directly from
+  the [GitHub Releases page](https://github.com/vinit2510/Story-Ghost-Compose/releases) to get the
+  latest features without waiting for app store review delays.
 
 ---
 
