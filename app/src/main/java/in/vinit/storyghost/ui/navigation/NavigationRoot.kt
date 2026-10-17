@@ -21,7 +21,9 @@ import `in`.vinit.storyghost.ui.downloads.DownloadsScreen
 import `in`.vinit.storyghost.ui.forceupdate.ForceUpdateScreen
 import `in`.vinit.storyghost.ui.highlight.HighlightScreen
 import `in`.vinit.storyghost.ui.home.HomeScreen
+import `in`.vinit.storyghost.ui.login.LoginDialog
 import `in`.vinit.storyghost.ui.login.LoginWebViewScreen
+import `in`.vinit.storyghost.ui.login.LogoutDialog
 import `in`.vinit.storyghost.ui.onboarding.OnboardingScreen
 import `in`.vinit.storyghost.ui.story.StoryScreen
 import `in`.vinit.storyghost.ui.subscription.SubscriptionScreen
@@ -112,6 +114,25 @@ fun NavigationRoot(
                             },
                             onLoginClick = {
                                 backStack.add(Route.LoginWebView)
+                            },
+                            renderLoginDialog = { onDismiss ->
+                                LoginDialog(
+                                    onLoginClick = {
+                                        onDismiss()
+                                        backStack.add(Route.LoginWebView)
+                                    },
+                                    onCookieLoginSuccess = { onDismiss() },
+                                    onDismissRequest = onDismiss
+                                )
+                            },
+                            renderLogoutDialog = { onDismiss, onLogout ->
+                                LogoutDialog(
+                                    onLogoutSuccess = {
+                                        onDismiss()
+                                        onLogout()
+                                    },
+                                    onDismissRequest = onDismiss
+                                )
                             }
                         )
                     }
