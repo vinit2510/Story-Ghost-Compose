@@ -14,8 +14,8 @@ android {
         applicationId = "in.vinit.storyghost"
         minSdk = 26
         targetSdk = 37
-        versionCode = 17
-        versionName = "2.7"
+        versionCode = 20
+        versionName = "3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
