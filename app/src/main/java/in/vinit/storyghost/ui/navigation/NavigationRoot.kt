@@ -1,18 +1,13 @@
 package `in`.vinit.storyghost.ui.navigation
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.runtime.metadata
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
@@ -58,25 +53,18 @@ fun NavigationRoot(
     }
 
     NavDisplay(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
         backStack = backStack,
         onBack = popBackStack,
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
         ),
-        transitionSpec = {
-            slideInHorizontally(initialOffsetX = { it }) togetherWith
-                    slideOutHorizontally(targetOffsetX = { -it })
-        },
-        popTransitionSpec = {
-            slideInHorizontally(initialOffsetX = { -it }) togetherWith
-                    slideOutHorizontally(targetOffsetX = { it })
-        },
-        predictivePopTransitionSpec = { _ ->
-            slideInHorizontally(initialOffsetX = { -it }) togetherWith
-                    slideOutHorizontally(targetOffsetX = { it })
-        },
+        transitionSpec = { horizontalTransition() },
+        popTransitionSpec = { horizontalPopTransition() },
+        predictivePopTransitionSpec = { horizontalPopTransition() },
         entryProvider = { key ->
             when (key) {
                 is Route.Onboarding -> {
@@ -214,19 +202,4 @@ fun NavigationRoot(
 
         }
     )
-}
-
-private val slideUpTransitionMetadata = metadata {
-    put(NavDisplay.TransitionKey) {
-        slideInVertically(initialOffsetY = { it }) togetherWith
-                ExitTransition.KeepUntilTransitionsFinished
-    }
-    put(NavDisplay.PopTransitionKey) {
-        EnterTransition.None togetherWith
-                slideOutVertically(targetOffsetY = { it })
-    }
-    put(NavDisplay.PredictivePopTransitionKey) { _ ->
-        EnterTransition.None togetherWith
-                slideOutVertically(targetOffsetY = { it })
-    }
 }

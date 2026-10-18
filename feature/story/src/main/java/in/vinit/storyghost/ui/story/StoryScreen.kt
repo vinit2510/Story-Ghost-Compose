@@ -429,7 +429,7 @@ fun StoryPage(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 15.dp),
+                .padding(start = 20.dp, end = 20.dp, top = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {

@@ -42,6 +42,8 @@ fun App(
             NavigationRoot(
                 initialRoute = state.data,
                 modifier = modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
             )
         }
 
