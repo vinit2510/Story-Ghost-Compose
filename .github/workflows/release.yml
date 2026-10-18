@@ -17,6 +17,8 @@ jobs:
   release:
     name: Build, Sign & Publish
     runs-on: ubuntu-latest
+    env:
+      GRADLE_OPTS: "-Xmx4096m -Dfile.encoding=UTF-8"
 
     steps:
       - name: Checkout Code
@@ -53,8 +55,11 @@ jobs:
       - name: Run Unit Tests
         run: ./gradlew testDebugUnitTest --no-daemon --stacktrace
 
-      - name: Build Release Bundle & APK
-        run: ./gradlew :app:bundleRelease :app:assembleRelease --no-daemon --stacktrace
+      - name: Build Release Bundle (AAB)
+        run: ./gradlew :app:bundleRelease --no-daemon --stacktrace
+
+      - name: Build Release APK
+        run: ./gradlew :app:assembleRelease --no-daemon --stacktrace
 
       - name: Sign Release AAB
         uses: r0adkll/sign-android-release@v1
