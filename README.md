@@ -5,7 +5,7 @@ download media — built 100% with **Jetpack Compose**, **Material 3**, and mode
 architecture.
 
 [![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-3DDC84?logo=android&logoColor=white)](https://android.com)
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.4.0-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org)
 [![Jetpack Compose](https://img.shields.io/badge/Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
@@ -42,8 +42,9 @@ Story Ghost gives you a clean, private, and ad-minimal way to:
   directly. Your credentials stay strictly on your device.
 - **Offline Downloads Gallery**: View and manage all your saved media inside the app with quick
   options to share or delete.
-- **Multilingual Support**: Fully localized in English, Spanish, Portuguese, Italian, Indonesian,
-  and Arabic — with community contributions for additional languages welcome!
+- **Multilingual Support**: Fully localized in 8 languages (English, Arabic, French, Indonesian,
+  Italian, Portuguese, Spanish, and Turkish) — with community contributions for additional
+  languages welcome!
 - **Material 3 UI**: Clean dark theme with edge-to-edge support and smooth Compose animations.
 
 ---

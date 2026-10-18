@@ -40,14 +40,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import `in`.vinit.storyghost.config.AppConfig
 import `in`.vinit.storyghost.core.ui.R
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.OpenSourceNoticeCard
 import `in`.vinit.storyghost.ui.component.PrimaryButton
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 
 @Composable
 fun LoginDialog(
@@ -55,8 +53,7 @@ fun LoginDialog(
     onCookieLoginSuccess: () -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LoginDialogViewModel = koinViewModel(),
-    appConfig: AppConfig = koinInject()
+    viewModel: LoginDialogViewModel = koinViewModel()
 ) {
     val cookieMinVersionState by viewModel.cookieMinVersion.collectAsStateWithLifecycle()
     val openSourceUrl = remember { viewModel.getOpenSourceContributionUrl() }
@@ -68,7 +65,7 @@ fun LoginDialog(
             is UiState.Success -> state.data
             else -> 1
         }
-        val isCookieLoginEnabled = appConfig.versionCode >= cookieMinVersion
+        val isCookieLoginEnabled = viewModel.isCookieLoginEnabled(cookieMinVersion)
 
         LoginDialogContent(
             isCookieLoginEnabled = isCookieLoginEnabled,

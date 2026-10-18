@@ -65,11 +65,9 @@ fun Throwable.toUiError(): UiState.Error = when (this) {
     )
 
     else -> UiState.Error(
-        errorMsg = if (!message.isNullOrBlank()) {
-            UiText.DynamicString(message!!)
-        } else {
-            UiText.StringResource(R.string.error_unexpected)
-        },
+        errorMsg = message?.takeIf { it.isNotBlank() }
+            ?.let { UiText.DynamicString(it) }
+            ?: UiText.StringResource(R.string.error_unexpected),
         cause = this
     )
 }

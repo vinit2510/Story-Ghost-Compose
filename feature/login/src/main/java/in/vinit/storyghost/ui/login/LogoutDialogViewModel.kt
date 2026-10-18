@@ -11,6 +11,7 @@ import `in`.vinit.storyghost.data.model.UserInfoResponse
 import `in`.vinit.storyghost.data.user.UserRepository
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.UiText
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -38,13 +39,12 @@ class LogoutDialogViewModel(
             val userJson = try {
                 localStorage.getUserData().first()
             } catch (e: Exception) {
+                if (e is CancellationException) throw e
                 logger.e(TAG, "loadUserData: Failed to load user details from localStorage", e)
                 _uiState.value = UiState.Error(
-                    if (!e.message.isNullOrBlank()) {
-                        UiText.DynamicString(e.message!!)
-                    } else {
-                        UiText.StringResource(R.string.error_unexpected)
-                    }
+                    e.message?.takeIf { it.isNotBlank() }
+                        ?.let { UiText.DynamicString(it) }
+                        ?: UiText.StringResource(R.string.error_unexpected)
                 )
                 return@launch
             }
@@ -62,13 +62,12 @@ class LogoutDialogViewModel(
                 val userId = try {
                     localStorage.getUserId().first()
                 } catch (e: Exception) {
+                    if (e is CancellationException) throw e
                     logger.e(TAG, "loadUserData: Failed to load user ID from localStorage", e)
                     _uiState.value = UiState.Error(
-                        if (!e.message.isNullOrBlank()) {
-                            UiText.DynamicString(e.message!!)
-                        } else {
-                            UiText.StringResource(R.string.error_unexpected)
-                        }
+                        e.message?.takeIf { it.isNotBlank() }
+                            ?.let { UiText.DynamicString(it) }
+                            ?: UiText.StringResource(R.string.error_unexpected)
                     )
                     return@launch
                 }

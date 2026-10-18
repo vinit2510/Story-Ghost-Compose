@@ -6,6 +6,7 @@ import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.data.downloads.DownloadsRepository
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.UiText
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,6 +42,7 @@ class DownloadsViewModel(
                 val files = downloadsRepository.getDownloadedFiles()
                 _fileList.value = UiState.Success(files)
             } catch (e: Exception) {
+                if (e is CancellationException) throw e
                 logger.e(TAG, "loadDownloads: Failed to load downloaded files", e)
                 _fileList.value =
                     UiState.Error(UiText.DynamicString(e.message ?: "Failed to load files"))

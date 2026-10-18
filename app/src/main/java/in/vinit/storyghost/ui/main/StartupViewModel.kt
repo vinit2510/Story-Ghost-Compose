@@ -8,6 +8,7 @@ import `in`.vinit.storyghost.data.local.LocalDataSource
 import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.navigation.Route
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -55,6 +56,7 @@ class StartupViewModel(
             val isOnboarded = try {
                 localRepository.isOnboarded().first()
             } catch (e: Exception) {
+                if (e is CancellationException) throw e
                 logger.e(TAG, "Error reading isOnboarded preference from local storage", e)
                 false
             }

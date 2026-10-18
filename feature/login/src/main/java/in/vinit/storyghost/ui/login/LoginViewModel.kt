@@ -8,6 +8,7 @@ import `in`.vinit.storyghost.core.ui.R
 import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.UiText
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -115,13 +116,14 @@ class LoginViewModel(
                 localStorage.setOnboarded(true)
                 _uiState.value = UiState.Success(true)
             } catch (e: Exception) {
+                if (e is CancellationException) throw e
                 logger.e(TAG, "Failed to save session", e)
                 _uiState.value = UiState.Error(
-                    errorMsg = if (!e.localizedMessage.isNullOrBlank()) {
-                        UiText.DynamicString(e.localizedMessage!!)
-                    } else {
-                        UiText.StringResource(R.string.failed_to_login)
-                    },
+                    errorMsg = e.localizedMessage?.takeIf { it.isNotBlank() }
+                        ?.let { UiText.DynamicString(it) }
+                        ?: e.message?.takeIf { it.isNotBlank() }
+                        ?.let { UiText.DynamicString(it) }
+                        ?: UiText.StringResource(R.string.failed_to_login),
                     cause = e
                 )
             }
