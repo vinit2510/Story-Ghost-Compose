@@ -239,10 +239,11 @@ fun SubscriptionContent(
 fun SubscriptionPlansList(
     subscriptionPlans: List<SubscriptionPlan>,
     selectedPlan: SubscriptionViewModel.Plan,
-    onPlanSelect: (SubscriptionViewModel.Plan) -> Unit
+    onPlanSelect: (SubscriptionViewModel.Plan) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -296,13 +297,14 @@ fun PlanCard(
     features: List<String>,
     isSelected: Boolean,
     showBestValue: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
     val borderStroke = BorderStroke(2.dp, borderColor)
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(20.dp),

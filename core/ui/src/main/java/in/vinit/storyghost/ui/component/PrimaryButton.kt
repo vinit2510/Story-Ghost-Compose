@@ -20,9 +20,9 @@ import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 
 @Composable
 fun PrimaryButton(
-    modifier: Modifier = Modifier,
     text: String,
     color: Color,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
     Button(
@@ -35,14 +35,14 @@ fun PrimaryButton(
     ) {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             Text(
-                text,
+                text = text,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_continue),
-                "",
+                contentDescription = null,
                 modifier = Modifier.align(Alignment.CenterEnd),
                 tint = MaterialTheme.colorScheme.onSurface
             )
@@ -54,6 +54,10 @@ fun PrimaryButton(
 @Composable
 private fun PrimaryButtonPreview() {
     StoryGhostTheme {
-        PrimaryButton(Modifier.fillMaxWidth(), "Button", MaterialTheme.colorScheme.surface)
+        PrimaryButton(
+            text = "Button",
+            color = MaterialTheme.colorScheme.surface,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }

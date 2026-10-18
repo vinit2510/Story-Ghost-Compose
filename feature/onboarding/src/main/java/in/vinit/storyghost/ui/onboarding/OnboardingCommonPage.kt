@@ -24,17 +24,18 @@ import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 fun OnboardingCommonPage(
     @DrawableRes image: Int,
     @StringRes title: Int,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(top = 10.dp, bottom = 30.dp)
             .padding(horizontal = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painterResource(image),
-            "Onboarding Image",
+            painter = painterResource(image),
+            contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),

@@ -54,6 +54,7 @@ fun LoginDialog(
     onLoginClick: () -> Unit,
     onCookieLoginSuccess: () -> Unit,
     onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: LoginDialogViewModel = koinViewModel(),
     appConfig: AppConfig = koinInject()
 ) {
@@ -77,7 +78,8 @@ fun LoginDialog(
                 onDismissRequest()
                 onCookieLoginSuccess()
             },
-            onDismissRequest = onDismissRequest
+            onDismissRequest = onDismissRequest,
+            modifier = modifier
         )
     }
 }
@@ -88,8 +90,8 @@ fun LoginDialogContent(
     onLoginClick: () -> Unit,
     onCookieLoginSuccess: () -> Unit,
     onDismissRequest: () -> Unit,
-    openSourceUrl: String = "",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    openSourceUrl: String = ""
 ) {
     val showCookieDialog = remember { mutableStateOf(false) }
 

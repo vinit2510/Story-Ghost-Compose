@@ -32,7 +32,8 @@ import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 @Composable
 fun SubscriptionSuccessDialog(
     plan: SubscriptionViewModel.Plan,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val planText = when (plan) {
         SubscriptionViewModel.Plan.MONTHLY -> stringResource(R.string.monthly)
@@ -42,7 +43,8 @@ fun SubscriptionSuccessDialog(
     Dialog(onDismissRequest = onDismiss) {
         SubscriptionSuccessDialogContent(
             planText = planText,
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
+            modifier = modifier
         )
     }
 }

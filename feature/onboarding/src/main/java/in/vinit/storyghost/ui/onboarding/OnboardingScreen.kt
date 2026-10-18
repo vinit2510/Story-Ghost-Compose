@@ -74,8 +74,8 @@ fun OnboardingContent(
     onComplete: () -> Unit,
     onLoginClick: () -> Unit,
     onCookieLoginClick: () -> Unit,
-    openSourceUrl: String = "",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    openSourceUrl: String = ""
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
     val scope = rememberCoroutineScope()

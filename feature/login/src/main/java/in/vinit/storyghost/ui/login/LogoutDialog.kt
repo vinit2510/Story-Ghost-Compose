@@ -42,6 +42,7 @@ import org.koin.androidx.compose.koinViewModel
 fun LogoutDialog(
     onLogoutSuccess: () -> Unit,
     onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: LogoutDialogViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -52,7 +53,7 @@ fun LogoutDialog(
         when (val state = uiState) {
             is UiState.Loading -> {
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.small,
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                 ) {
@@ -76,7 +77,8 @@ fun LogoutDialog(
                         viewModel.logout()
                         onLogoutSuccess()
                     },
-                    onDismissRequest = onDismissRequest
+                    onDismissRequest = onDismissRequest,
+                    modifier = modifier
                 )
             }
 
@@ -87,7 +89,8 @@ fun LogoutDialog(
                         viewModel.logout()
                         onLogoutSuccess()
                     },
-                    onDismissRequest = onDismissRequest
+                    onDismissRequest = onDismissRequest,
+                    modifier = modifier
                 )
             }
         }
@@ -134,7 +137,7 @@ fun LogoutDialogContent(
                     .padding(top = 20.dp)
                     .size(100.dp)
                     .clip(CircleShape)
-                    .border(2.dp, MaterialTheme.colorScheme.tertiary, CircleShape),
+                    .border(2.dp, MaterialTheme.colorScheme.outline, CircleShape),
                 placeholder = painterResource(R.drawable.avatar_instagram_user),
                 error = painterResource(R.drawable.avatar_instagram_user)
             )
@@ -144,7 +147,7 @@ fun LogoutDialogContent(
                 Text(
                     text = stringResource(R.string.insta_username, username),
                     modifier = Modifier.padding(top = 10.dp),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }

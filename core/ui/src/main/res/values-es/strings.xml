@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="error_unauthorized">Inicia sesión para obtener datos</string>
     <string name="error_not_found">Error No Encontrado</string>
     <string name="error_server">Error del Servidor</string>
@@ -93,11 +93,11 @@
     <string name="story_not_available">Historia no disponible en este momento</string>
     <string name="watching_secretly">Viendo en secreto</string>
 
-    <plurals name="time_minutes_ago">
+    <plurals name="time_minutes_ago" tools:ignore="MissingQuantity">
         <item quantity="one">hace %1$d minuto</item>
         <item quantity="other">hace %1$d minutos</item>
     </plurals>
-    <plurals name="time_hours_ago">
+    <plurals name="time_hours_ago" tools:ignore="MissingQuantity">
         <item quantity="one">hace %1$d hora</item>
         <item quantity="other">hace %1$d horas</item>
     </plurals>

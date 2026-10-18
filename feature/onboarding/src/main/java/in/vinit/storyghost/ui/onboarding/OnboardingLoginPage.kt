@@ -38,10 +38,11 @@ fun OnboardingLoginPage(
     isCookieLoginEnabled: Boolean,
     onLoginClick: () -> Unit,
     onCookieLoginClick: () -> Unit,
+    modifier: Modifier = Modifier,
     openSourceUrl: String = ""
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 28.dp)
             .verticalScroll(rememberScrollState(), reverseScrolling = true),
@@ -52,35 +53,34 @@ fun OnboardingLoginPage(
         Spacer(Modifier.size(50.dp))
 
         AccountTypeSection(
-            R.drawable.avatar_real_user,
-            R.string.real_user_name,
-            R.string.real_name,
-            R.string.real_account_login_msg
+            image = R.drawable.avatar_real_user,
+            username = R.string.real_user_name,
+            name = R.string.real_name,
+            description = R.string.real_account_login_msg
         )
 
         DashedDivider(
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 20.dp),
-            MaterialTheme.colorScheme.tertiary
+                .padding(vertical = 20.dp)
         )
 
         AccountTypeSection(
-            R.drawable.avatar_instagram_user,
-            R.string.fake10,
-            R.string.fake_user,
-            R.string.fake_account_login_msg
+            image = R.drawable.avatar_instagram_user,
+            username = R.string.fake10,
+            name = R.string.fake_user,
+            description = R.string.fake_account_login_msg
         )
 
         PrimaryButton(
+            text = stringResource(R.string.login_with_ig),
+            color = MaterialTheme.colorScheme.surface,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 50.dp),
-            text = stringResource(R.string.login_with_ig),
-            color = MaterialTheme.colorScheme.surface
-        ) {
-            onLoginClick()
-        }
+            onClick = onLoginClick
+        )
 
         if (isCookieLoginEnabled) {
             Row(
@@ -136,17 +136,21 @@ private fun AccountTypeSection(
     @DrawableRes image: Int,
     @StringRes username: Int,
     @StringRes name: Int,
-    @StringRes description: Int
+    @StringRes description: Int,
+    modifier: Modifier = Modifier
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(25.dp)) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(25.dp)
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             Image(
-                painterResource(image),
-                "Profile photo",
+                painter = painterResource(image),
+                contentDescription = null,
                 modifier = Modifier
                     .size(96.dp)
                     .clip(CircleShape),

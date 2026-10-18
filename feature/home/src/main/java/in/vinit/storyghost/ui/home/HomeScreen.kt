@@ -90,8 +90,8 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
     onStoryClick: (userId: String, userName: String, isHighlight: Boolean) -> Unit,
+    modifier: Modifier = Modifier,
     onLoginClick: () -> Unit = {},
     onDownloadsClick: () -> Unit = {},
     onPremiumClick: () -> Unit = {},
@@ -186,7 +186,6 @@ fun HomeContent(
     isHighlightMode: Boolean,
     profilePicUrl: String?,
     isPremium: Boolean,
-    isPaginating: Boolean = false,
     onHighlightToggle: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
     onSearchClick: () -> Unit,
@@ -195,8 +194,9 @@ fun HomeContent(
     onPremiumClick: () -> Unit,
     onProfileClick: () -> Unit,
     onRetryClick: () -> Unit,
-    onLoadMore: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isPaginating: Boolean = false,
+    onLoadMore: () -> Unit = {}
 ) {
     val gridState = rememberLazyGridState()
     val coroutineScope = rememberCoroutineScope()

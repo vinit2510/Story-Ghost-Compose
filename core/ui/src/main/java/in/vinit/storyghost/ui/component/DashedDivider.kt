@@ -16,8 +16,8 @@ import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 
 @Composable
 fun DashedDivider(
-    modifier: Modifier,
     color: Color,
+    modifier: Modifier = Modifier,
     thickness: Dp = 2.dp,
     dashWidth: Dp = 8.dp,
     dashGap: Dp = 8.dp
@@ -46,10 +46,10 @@ fun DashedDivider(
 private fun DashedDividerPreview() {
     StoryGhostTheme {
         DashedDivider(
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            color = MaterialTheme.colorScheme.tertiary
+                .padding(16.dp)
         )
     }
 }
