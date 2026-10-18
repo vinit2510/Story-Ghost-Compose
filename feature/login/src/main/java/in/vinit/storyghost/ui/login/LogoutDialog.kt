@@ -145,7 +145,7 @@ fun LogoutDialogContent(
             val username = displayUser?.username
             if (!username.isNullOrBlank()) {
                 Text(
-                    text = stringResource(R.string.insta_username, username),
+                    text = "@$username",
                     modifier = Modifier.padding(top = 10.dp),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface

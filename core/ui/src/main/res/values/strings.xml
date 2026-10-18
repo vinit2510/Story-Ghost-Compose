@@ -36,7 +36,6 @@
     <string name="find_highlights">Find Highlights</string>
     <string name="search_any_user_highlights">search any user highlights…</string>
     <string name="highlight_desc">Search or tap on below user to see their highlights</string>
-    <string name="insta_username">@%1$s</string>
     <string name="login_with_instagram">Login with Instagram</string>
     <string name="instagram_account_is_required">Instagram account is required to get stories data</string>
     <string name="your_account">Your Account</string>

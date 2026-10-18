@@ -105,7 +105,7 @@ fun MediaGridItem(
                         )
                     ) {
                         val displayText = if (prefixUsername) {
-                            stringResource(R.string.insta_username, title)
+                            "@$title"
                         } else {
                             title
                         }

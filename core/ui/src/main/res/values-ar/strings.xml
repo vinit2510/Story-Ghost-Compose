@@ -36,7 +36,6 @@
     <string name="find_highlights">البحث عن الهايلايت</string>
     <string name="search_any_user_highlights">ابحث عن هايلايت أي مستخدم…</string>
     <string name="highlight_desc">ابحث أو اضغط على المستخدم أدناه لمشاهدة الهايلايت الخاصة به</string>
-    <string name="insta_username">@%1$s</string>
     <string name="login_with_instagram">تسجيل الدخول باستخدام إنستغرام</string>
     <string name="instagram_account_is_required">يلزم حساب إنستغرام للحصول على بيانات القصص</string>
     <string name="your_account">حسابك</string>

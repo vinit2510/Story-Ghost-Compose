@@ -36,7 +36,6 @@
     <string name="find_highlights">Buscar Destacados</string>
     <string name="search_any_user_highlights">buscar destacados de cualquier usuario…</string>
     <string name="highlight_desc">Busca o toca el usuario de abajo para ver sus destacados</string>
-    <string name="insta_username">@%1$s</string>
     <string name="login_with_instagram">Iniciar sesión con Instagram</string>
     <string name="instagram_account_is_required">Se requiere una cuenta de Instagram para obtener los datos de las historias</string>
     <string name="your_account">Tu Cuenta</string>

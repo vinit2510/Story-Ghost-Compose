@@ -122,7 +122,7 @@ fun MentionPopupContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = stringResource(R.string.insta_username, username),
+                        text = "@$username",
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         maxLines = 1,
