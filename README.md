@@ -7,6 +7,7 @@ architecture.
 [![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-3DDC84?logo=android&logoColor=white)](https://android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.4.0-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org)
 [![Jetpack Compose](https://img.shields.io/badge/Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
+[![CI](https://github.com/vinit2510/Story-Ghost-Compose/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/vinit2510/Story-Ghost-Compose/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ![Story Ghost Features Showcase](.github/assets/banner.png)
@@ -221,97 +222,21 @@ To run the full unit test suite across all modules:
 
 ## Contributing
 
-Contributions, bug reports, and translations are very welcome! Whether you are fixing a bug, adding
-a new Compose component, optimizing architecture, or translating into your native language, your
-help makes Story Ghost better for everyone.
+Contributions, bug reports, and translations are very welcome!
 
-### Branching Model
-
-To keep our commit history clean and prevent broken release builds, we use a two-branch workflow:
-
-- **`dev` (Default branch)**: All active development happens here. All community Pull Requests must
-  target `dev`.
-- **`master` (Production branch)**: Production-ready code only. Changes are merged from `dev` to
-  `master` only when cutting an official release.
-
-```mermaid
-flowchart LR
-    subgraph Development ["Development Flow"]
-        dev["dev (Default Branch)"]
-        feat["feat/my-feature"]
-        dev -->|"branch out"| feat
-        feat -->|"Pull Request (Squash & Merge)"| dev
-    end
-    subgraph Release ["Release Flow"]
-        master["master (Production)"]
-        tag["Tag: v1.0.0"]
-        ghRelease["GitHub Release (Signed APK)"]
-        dev -->|"Merge on Release"| master
-        master -->|"Git Tag"| tag
-        tag -->|"GitHub Actions"| ghRelease
-    end
-```
-
-> [!IMPORTANT]
-> **Always target `dev`** when submitting a Pull Request. Pull Requests opened against `master` will
-> be requested to re-target `dev`.
-
----
-
-### Local Development (Zero Credentials Needed)
-
-You do **not** need an active Instagram account or developer credentials to contribute to Story
-Ghost:
-
-- Set `IS_MOCK=true` in your root `.env` file (the default for local development).
-- The built-in `MockInterceptor` intercepts requests and serves realistic mock JSON responses for
-  story feeds, user profiles, video reels, and highlights.
-- You can freely build, run, and test UI components, animations, and feature logic completely
-  offline.
-
----
-
-### Pull Request Workflow
-
-1. **Fork the repository** on GitHub:
-   [https://github.com/vinit2510/Story-Ghost-Compose](https://github.com/vinit2510/Story-Ghost-Compose)
-2. **Clone your fork** and branch off `dev`:
+1. **Fork & Branch**: Create a feature branch off **`dev`**:
    ```bash
-   git checkout dev
-   git pull origin dev
    git checkout -b feat/your-feature-name
    ```
-3. **Make your changes** following our code style and architecture patterns.
-4. **Follow Conventional Commits** for clear and readable commit messages:
-    - `feat: add story duration badge`
-    - `fix: resolve crash on null thumbnail`
-    - `refactor: extract video controls composable`
-    - `docs: update setup guide in README`
-    - `test: add unit tests for StoryViewModel`
-5. **Run tests** and verify everything builds cleanly:
+2. **Local Development**: No API keys or credentials needed. Keep `IS_MOCK=true` in `.env` (default) to develop and test offline with mock data.
+3. **Run Tests**: Verify that unit tests pass:
    ```bash
    ./gradlew testDebugUnitTest
    ```
-6. **Push to your fork** and open a Pull Request targeting the **`dev`** branch.
-7. PRs will be reviewed and merged into `dev` using **Squash and Merge** to maintain a clean linear
-   commit history.
+4. **Submit PR**: Open a Pull Request targeting the **`dev`** branch using [Conventional Commits](https://www.conventionalcommits.org/).
 
----
-
-### Localization & Translations
-
-Help bring Story Ghost to more users worldwide! All strings are centralized in the `:core:ui`
-module:
-
-- Source strings: `core/ui/src/main/res/values/strings.xml`
-- Locale strings: `core/ui/src/main/res/values-<locale>/strings.xml` (e.g. `values-es`, `values-ar`,
-  `values-pt-rBR`)
-
-To add a new language:
-
-1. Create a new directory `core/ui/src/main/res/values-<language-code>/`
-2. Copy `strings.xml` into it and translate the string values.
-3. Submit a PR titled `feat(i18n): add <Language> translations`.
+### Localization
+To add or update translations, edit the string resources in `core/ui/src/main/res/values-<locale>/strings.xml` and submit a PR titled `feat(i18n): add <Language> translations`.
 
 ---
 
