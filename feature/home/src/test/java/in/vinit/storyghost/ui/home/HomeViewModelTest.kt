@@ -28,6 +28,7 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.HttpException
 import retrofit2.Response
+import okhttp3.ResponseBody.Companion.toResponseBody
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
@@ -116,7 +117,7 @@ class HomeViewModelTest {
     @Test
     fun `loadStoryList 401 unauthorized triggers login dialog`() = runTest {
         val httpException =
-            HttpException(Response.error<Any>(401, okhttp3.ResponseBody.create(null, "")))
+            HttpException(Response.error<Any>(401, "".toResponseBody(null)))
         coEvery { storyRepository.getFollowing("user_123", any()) } throws httpException
 
         viewModel = createViewModel()
