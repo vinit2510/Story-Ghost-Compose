@@ -28,7 +28,6 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":data:user"))
     implementation(project(":data:config"))
-    implementation(project(":feature:login"))
 
     implementation(libs.androidx.core.ktx)
     implementation(platform(libs.androidx.compose.bom))

@@ -32,7 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import `in`.vinit.storyghost.core.ui.R
-import `in`.vinit.storyghost.ui.login.LoginWithCookieDialog
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -42,6 +41,7 @@ fun OnboardingScreen(
     onboardingComplete: () -> Unit,
     onLoginClick: () -> Unit,
     modifier: Modifier = Modifier,
+    renderCookieLoginDialog: (@Composable (onDismiss: () -> Unit, onLoginSuccess: () -> Unit) -> Unit)? = null,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
     val isCookieLoginEnabled = remember { viewModel.isCookieLoginEnabled() }
@@ -49,9 +49,9 @@ fun OnboardingScreen(
     var showCookieDialog by remember { mutableStateOf(false) }
 
     if (showCookieDialog) {
-        LoginWithCookieDialog(
-            onDismissRequest = { showCookieDialog = false },
-            onLoginSuccess = {
+        renderCookieLoginDialog?.invoke(
+            /* onDismiss = */ { showCookieDialog = false },
+            /* onLoginSuccess = */ {
                 showCookieDialog = false
                 onboardingComplete()
             }

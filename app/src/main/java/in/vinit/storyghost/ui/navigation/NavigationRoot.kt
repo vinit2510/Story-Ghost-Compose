@@ -23,6 +23,7 @@ import `in`.vinit.storyghost.ui.highlight.HighlightScreen
 import `in`.vinit.storyghost.ui.home.HomeScreen
 import `in`.vinit.storyghost.ui.login.LoginDialog
 import `in`.vinit.storyghost.ui.login.LoginWebViewScreen
+import `in`.vinit.storyghost.ui.login.LoginWithCookieDialog
 import `in`.vinit.storyghost.ui.login.LogoutDialog
 import `in`.vinit.storyghost.ui.onboarding.OnboardingScreen
 import `in`.vinit.storyghost.ui.story.StoryScreen
@@ -87,6 +88,12 @@ fun NavigationRoot(
                             },
                             onLoginClick = {
                                 backStack.add(Route.LoginWebView)
+                            },
+                            renderCookieLoginDialog = { onDismiss, onLoginSuccess ->
+                                LoginWithCookieDialog(
+                                    onDismissRequest = onDismiss,
+                                    onLoginSuccess = onLoginSuccess
+                                )
                             }
                         )
                     }
