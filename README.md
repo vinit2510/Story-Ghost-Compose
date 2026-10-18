@@ -5,12 +5,20 @@ download media — built 100% with **Jetpack Compose**, **Material 3**, and mode
 architecture.
 
 [![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-3DDC84?logo=android&logoColor=white)](https://android.com)
+[![Google Play](https://img.shields.io/badge/Google_Play-Story_Ghost-414141?logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=in.vinit.storyghost)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.4.0-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org)
 [![Jetpack Compose](https://img.shields.io/badge/Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
 [![CI](https://github.com/vinit2510/Story-Ghost-Compose/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/vinit2510/Story-Ghost-Compose/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ![Story Ghost Features Showcase](.github/assets/banner.png)
+
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=in.vinit.storyghost">
+    <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="75">
+  </a>
+</p>
+
 ---
 
 ## Why Story Ghost?
@@ -242,7 +250,7 @@ To add or update translations, edit the string resources in `core/ui/src/main/re
 
 ### Releases & Direct APK Downloads
 
-In addition to Google Play Store releases, production builds are automatically published on GitHub:
+In addition to [Google Play Store](https://play.google.com/store/apps/details?id=in.vinit.storyghost) releases, production builds are automatically published on GitHub:
 
 - When a new release tag (e.g., `v1.0.0`) is pushed to `master`, GitHub Actions automatically
   builds, signs, and publishes a new **GitHub Release** with the production APK.
