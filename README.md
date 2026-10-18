@@ -51,6 +51,8 @@ Story Ghost gives you a clean, private, and ad-minimal way to:
   directly. Your credentials stay strictly on your device.
 - **Offline Downloads Gallery**: View and manage all your saved media inside the app with quick
   options to share or delete.
+- **Seamless DataStore Migration**: Automatic migration from legacy SharedPreferences to Jetpack
+  DataStore ensures existing users receive a smooth, uninterrupted update without session loss.
 - **Multilingual Support**: Fully localized in 8 languages (English, Arabic, French, Indonesian,
   Italian, Portuguese, Spanish, and Turkish) — with community contributions for additional
   languages welcome!
@@ -145,7 +147,7 @@ graph TD
 - **Media Playback:** AndroidX Media3 (ExoPlayer)
 - **Image Loading:** Coil 3 (with video thumbnail decoding)
 - **Networking:** Retrofit 2, OkHttp 3, Gson
-- **Local Storage:** Jetpack DataStore Preferences
+- **Local Storage:** Jetpack DataStore Preferences (with automated SharedPreferences migration)
 - **Testing:** JUnit 4, MockK, Cash App Turbine
 
 ---
