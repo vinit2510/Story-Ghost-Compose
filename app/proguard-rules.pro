@@ -1,21 +1,35 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Preserve SourceFile and LineNumberTable for Crashlytics de-obfuscation
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Preserve annotations and generic signatures
+-keepattributes Signature,InnerClasses,EnclosingMethod
+-keepattributes RuntimeVisibleAnnotations,RuntimeVisibleParameterAnnotations
+-keepattributes AnnotationDefault
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Koin Dependency Injection - keep ViewModel constructors for reflection/injection
+# Note: ViewModel class names and internal methods are safely obfuscated; only constructor signatures are retained
+-keepclassmembers class * extends androidx.lifecycle.ViewModel {
+    <init>(...);
+}
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Navigation 3 & Kotlinx Serialization - preserve serializers and companion objects for NavKey route serialization
+-keepclassmembers class * {
+    *** Companion;
+}
+-keepclasseswithmembers class * {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+-keepclassmembers class **$Companion {
+    public kotlinx.serialization.KSerializer serializer(...);
+}
+-keepclassmembers class * extends kotlinx.serialization.internal.GeneratedSerializer {
+    <init>(...);
+}
+-keep class in.vinit.storyghost.ui.navigation.Route** { *; }
+-dontnote kotlinx.serialization.SerializationKt
+
+# Suppress harmless warnings for optional / tooling annotations
+-dontwarn javax.annotation.**
+-dontwarn org.checkerframework.**
+-dontwarn com.google.errorprone.annotations.**

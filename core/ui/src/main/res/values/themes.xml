@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.StoryGhostCompose" parent="android:Theme.Material.Light.NoActionBar">
+
+        <item name="android:windowSplashScreenBackground" tools:targetApi="s">#101415</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">
+            @drawable/ic_app_logo_splash
+        </item>
+    </style>
+</resources>

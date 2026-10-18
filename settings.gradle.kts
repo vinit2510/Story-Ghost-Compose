@@ -1,12 +1,6 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
+        google()
         mavenCentral()
         gradlePluginPortal()
     }
@@ -23,5 +17,34 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Story-Ghost-Compose"
-include(":app")
- 
+
+include(
+    ":app",
+
+    // Core Modules
+    ":core:model",
+    ":core:network",
+    ":core:ui",
+    ":core:common",
+    ":core:analytics",
+    ":core:ads",
+    ":core:play",
+
+    // Data Modules
+    ":data:local",
+    ":data:story",
+    ":data:user",
+    ":data:billing",
+    ":data:downloads",
+    ":data:config",
+
+    // Feature Modules
+    ":feature:home",
+    ":feature:story",
+    ":feature:highlight",
+    ":feature:login",
+    ":feature:onboarding",
+    ":feature:downloads",
+    ":feature:subscription",
+    ":feature:forceupdate"
+)

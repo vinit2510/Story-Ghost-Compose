@@ -13,14 +13,24 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import `in`.vinit.storyghost.core.ads.AppOpenAdManager
 import `in`.vinit.storyghost.core.analytics.LocalAnalyticsLogger
-import `in`.vinit.storyghost.core.play.InAppUpdate
+import `in`.vinit.storyghost.core.play.InAppUpdateManager
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 import org.koin.android.ext.android.inject
 import org.koin.compose.koinInject
 
+/**
+ * Single-activity host for the Story Ghost Compose UI.
+ *
+ * Responsibilities:
+ * - Enables Android edge-to-edge drawing for immersive UI.
+ * - Manages process lifecycle observation for Google Mobile Ads [AppOpenAdManager].
+ * - Checks for flexible Google Play in-app updates via [InAppUpdateManager].
+ * - Sets the root Jetpack Compose content with [StoryGhostTheme] and [LocalAnalyticsLogger].
+ */
 class MainActivity : ComponentActivity() {
 
     private val appOpenAdManager: AppOpenAdManager by inject()
+    private val inAppUpdateManager: InAppUpdateManager by inject()
 
     private val updateLauncher = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
@@ -33,7 +43,7 @@ class MainActivity : ComponentActivity() {
         ProcessLifecycleOwner.get().lifecycle.addObserver(processLifecycleObserver)
 
         // Check for Google Play in-app updates
-        InAppUpdate.check(this, updateLauncher)
+        inAppUpdateManager.checkForUpdate(this, updateLauncher)
 
         setContent {
             CompositionLocalProvider(LocalAnalyticsLogger provides koinInject()) {

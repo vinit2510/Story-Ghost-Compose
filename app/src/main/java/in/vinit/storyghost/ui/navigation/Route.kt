@@ -1,11 +1,22 @@
 package `in`.vinit.storyghost.ui.navigation
 
+import androidx.compose.runtime.Immutable
 import androidx.navigation3.runtime.NavKey
-import `in`.vinit.storyghost.constant.AnalyticsScreen
+import `in`.vinit.storyghost.core.analytics.AnalyticsScreen
 import kotlinx.serialization.Serializable
 
+/**
+ * Sealed interface representing type-safe navigation destinations for the app.
+ *
+ * Implements [NavKey] for compatibility with AndroidX Navigation 3 and provides
+ * an [analyticsScreenName] for automatic screen view event tracking.
+ */
+@Immutable
 @Serializable
 sealed interface Route : NavKey {
+    /**
+     * Analytics identifier logged to Firebase when navigating to this destination.
+     */
     val analyticsScreenName: String
 
     @Serializable
