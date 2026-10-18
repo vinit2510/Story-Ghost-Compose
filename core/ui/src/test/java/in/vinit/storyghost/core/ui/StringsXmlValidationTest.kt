@@ -56,7 +56,8 @@ class StringsXmlValidationTest {
             val stringsFile = File(dir, "strings.xml")
             if (!stringsFile.exists()) continue
 
-            val langCode = if (dir.name == "values") "en" else dir.name.removePrefix("values-").replace("-r", "-")
+            val langCode = if (dir.name == "values") "en" else dir.name.removePrefix("values-")
+                .replace("-r", "-")
             val locale = Locale.forLanguageTag(langCode)
             val doc = builder.parse(stringsFile)
             val currentStrings = extractStrings(doc.documentElement)
@@ -81,10 +82,16 @@ class StringsXmlValidationTest {
                 if (testArgs != null) {
                     try {
                         val formatted = String.format(locale, text, *testArgs)
-                        assertNotNull("Formatted result for $key ($langCode) should not be null", formatted)
+                        assertNotNull(
+                            "Formatted result for $key ($langCode) should not be null",
+                            formatted
+                        )
                         assertTrue("Formatted result should not be blank", formatted.isNotBlank())
                     } catch (e: Exception) {
-                        throw AssertionError("String.format failed for '$key' in locale [$langCode] with text: '$text'", e)
+                        throw AssertionError(
+                            "String.format failed for '$key' in locale [$langCode] with text: '$text'",
+                            e
+                        )
                     }
                 }
             }
@@ -96,7 +103,10 @@ class StringsXmlValidationTest {
                         val formatted = String.format(locale, text, 5)
                         assertNotNull(formatted)
                     } catch (e: Exception) {
-                        throw AssertionError("Plural formatting failed for '$key' ($quantity) in locale [$langCode] with text: '$text'", e)
+                        throw AssertionError(
+                            "Plural formatting failed for '$key' ($quantity) in locale [$langCode] with text: '$text'",
+                            e
+                        )
                     }
                 }
             }

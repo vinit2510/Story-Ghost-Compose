@@ -122,7 +122,7 @@ class LoginViewModel(
                     errorMsg = e.localizedMessage?.takeIf { it.isNotBlank() }
                         ?.let { UiText.DynamicString(it) }
                         ?: e.message?.takeIf { it.isNotBlank() }
-                        ?.let { UiText.DynamicString(it) }
+                            ?.let { UiText.DynamicString(it) }
                         ?: UiText.StringResource(R.string.failed_to_login),
                     cause = e
                 )

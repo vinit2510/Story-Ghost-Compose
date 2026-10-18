@@ -238,21 +238,28 @@ Contributions, bug reports, and translations are very welcome!
    ```bash
    git checkout -b feat/your-feature-name
    ```
-2. **Local Development**: No API keys or credentials needed. Keep `IS_MOCK=true` in `.env` (default) to develop and test offline with mock data.
+2. **Local Development**: No API keys or credentials needed. Keep `IS_MOCK=true` in `.env` (default)
+   to develop and test offline with mock data.
 3. **Run Tests**: Verify that unit tests pass:
    ```bash
    ./gradlew testDebugUnitTest
    ```
-4. **Submit PR**: Open a Pull Request targeting the **`dev`** branch using [Conventional Commits](https://www.conventionalcommits.org/).
+4. **Submit PR**: Open a Pull Request targeting the **`dev`** branch
+   using [Conventional Commits](https://www.conventionalcommits.org/).
 
 ### Localization
-To add or update translations, edit the string resources in `core/ui/src/main/res/values-<locale>/strings.xml` and submit a PR titled `feat(i18n): add <Language> translations`.
+
+To add or update translations, edit the string resources in
+`core/ui/src/main/res/values-<locale>/strings.xml` and submit a PR titled
+`feat(i18n): add <Language> translations`.
 
 ---
 
 ### Releases & Direct APK Downloads
 
-In addition to [Google Play Store](https://play.google.com/store/apps/details?id=in.vinit.storyghost) releases, production builds are automatically published on GitHub:
+In addition
+to [Google Play Store](https://play.google.com/store/apps/details?id=in.vinit.storyghost) releases,
+production builds are automatically published on GitHub:
 
 - When a new release tag (e.g., `v1.0.0`) is pushed to `master`, GitHub Actions automatically
   builds, signs, and publishes a new **GitHub Release** with the production APK.

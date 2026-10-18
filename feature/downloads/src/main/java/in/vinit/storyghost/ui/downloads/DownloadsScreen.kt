@@ -202,7 +202,8 @@ fun DownloadItemRow(
             .build()
     }
     val isVideo = remember(file) { file.extension.equals("mp4", ignoreCase = true) }
-    val formattedDate = remember(file, context) { formatFileTimestamp(context, file.lastModified()) }
+    val formattedDate =
+        remember(file, context) { formatFileTimestamp(context, file.lastModified()) }
     val formattedSize = remember(file) { FileUtils.getReadableFileSize(file) }
 
     Row(

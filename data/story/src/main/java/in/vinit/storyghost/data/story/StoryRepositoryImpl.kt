@@ -17,7 +17,8 @@ class StoryRepositoryImpl(
 ) : StoryRepository {
 
     override suspend fun getFollowing(userId: String, maxId: String?): FollowingResponse {
-        val base = if (appConfig.iBaseUrl.endsWith("/")) appConfig.iBaseUrl else "${appConfig.iBaseUrl}/"
+        val base =
+            if (appConfig.iBaseUrl.endsWith("/")) appConfig.iBaseUrl else "${appConfig.iBaseUrl}/"
         val url = "${base}api/v1/friendships/$userId/following/"
         return api.getFollowing(url, maxId)
     }

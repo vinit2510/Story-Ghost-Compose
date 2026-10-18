@@ -17,14 +17,12 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
-
-import androidx.compose.ui.graphics.graphicsLayer
 
 @Composable
 fun ShimmerGridCard(modifier: Modifier = Modifier) {
