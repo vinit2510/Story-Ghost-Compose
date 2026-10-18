@@ -33,6 +33,7 @@ def createGoogleServicesJson(String base64String) {
 android {
     defaultConfig {
         buildConfigField "String", "BASE_URL", "\"${getEnvValue('BASE_URL')}\""
+        buildConfigField "String", "I_BASE_URL", "\"${getEnvValue('I_BASE_URL')}\""
         buildConfigField "Boolean", "IS_MOCK", "${getEnvValue('IS_MOCK')}"
         buildConfigField "String", "QH_USER_INFO", "\"${getEnvValue('QH_USER_INFO')}\""
         buildConfigField "String", "QH_HIGHLIGHT_LIST", "\"${getEnvValue('QH_HIGHLIGHT_LIST')}\""

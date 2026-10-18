@@ -5,8 +5,8 @@ import `in`.vinit.storyghost.data.model.HighlightsResponse
 import `in`.vinit.storyghost.data.model.StoryListResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 /**
  * Retrofit interface defining endpoints for Instagram story feeds, user stories, and highlights.
@@ -16,13 +16,13 @@ interface StoryAPI {
     /**
      * Fetches the following list for a user containing active 24-hour story timestamps.
      *
-     * @param userId The target user ID.
+     * @param url Dynamic target URL for the following endpoint.
      * @param maxId Optional pagination cursor.
      * @return [FollowingResponse] containing followed users.
      */
-    @GET("https://i.instagram.com/api/v1/friendships/{userId}/following/")
+    @GET
     suspend fun getFollowing(
-        @Path("userId") userId: String,
+        @Url url: String,
         @Query("max_id") maxId: String? = null
     ): FollowingResponse
 

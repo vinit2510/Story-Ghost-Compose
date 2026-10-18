@@ -5,6 +5,7 @@ data class AppConfig(
     val isDebug: Boolean,
     val applicationId: String,
     val baseUrl: String,
+    val iBaseUrl: String,
     val isMock: Boolean,
     val onesignalAppId: String,
     val qhStoryList: String,

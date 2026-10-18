@@ -17,7 +17,9 @@ class StoryRepositoryImpl(
 ) : StoryRepository {
 
     override suspend fun getFollowing(userId: String, maxId: String?): FollowingResponse {
-        return api.getFollowing(userId, maxId)
+        val base = if (appConfig.iBaseUrl.endsWith("/")) appConfig.iBaseUrl else "${appConfig.iBaseUrl}/"
+        val url = "${base}api/v1/friendships/$userId/following/"
+        return api.getFollowing(url, maxId)
     }
 
     @Deprecated("Deprecated by Instagram GraphQL changes. Use getFollowing instead.")

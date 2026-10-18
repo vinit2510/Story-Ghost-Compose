@@ -8,6 +8,7 @@ import `in`.vinit.storyghost.data.model.UserStoryResponse
 import `in`.vinit.storyghost.data.story.StoryRepositoryImpl
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -23,19 +24,35 @@ class StoryRepositoryTest {
 
     @Before
     fun setUp() {
+        every { appConfig.iBaseUrl } returns "https://i.example.com/"
         repository = StoryRepositoryImpl(api, appConfig)
     }
 
     @Test
     fun `getFollowing delegates to API with expected params`() = runTest {
         val expected = FollowingResponse()
-        coEvery { api.getFollowing("123", "cursor_1") } returns expected
+        val expectedUrl = "https://i.example.com/api/v1/friendships/123/following/"
+        coEvery { api.getFollowing(expectedUrl, "cursor_1") } returns expected
 
         val result = repository.getFollowing("123", "cursor_1")
 
         assertNotNull(result)
         assertEquals(expected, result)
-        coVerify(exactly = 1) { api.getFollowing("123", "cursor_1") }
+        coVerify(exactly = 1) { api.getFollowing(expectedUrl, "cursor_1") }
+    }
+
+    @Test
+    fun `getFollowing handles iBaseUrl without trailing slash`() = runTest {
+        every { appConfig.iBaseUrl } returns "https://i.example.com"
+        val expected = FollowingResponse()
+        val expectedUrl = "https://i.example.com/api/v1/friendships/456/following/"
+        coEvery { api.getFollowing(expectedUrl, null) } returns expected
+
+        val result = repository.getFollowing("456", null)
+
+        assertNotNull(result)
+        assertEquals(expected, result)
+        coVerify(exactly = 1) { api.getFollowing(expectedUrl, null) }
     }
 
     @Suppress("DEPRECATION")

@@ -34,6 +34,7 @@ val appConfigModule = module {
             isDebug = BuildConfig.DEBUG,
             applicationId = BuildConfig.APPLICATION_ID,
             baseUrl = BuildConfig.BASE_URL,
+            iBaseUrl = BuildConfig.I_BASE_URL,
             isMock = BuildConfig.IS_MOCK,
             onesignalAppId = BuildConfig.ONESIGNAL_APP_ID,
             qhStoryList = BuildConfig.QH_STORY_LIST,
