@@ -6,6 +6,7 @@ import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.core.common.storage.LocalStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -17,7 +18,7 @@ class InAppReviewManager(
 ) {
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             try {
                 val installTime = localStorage.getInstallTime().first()
                 if (installTime == 0L) {

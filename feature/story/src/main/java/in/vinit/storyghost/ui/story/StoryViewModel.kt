@@ -66,10 +66,8 @@ class StoryViewModel(
         }
     }
 
-    fun showReviewDialogIfEligible(activity: Activity) {
-        viewModelScope.launch {
-            inAppReviewManager.showDialogAfterDays(activity)
-        }
+    suspend fun showReviewDialogIfEligible(activity: Activity) {
+        inAppReviewManager.showDialogAfterDays(activity)
     }
 
     fun getInstagramAccountUrl(): String {

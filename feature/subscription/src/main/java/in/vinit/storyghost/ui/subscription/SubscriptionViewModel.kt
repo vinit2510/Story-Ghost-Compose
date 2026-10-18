@@ -37,7 +37,7 @@ class SubscriptionViewModel(
         YEARLY
     }
 
-    private val _billingErrorEvent = MutableSharedFlow<UiText>()
+    private val _billingErrorEvent = MutableSharedFlow<UiText>(extraBufferCapacity = 1)
     val billingErrorEvent: SharedFlow<UiText> = _billingErrorEvent.asSharedFlow()
 
     private val _selectedPlan = MutableStateFlow(Plan.YEARLY)
@@ -48,7 +48,7 @@ class SubscriptionViewModel(
     val subscriptionPlans: StateFlow<UiState<List<SubscriptionPlan>>> =
         _subscriptionPlans.asStateFlow()
 
-    private val _purchaseSuccessEvent = MutableSharedFlow<Plan>()
+    private val _purchaseSuccessEvent = MutableSharedFlow<Plan>(extraBufferCapacity = 1)
     val purchaseSuccessEvent: SharedFlow<Plan> = _purchaseSuccessEvent.asSharedFlow()
 
     init {
