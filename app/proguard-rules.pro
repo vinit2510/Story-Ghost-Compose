@@ -7,22 +7,8 @@
 -keepattributes RuntimeVisibleAnnotations,RuntimeVisibleParameterAnnotations
 -keepattributes AnnotationDefault
 
-# Data Models & Serialization (Gson)
-# Preserves all API response models and local storage DTOs from obfuscation/stripping
--keep class in.vinit.storyghost.data.model.** { *; }
--keepclassmembers class in.vinit.storyghost.data.model.** { *; }
--keep class in.vinit.storyghost.core.model.** { *; }
--keepclassmembers class in.vinit.storyghost.core.model.** { *; }
--keep class in.vinit.storyghost.config.AppConfig { *; }
--keepclassmembers class in.vinit.storyghost.config.AppConfig { *; }
-
-# Retrofit API Interfaces
--keep interface in.vinit.storyghost.data.remote.**.*API { *; }
--keepclassmembers interface in.vinit.storyghost.data.remote.**.*API { *; }
-
-# Custom Network Exceptions
--keep class in.vinit.storyghost.core.common.network.ApiException { *; }
-
-# Koin Dependency Injection
--keep class in.vinit.storyghost.**.*ViewModel { *; }
--keepclassmembers class in.vinit.storyghost.**.*ViewModel { <init>(...); }
+# Koin Dependency Injection - keep ViewModel constructors for reflection/injection
+# Note: ViewModel class names and internal methods are safely obfuscated; only constructor signatures are retained
+-keepclassmembers class * extends androidx.lifecycle.ViewModel {
+    <init>(...);
+}
