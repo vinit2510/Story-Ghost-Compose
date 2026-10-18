@@ -1,21 +1,28 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Preserve SourceFile and LineNumberTable for Crashlytics de-obfuscation
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Preserve annotations and generic signatures
+-keepattributes Signature,InnerClasses,EnclosingMethod
+-keepattributes RuntimeVisibleAnnotations,RuntimeVisibleParameterAnnotations
+-keepattributes AnnotationDefault
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Data Models & Serialization (Gson)
+# Preserves all API response models and local storage DTOs from obfuscation/stripping
+-keep class in.vinit.storyghost.data.model.** { *; }
+-keepclassmembers class in.vinit.storyghost.data.model.** { *; }
+-keep class in.vinit.storyghost.core.model.** { *; }
+-keepclassmembers class in.vinit.storyghost.core.model.** { *; }
+-keep class in.vinit.storyghost.config.AppConfig { *; }
+-keepclassmembers class in.vinit.storyghost.config.AppConfig { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Retrofit API Interfaces
+-keep interface in.vinit.storyghost.data.remote.**.*API { *; }
+-keepclassmembers interface in.vinit.storyghost.data.remote.**.*API { *; }
+
+# Custom Network Exceptions
+-keep class in.vinit.storyghost.core.common.network.ApiException { *; }
+
+# Koin Dependency Injection
+-keep class in.vinit.storyghost.**.*ViewModel { *; }
+-keepclassmembers class in.vinit.storyghost.**.*ViewModel { <init>(...); }
