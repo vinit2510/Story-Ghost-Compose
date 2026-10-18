@@ -142,7 +142,7 @@ fun HighlightContent(
                     if (uiState is UiState.Loading) {
                         storyGridShimmerItems()
                     } else if (uiState is UiState.Success) {
-                        items(uiState.data) { edge ->
+                        items(uiState.data, key = { it.node?.id ?: it.hashCode() }) { edge ->
                             val node = edge.node
                             if (node != null) {
                                 MediaGridItem(

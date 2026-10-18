@@ -29,9 +29,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -193,6 +195,16 @@ fun DownloadItemRow(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val imageRequest = remember(file, context) {
+        ImageRequest.Builder(context)
+            .data(file)
+            .crossfade(true)
+            .build()
+    }
+    val isVideo = remember(file) { file.extension.equals("mp4", ignoreCase = true) }
+    val formattedDate = remember(file, context) { formatFileTimestamp(context, file.lastModified()) }
+    val formattedSize = remember(file) { FileUtils.getReadableFileSize(file) }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -206,16 +218,13 @@ fun DownloadItemRow(
                 .background(MaterialTheme.colorScheme.surface)
         ) {
             AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(file)
-                    .crossfade(true)
-                    .build(),
+                model = imageRequest,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
 
-            if (file.extension.equals("mp4", ignoreCase = true)) {
+            if (isVideo) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize(),
@@ -249,7 +258,7 @@ fun DownloadItemRow(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = formatFileTimestamp(LocalContext.current, file.lastModified()),
+                    text = formattedDate,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.tertiary
                 )
@@ -260,7 +269,7 @@ fun DownloadItemRow(
                     modifier = Modifier.padding(horizontal = 5.dp)
                 )
                 Text(
-                    text = FileUtils.getReadableFileSize(file),
+                    text = formattedSize,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.tertiary
                 )
@@ -290,7 +299,7 @@ fun DownloadItemRow(
 @Composable
 fun DownloadsShimmerLoader(modifier: Modifier = Modifier) {
     val infiniteTransition = rememberInfiniteTransition(label = "shimmer")
-    val alpha by infiniteTransition.animateFloat(
+    val alpha = infiniteTransition.animateFloat(
         initialValue = 0.3f,
         targetValue = 0.7f,
         animationSpec = infiniteRepeatable(
@@ -299,9 +308,12 @@ fun DownloadsShimmerLoader(modifier: Modifier = Modifier) {
         ),
         label = "shimmer_alpha"
     )
+    val shimmerColor = MaterialTheme.colorScheme.surface
 
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .graphicsLayer { this.alpha = alpha.value },
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         items(30) {
@@ -314,7 +326,7 @@ fun DownloadsShimmerLoader(modifier: Modifier = Modifier) {
                 Box(
                     modifier = Modifier
                         .size(50.dp)
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = alpha))
+                        .background(shimmerColor)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Column(
@@ -323,13 +335,13 @@ fun DownloadsShimmerLoader(modifier: Modifier = Modifier) {
                     Box(
                         modifier = Modifier
                             .size(width = 140.dp, height = 16.dp)
-                            .background(MaterialTheme.colorScheme.surface.copy(alpha = alpha))
+                            .background(shimmerColor)
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Box(
                         modifier = Modifier
                             .size(width = 90.dp, height = 12.dp)
-                            .background(MaterialTheme.colorScheme.surface.copy(alpha = alpha))
+                            .background(shimmerColor)
                     )
                 }
             }

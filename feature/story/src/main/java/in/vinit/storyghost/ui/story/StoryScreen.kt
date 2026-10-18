@@ -188,6 +188,7 @@ fun StoryContent(
     Box(modifier = modifier.fillMaxSize()) {
         HorizontalPager(
             state = pagerState,
+            key = { page -> stories.getOrNull(page)?.id ?: page },
             modifier = Modifier.fillMaxSize()
         ) { page ->
             Box(
@@ -287,6 +288,24 @@ fun StoryPage(
         data.takenAtTimeStamp?.let { formatStoryTimestamp(context, it) } ?: ""
     }
 
+    val storyImageRequest = remember(data.displayUrl, context) {
+        data.displayUrl?.let {
+            ImageRequest.Builder(context)
+                .data(it)
+                .crossfade(true)
+                .build()
+        }
+    }
+
+    val ownerImageRequest = remember(data.owner?.profilePicUrl, context) {
+        data.owner?.profilePicUrl?.let {
+            ImageRequest.Builder(context)
+                .data(it)
+                .crossfade(true)
+                .build()
+        }
+    }
+
     val countText = "${currentCount + 1}/${totalCount}"
 
     val mentionText = when {
@@ -345,12 +364,8 @@ fun StoryPage(
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
-                        val imageUrl = data.displayUrl ?: ""
                         AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(imageUrl)
-                                .crossfade(true)
-                                .build(),
+                            model = storyImageRequest,
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize(),
@@ -367,10 +382,7 @@ fun StoryPage(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(data.owner?.profilePicUrl)
-                                .crossfade(true)
-                                .build(),
+                            model = ownerImageRequest,
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier

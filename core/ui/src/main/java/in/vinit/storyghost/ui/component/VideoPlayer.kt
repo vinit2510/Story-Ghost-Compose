@@ -131,7 +131,7 @@ fun VideoPlayer(
 @Composable
 fun VideoShimmerLoader(modifier: Modifier = Modifier) {
     val transition = rememberInfiniteTransition(label = "video_shimmer")
-    val translateAnim by transition.animateFloat(
+    val translateAnim = transition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
@@ -142,19 +142,25 @@ fun VideoShimmerLoader(modifier: Modifier = Modifier) {
     )
 
     val shimmerColor = MaterialTheme.colorScheme.onSurface
-    val baseColor = shimmerColor.copy(alpha = 0.0f)
-    val highlightColor = shimmerColor.copy(alpha = 0.25f)
+    val shimmerColors = remember(shimmerColor) {
+        listOf(
+            shimmerColor.copy(alpha = 0.0f),
+            shimmerColor.copy(alpha = 0.25f),
+            shimmerColor.copy(alpha = 0.0f)
+        )
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .drawBehind {
+                val progress = translateAnim.value
                 val sweepHeight = size.height * 0.4f
-                val startY = (translateAnim * (size.height + sweepHeight)) - sweepHeight
+                val startY = (progress * (size.height + sweepHeight)) - sweepHeight
                 val endY = startY + sweepHeight
 
                 val brush = Brush.linearGradient(
-                    colors = listOf(baseColor, highlightColor, baseColor),
+                    colors = shimmerColors,
                     start = Offset(x = 0f, y = startY),
                     end = Offset(x = 0f, y = endY)
                 )

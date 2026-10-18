@@ -33,10 +33,13 @@ import androidx.compose.ui.unit.dp
 import `in`.vinit.storyghost.core.ui.R
 import `in`.vinit.storyghost.ui.theme.StoryGhostTheme
 
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.graphicsLayer
+
 @Composable
 fun ShimmerOverlay(modifier: Modifier = Modifier) {
     val transition = rememberInfiniteTransition(label = "shimmer_overlay")
-    val translateAnim by transition.animateFloat(
+    val translateAnim = transition.animateFloat(
         initialValue = 0f,
         targetValue = 2000f,
         animationSpec = infiniteRepeatable(
@@ -47,20 +50,23 @@ fun ShimmerOverlay(modifier: Modifier = Modifier) {
     )
 
     val shimmerColor = MaterialTheme.colorScheme.onSurface
-    val shimmerColors = listOf(
-        shimmerColor.copy(alpha = 0.0f),
-        shimmerColor.copy(alpha = 0.3f),
-        shimmerColor.copy(alpha = 0.0f)
-    )
+    val shimmerColors = remember(shimmerColor) {
+        listOf(
+            shimmerColor.copy(alpha = 0.0f),
+            shimmerColor.copy(alpha = 0.3f),
+            shimmerColor.copy(alpha = 0.0f)
+        )
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .drawBehind {
+                val offset = translateAnim.value
                 val brush = Brush.linearGradient(
                     colors = shimmerColors,
-                    start = Offset(x = translateAnim - 500f, y = translateAnim - 500f),
-                    end = Offset(x = translateAnim, y = translateAnim)
+                    start = Offset(x = offset - 500f, y = offset - 500f),
+                    end = Offset(x = offset, y = offset)
                 )
                 drawRect(brush = brush)
             }
@@ -70,7 +76,7 @@ fun ShimmerOverlay(modifier: Modifier = Modifier) {
 @Composable
 fun StoryShimmerItem(modifier: Modifier = Modifier) {
     val infiniteTransition = rememberInfiniteTransition(label = "shimmer")
-    val alpha by infiniteTransition.animateFloat(
+    val alpha = infiniteTransition.animateFloat(
         initialValue = 0.3f,
         targetValue = 0.7f,
         animationSpec = infiniteRepeatable(
@@ -79,11 +85,12 @@ fun StoryShimmerItem(modifier: Modifier = Modifier) {
         ),
         label = "shimmer_alpha"
     )
-    val shimmerColor = MaterialTheme.colorScheme.surface.copy(alpha = alpha)
+    val shimmerColor = MaterialTheme.colorScheme.surface
 
     Column(
         modifier = modifier
             .fillMaxSize()
+            .graphicsLayer { this.alpha = alpha.value }
             .padding(vertical = 10.dp)
     ) {
         Box(

@@ -17,7 +17,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -44,82 +46,78 @@ fun MediaGridItem(
     modifier: Modifier = Modifier,
     prefixUsername: Boolean = false
 ) {
-    BoxWithConstraints(modifier = modifier) {
-        val parentWidth = maxWidth
-        val coverSize = parentWidth * 0.65f
-        val totalHeight = parentWidth * 1.33f
+    val context = LocalContext.current
+    val imageRequest = remember(coverUrl, context) {
+        ImageRequest.Builder(context)
+            .data(coverUrl)
+            .crossfade(true)
+            .build()
+    }
 
-        Card(
-            onClick = onClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(totalHeight),
-            shape = MaterialTheme.shapes.small,
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-        ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                val context = LocalContext.current
+    Card(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .aspectRatio(0.75f),
+        shape = MaterialTheme.shapes.small,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            AsyncImage(
+                model = imageRequest,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .blur(10.dp),
+                error = painterResource(R.drawable.avatar_instagram_user)
+            )
+
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(coverUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = null,
+                    model = imageRequest,
+                    contentDescription = title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .blur(10.dp),
+                        .fillMaxWidth(0.65f)
+                        .aspectRatio(1f)
+                        .clip(CircleShape)
+                        .border(
+                            3.dp,
+                            MaterialTheme.colorScheme.outline,
+                            CircleShape
+                        ),
                     error = painterResource(R.drawable.avatar_instagram_user)
                 )
 
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context)
-                            .data(coverUrl)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = title,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(coverSize)
-                            .clip(CircleShape)
-                            .border(
-                                3.dp,
-                                MaterialTheme.colorScheme.outline,
-                                CircleShape
-                            ),
-                        error = painterResource(R.drawable.avatar_instagram_user)
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Card(
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    shape = MaterialTheme.shapes.extraSmall,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
                     )
-
-                    Spacer(modifier = Modifier.height(totalHeight * 0.065f))
-
-                    Card(
-                        modifier = Modifier.widthIn(max = coverSize),
-                        shape = MaterialTheme.shapes.extraSmall,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
-                        )
-                    ) {
-                        val displayText = if (prefixUsername) {
-                            "@$title"
-                        } else {
-                            title
-                        }
-                        Text(
-                            text = displayText,
-                            modifier = Modifier
-                                .padding(horizontal = 10.dp, vertical = 5.dp),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            textAlign = TextAlign.Center,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
-                        )
+                ) {
+                    val displayText = if (prefixUsername) {
+                        "@$title"
+                    } else {
+                        title
                     }
+                    Text(
+                        text = displayText,
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp, vertical = 5.dp),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2
+                    )
                 }
             }
         }

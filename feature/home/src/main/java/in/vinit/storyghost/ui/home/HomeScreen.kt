@@ -312,7 +312,7 @@ fun HomeContent(
                             )
                         }
                     } else {
-                        items(displayList.data) { user ->
+                        items(displayList.data, key = { it.node?.id ?: it.hashCode() }) { user ->
                             val reelUser = user.node?.user
                             val username = reelUser?.username ?: ""
                             val profilePicUrl = reelUser?.profilePicUrl ?: ""
@@ -461,11 +461,15 @@ fun HomeTopBar(
                 }
             }
 
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
+            val context = LocalContext.current
+            val profileImageRequest = remember(profilePicUrl, context) {
+                ImageRequest.Builder(context)
                     .data(profilePicUrl)
                     .crossfade(true)
-                    .build(),
+                    .build()
+            }
+            AsyncImage(
+                model = profileImageRequest,
                 contentDescription = "Profile",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
