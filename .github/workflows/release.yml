@@ -93,14 +93,14 @@ jobs:
       - name: Deploy to Google Play Console (Internal Track Only)
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_CONFIG_JSON }}
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: in.vinit.storyghost
           releaseFiles: ${{ steps.sign_aab.outputs.signedReleaseFile }}
           track: internal
-          status: completed
+          status: draft
           mappingFile: app/build/outputs/mapping/release/mapping.txt
 
-      - name: Publish GitHub Release
+      - name: Publish GitHub Release (Draft)
         uses: softprops/action-gh-release@v2
         with:
           name: Release ${{ github.ref_name }}
@@ -109,7 +109,7 @@ jobs:
             ${{ steps.sign_apk.outputs.signedReleaseFile }}
             app/build/outputs/mapping/release/mapping.txt
           generate_release_notes: true
-          draft: false
+          draft: true
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
