@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GRADLE_OPTS: "-Xmx4096m -Dfile.encoding=UTF-8"
+      BUILD_TOOLS_VERSION: "35.0.0"
 
     steps:
       - name: Checkout Code
@@ -52,6 +53,15 @@ jobs:
       - name: Grant Execute Permission to Gradle Wrapper
         run: chmod +x gradlew
 
+      - name: Detect Android Build Tools Version
+        run: |
+          BUILD_TOOLS_PATH="/usr/local/lib/android/sdk/build-tools"
+          if [ -d "$BUILD_TOOLS_PATH" ]; then
+            DETECTED_VERSION=$(ls -1 "$BUILD_TOOLS_PATH" | sort -V | tail -n 1)
+            echo "Detected Android Build-Tools version: $DETECTED_VERSION"
+            echo "BUILD_TOOLS_VERSION=$DETECTED_VERSION" >> $GITHUB_ENV
+          fi
+
       - name: Run Unit Tests
         run: ./gradlew testDebugUnitTest --no-daemon --stacktrace
 
@@ -80,6 +90,8 @@ jobs:
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOLS_VERSION }}
 
       - name: Upload Signed AAB as GitHub Artifact
         uses: actions/upload-artifact@v4
