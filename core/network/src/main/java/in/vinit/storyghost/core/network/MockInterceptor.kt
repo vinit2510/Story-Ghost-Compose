@@ -36,15 +36,19 @@ class MockInterceptor(
 
         val mockFileName = when {
             path.contains("graphql/query") -> {
+                val formBody = request.body as? okhttp3.FormBody
                 val queryHash = url.queryParameter("query_hash")
-                val variables = url.queryParameter("variables") ?: ""
+                    ?: (0 until (formBody?.size ?: 0)).firstOrNull { formBody?.name(it) == "doc_id" }?.let { formBody?.value(it) }
+                val variables = url.queryParameter("variables")
+                    ?: (0 until (formBody?.size ?: 0)).firstOrNull { formBody?.name(it) == "variables" }?.let { formBody?.value(it) }
+                    ?: ""
 
-                when (queryHash) {
-                    appConfig.qhStoryList -> "mock_story_list.json"
-                    appConfig.qhUserStory -> "mock_user_story.json"
-                    appConfig.qhHighlightStory -> "mock_user_highlights.json"
-                    appConfig.qhHighlightList if (variables.contains("\"include_highlight_reels\":true")) -> "mock_highlights.json"
-                    appConfig.qhUserInfo if (variables.contains("\"include_highlight_reels\":false")) -> "mock_user_info.json"
+                when {
+                    queryHash == appConfig.qhStoryList -> "mock_story_list.json"
+                    queryHash == appConfig.qhHighlightList && variables.contains("\"include_highlight_reels\":true") -> "mock_highlights.json"
+                    queryHash == appConfig.qhUserInfo && variables.contains("\"include_highlight_reels\":false") -> "mock_user_info.json"
+                    variables.contains("highlight:") -> "mock_user_highlights.json"
+                    queryHash == appConfig.docIdStoryAndHighlight -> "mock_user_story.json"
                     else -> null
                 }
             }

@@ -64,13 +64,15 @@ class StoryViewModelTest {
     fun `loadStories fetches user stories when called first time`() = runTest {
         val userId = "12345"
         val mockItems = listOf(
-            Item(id = "item_1", typename = "GraphStoryImage")
+            Item(id = "item_1", mediaType = 1)
         )
         val mockResponse = UserStoryResponse(
             data = UserStoryResponse.Data(
-                reelsMedia = listOf(
-                    UserStoryResponse.Data.ReelsMedia(
-                        items = mockItems
+                xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
+                    reelsMedia = listOf(
+                        UserStoryResponse.Data.ReelsMedia(
+                            items = mockItems
+                        )
                     )
                 )
             )
@@ -91,13 +93,15 @@ class StoryViewModelTest {
         runTest {
             val userId = "12345"
             val mockItems = listOf(
-                Item(id = "item_1", typename = "GraphStoryImage")
+                Item(id = "item_1", mediaType = 1)
             )
             val mockResponse = UserStoryResponse(
                 data = UserStoryResponse.Data(
-                    reelsMedia = listOf(
-                        UserStoryResponse.Data.ReelsMedia(
-                            items = mockItems
+                    xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
+                        reelsMedia = listOf(
+                            UserStoryResponse.Data.ReelsMedia(
+                                items = mockItems
+                            )
                         )
                     )
                 )
@@ -125,9 +129,11 @@ class StoryViewModelTest {
         val userId = "12345"
         val mockResponse = UserStoryResponse(
             data = UserStoryResponse.Data(
-                reelsMedia = listOf(
-                    UserStoryResponse.Data.ReelsMedia(
-                        items = emptyList()
+                xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
+                    reelsMedia = listOf(
+                        UserStoryResponse.Data.ReelsMedia(
+                            items = emptyList()
+                        )
                     )
                 )
             )
@@ -156,9 +162,11 @@ class StoryViewModelTest {
             val highlightId = "highlight_999"
             val mockResponse = UserStoryResponse(
                 data = UserStoryResponse.Data(
-                    reelsMedia = listOf(
-                        UserStoryResponse.Data.ReelsMedia(
-                            items = emptyList()
+                    xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
+                        reelsMedia = listOf(
+                            UserStoryResponse.Data.ReelsMedia(
+                                items = emptyList()
+                            )
                         )
                     )
                 )
@@ -181,14 +189,16 @@ class StoryViewModelTest {
     fun `loadStories with isHighlight true reverses items to match chronological order`() =
         runTest {
             val highlightId = "highlight_999"
-            val item1 = Item(id = "item_1", typename = "GraphStoryImage")
-            val item2 = Item(id = "item_2", typename = "GraphStoryVideo")
-            val item3 = Item(id = "item_3", typename = "GraphStoryImage")
+            val item1 = Item(id = "item_1", mediaType = 1)
+            val item2 = Item(id = "item_2", mediaType = 2)
+            val item3 = Item(id = "item_3", mediaType = 1)
             val mockResponse = UserStoryResponse(
                 data = UserStoryResponse.Data(
-                    reelsMedia = listOf(
-                        UserStoryResponse.Data.ReelsMedia(
-                            items = listOf(item1, item2, item3)
+                    xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
+                        reelsMedia = listOf(
+                            UserStoryResponse.Data.ReelsMedia(
+                                items = listOf(item1, item2, item3)
+                            )
                         )
                     )
                 )
@@ -232,7 +242,7 @@ class StoryViewModelTest {
 
     @Test
     fun `downloadStory delegates to downloadsRepository`() {
-        val item = Item(id = "item_1", typename = "GraphStoryImage")
+        val item = Item(id = "item_1", mediaType = 1)
         val onSuccess: () -> Unit = {}
         viewModel.downloadStory(item, onSuccess)
         coVerify(exactly = 1) { downloadsRepository.downloadFile(item, onSuccess) }

@@ -4,7 +4,10 @@ import `in`.vinit.storyghost.data.model.FollowingResponse
 import `in`.vinit.storyghost.data.model.HighlightsResponse
 import `in`.vinit.storyghost.data.model.StoryListResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 import retrofit2.http.Url
 
@@ -41,16 +44,17 @@ interface StoryAPI {
     ): StoryListResponse
 
     /**
-     * Fetches active 24-hour stories for a specific user ID.
+     * Fetches story or highlight media items using Instagram Relay doc_id query.
      *
-     * @param queryHash The GraphQL query hash for user story query.
-     * @param variables Serialized JSON string containing user ID and overlay options.
-     * @return [UserStoryResponse] containing story items for the requested user.
+     * @param docId The persistent GraphQL document ID (e.g., PolarisStoriesV3ReelPageStandaloneQuery).
+     * @param variables Serialized JSON string containing query parameters.
+     * @return [UserStoryResponse] containing story items and tappable mentions.
      */
-    @GET("graphql/query/")
-    suspend fun getStoryByUserId(
-        @Query("query_hash") queryHash: String,
-        @Query("variables") variables: String
+    @FormUrlEncoded
+    @POST("graphql/query")
+    suspend fun getStories(
+        @Field("doc_id") docId: String,
+        @Field("variables") variables: String
     ): UserStoryResponse
 
     /**
@@ -65,17 +69,4 @@ interface StoryAPI {
         @Query("query_hash") queryHash: String,
         @Query("variables") variables: String
     ): HighlightsResponse
-
-    /**
-     * Fetches story media items contained inside a specific highlight reel ID.
-     *
-     * @param queryHash The GraphQL query hash for highlight story query.
-     * @param variables Serialized JSON string specifying highlight reel ID list.
-     * @return [UserStoryResponse] containing media items inside the highlight.
-     */
-    @GET("graphql/query/")
-    suspend fun getHighlightStoryByReelId(
-        @Query("query_hash") queryHash: String,
-        @Query("variables") variables: String
-    ): UserStoryResponse
 }

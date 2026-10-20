@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 private const val TAG = "DownloadsRepository"
-private const val STORY_TYPE_VIDEO = "GraphStoryVideo"
+private const val MEDIA_TYPE_VIDEO = 2
 
 class DownloadsRepositoryImpl(
     private val context: Context,
@@ -44,11 +44,11 @@ class DownloadsRepositoryImpl(
     ) {
         try {
             var extension = ".mp4"
-            val url = if (data.typename == STORY_TYPE_VIDEO) {
-                data.videoResources?.getOrNull(0)?.src
+            val url = if (data.mediaType == MEDIA_TYPE_VIDEO) {
+                data.videoVersions?.firstOrNull()?.url
             } else {
                 extension = ".jpg"
-                data.displayUrl
+                data.imageVersions2?.candidates?.firstOrNull()?.url
             }
 
             if (url == null) {
@@ -65,10 +65,11 @@ class DownloadsRepositoryImpl(
                 mFolder.mkdirs()
             }
 
+            val username = data.user?.username.orEmpty()
             val request = DownloadManager.Request(url.toUri())
-            val filename = "${data.owner?.username}_story_${data.id}$extension"
+            val filename = "${username}_story_${data.id}$extension"
             with(request) {
-                setTitle("@${data.owner?.username} story")
+                setTitle("@$username story")
                 setDescription("Downloading...")
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 setDestinationInExternalPublicDir(
