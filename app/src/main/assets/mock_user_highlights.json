@@ -46,6 +46,32 @@
                   }
                 }
               ]
+            },
+            {
+              "id": "highlight_story_2",
+              "pk": "highlight_story_2",
+              "media_type": 2,
+              "taken_at": 1784557620,
+              "user": {
+                "id": "111111",
+                "pk": "111111"
+              },
+              "image_versions2": {
+                "candidates": [
+                  {
+                    "url": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1080&h=1920&q=80",
+                    "width": 1080,
+                    "height": 1920
+                  }
+                ]
+              },
+              "video_versions": [
+                {
+                  "url": "https://vjs.zencdn.net/v/oceans.mp4",
+                  "type": 101
+                }
+              ],
+              "story_bloks_stickers": []
             }
           ]
         }
