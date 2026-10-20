@@ -24,7 +24,8 @@ data class UserInfoResponse(
                     @SerializedName("id") val id: String? = "",
                     @SerializedName("full_name") val fullName: String? = "",
                     @SerializedName("profile_pic_url") val profilePicUrl: String? = "",
-                    @SerializedName("username") val username: String? = ""
+                    @SerializedName("username") val username: String? = "",
+                    @SerializedName("is_verified") val isVerified: Boolean? = null
                 )
             }
         }

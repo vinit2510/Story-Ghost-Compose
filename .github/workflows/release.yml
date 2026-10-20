@@ -1,4 +1,4 @@
-name: Android Release (Internal Track & GitHub Release)
+name: CD
 
 on:
   push:
@@ -19,13 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GRADLE_OPTS: "-Xmx4096m -Dfile.encoding=UTF-8"
+      BUILD_TOOLS_VERSION: "35.0.0"
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '21'
@@ -37,10 +38,8 @@ jobs:
           echo "I_BASE_URL=${{ secrets.I_BASE_URL }}" >> .env
           echo "IS_MOCK=${{ secrets.IS_MOCK }}" >> .env
           echo "QH_USER_INFO=${{ secrets.QH_USER_INFO }}" >> .env
-          echo "QH_STORY_LIST=${{ secrets.QH_STORY_LIST }}" >> .env
-          echo "QH_USER_STORY=${{ secrets.QH_USER_STORY }}" >> .env
+          echo "DOC_ID_STORY_AND_HIGHLIGHT=${{ secrets.DOC_ID_STORY_AND_HIGHLIGHT }}" >> .env
           echo "QH_HIGHLIGHT_LIST=${{ secrets.QH_HIGHLIGHT_LIST }}" >> .env
-          echo "QH_HIGHLIGHT_STORY=${{ secrets.QH_HIGHLIGHT_STORY }}" >> .env
           echo "FIREBASE_BASE64=${{ secrets.FIREBASE_BASE64 }}" >> .env
           echo "ONESIGNAL_APP_ID=${{ secrets.ONESIGNAL_APP_ID }}" >> .env
           echo "ADMOB_APP_ID=${{ secrets.ADMOB_APP_ID }}" >> .env
@@ -52,6 +51,15 @@ jobs:
       - name: Grant Execute Permission to Gradle Wrapper
         run: chmod +x gradlew
 
+      - name: Detect Android Build Tools Version
+        run: |
+          BUILD_TOOLS_PATH="/usr/local/lib/android/sdk/build-tools"
+          if [ -d "$BUILD_TOOLS_PATH" ]; then
+            DETECTED_VERSION=$(ls -1 "$BUILD_TOOLS_PATH" | sort -V | tail -n 1)
+            echo "Detected Android Build-Tools version: $DETECTED_VERSION"
+            echo "BUILD_TOOLS_VERSION=$DETECTED_VERSION" >> $GITHUB_ENV
+          fi
+
       - name: Run Unit Tests
         run: ./gradlew testDebugUnitTest --no-daemon --stacktrace
 
@@ -61,35 +69,67 @@ jobs:
       - name: Build Release APK
         run: ./gradlew :app:assembleRelease --no-daemon --stacktrace
 
+      - name: Decode Keystore
+        run: echo "${{ secrets.SIGNING_KEY_BASE64 }}" | base64 -d > release.keystore
+
       - name: Sign Release AAB
-        uses: r0adkll/sign-android-release@v1
         id: sign_aab
-        with:
-          releaseDirectory: app/build/outputs/bundle/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY_BASE64 }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          AAB_FILE=$(find app/build/outputs/bundle/release -name "*.aab" | head -n 1)
+          jarsigner -verbose \
+            -sigalg SHA256withRSA \
+            -digestalg SHA-256 \
+            -keystore release.keystore \
+            -storepass "${{ secrets.KEYSTORE_PASSWORD }}" \
+            -keypass "${{ secrets.KEY_PASSWORD }}" \
+            "$AAB_FILE" "${{ secrets.KEY_ALIAS }}"
+          echo "signedReleaseFile=$AAB_FILE" >> $GITHUB_OUTPUT
 
       - name: Sign Release APK
-        uses: r0adkll/sign-android-release@v1
         id: sign_apk
-        with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY_BASE64 }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          BUILD_TOOLS_DIR="/usr/local/lib/android/sdk/build-tools/$BUILD_TOOLS_VERSION"
+          UNSIGNED_APK=$(find app/build/outputs/apk/release -name "*.apk" | head -n 1)
+          ALIGNED_APK="app/build/outputs/apk/release/storyghost-release-aligned.apk"
+          SIGNED_APK="app/build/outputs/apk/release/storyghost-release-signed.apk"
+          if [ -f "$BUILD_TOOLS_DIR/zipalign" ]; then
+            "$BUILD_TOOLS_DIR/zipalign" -v -p 4 "$UNSIGNED_APK" "$ALIGNED_APK" || cp "$UNSIGNED_APK" "$ALIGNED_APK"
+          else
+            cp "$UNSIGNED_APK" "$ALIGNED_APK"
+          fi
+          if [ -f "$BUILD_TOOLS_DIR/apksigner" ]; then
+            "$BUILD_TOOLS_DIR/apksigner" sign \
+              --ks release.keystore \
+              --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
+              --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
+              --key-pass "pass:${{ secrets.KEY_PASSWORD }}" \
+              --out "$SIGNED_APK" \
+              "$ALIGNED_APK"
+          else
+            jarsigner -verbose \
+              -sigalg SHA256withRSA \
+              -digestalg SHA-256 \
+              -keystore release.keystore \
+              -storepass "${{ secrets.KEYSTORE_PASSWORD }}" \
+              -keypass "${{ secrets.KEY_PASSWORD }}" \
+              "$ALIGNED_APK" "${{ secrets.KEY_ALIAS }}"
+            cp "$ALIGNED_APK" "$SIGNED_APK"
+          fi
+          echo "signedReleaseFile=$SIGNED_APK" >> $GITHUB_OUTPUT
+
+      - name: Clean up Keystore
+        if: always()
+        run: rm -f release.keystore
 
       - name: Upload Signed AAB as GitHub Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: storyghost-release-aab
           path: ${{ steps.sign_aab.outputs.signedReleaseFile }}
           if-no-files-found: error
 
       - name: Upload Signed APK as GitHub Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: storyghost-release-apk
           path: ${{ steps.sign_apk.outputs.signedReleaseFile }}
@@ -101,12 +141,12 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: in.vinit.storyghost
           releaseFiles: ${{ steps.sign_aab.outputs.signedReleaseFile }}
-          track: internal
+          tracks: internal
           status: draft
           mappingFile: app/build/outputs/mapping/release/mapping.txt
 
       - name: Publish GitHub Release (Draft)
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: Release ${{ github.ref_name }}
           files: |

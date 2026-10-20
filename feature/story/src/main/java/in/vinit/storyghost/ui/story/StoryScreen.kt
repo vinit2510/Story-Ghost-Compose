@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -59,6 +60,8 @@ import coil3.request.crossfade
 import `in`.vinit.storyghost.core.analytics.AnalyticsEvent
 import `in`.vinit.storyghost.core.analytics.LocalAnalyticsLogger
 import `in`.vinit.storyghost.core.ui.R
+import `in`.vinit.storyghost.data.model.UserStoryResponse
+import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia
 import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.ErrorPlaceholder
@@ -120,7 +123,7 @@ fun StoryScreen(
                 }
 
                 is UiState.Success -> {
-                    if (state.data.isEmpty()) {
+                    if (state.data.items.isNullOrEmpty()) {
                         ErrorPlaceholder(
                             message = if (isHighlight)
                                 stringResource(R.string.highlight_not_available)
@@ -129,7 +132,7 @@ fun StoryScreen(
                         )
                     } else {
                         StoryContent(
-                            stories = state.data,
+                            reel = state.data,
                             isHighlight = isHighlight,
                             isPremium = isPremium,
                             initialPage = viewModel.currentPageIndex,
@@ -137,7 +140,7 @@ fun StoryScreen(
                             onHighlightClick = onHighlightClick,
                             onDownloadClick = { item, onSuccess ->
                                 analyticsLogger.logEvent(AnalyticsEvent.STORY_DOWNLOAD)
-                                viewModel.downloadStory(item, onSuccess)
+                                viewModel.downloadStory(item, state.data.user?.username, onSuccess)
                             },
                             onShowAd = viewModel::showAd,
                             onMentionClick = { username ->
@@ -157,7 +160,7 @@ fun StoryScreen(
 
 @Composable
 fun StoryContent(
-    stories: List<Item>,
+    reel: ReelsMedia,
     isHighlight: Boolean,
     isPremium: Boolean,
     initialPage: Int,
@@ -168,6 +171,7 @@ fun StoryContent(
     onMentionClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val stories = reel.items.orEmpty()
     val pagerState = rememberPagerState(
         initialPage = initialPage,
         pageCount = { stories.size }
@@ -195,6 +199,7 @@ fun StoryContent(
                 modifier = Modifier.fillMaxSize()
             ) {
                 StoryPage(
+                    user = reel.user,
                     data = stories[page],
                     currentCount = page,
                     totalCount = stories.size,
@@ -249,6 +254,7 @@ fun StoryContent(
 
 @Composable
 fun StoryPage(
+    user: UserStoryResponse.Data.User?,
     data: Item,
     currentCount: Int,
     totalCount: Int,
@@ -281,15 +287,20 @@ fun StoryPage(
     var isShimmeringMentions by remember(data) { mutableStateOf(false) }
 
     val mentionList = remember(data) {
-        data.tappableObjects?.filter { it.typename == "GraphTappableMention" } ?: emptyList()
+        data.storyBloksStickers?.filter {
+            !it.bloksSticker?.stickerData?.igMention?.username.isNullOrEmpty()
+        } ?: emptyList()
     }
 
-    val timestampText = remember(data.takenAtTimeStamp, context) {
-        data.takenAtTimeStamp?.let { formatStoryTimestamp(context, it) } ?: ""
+    val timestampText = remember(data.takenAt, context) {
+        data.takenAt?.let { formatStoryTimestamp(context, it) } ?: ""
     }
 
-    val storyImageRequest = remember(data.displayUrl, context) {
-        data.displayUrl?.let {
+    val storyImageUrl = remember(data) {
+        data.imageVersions2?.candidates?.firstOrNull()?.url
+    }
+    val storyImageRequest = remember(storyImageUrl, context) {
+        storyImageUrl?.let {
             ImageRequest.Builder(context)
                 .data(it)
                 .crossfade(true)
@@ -297,8 +308,11 @@ fun StoryPage(
         }
     }
 
-    val ownerImageRequest = remember(data.owner?.profilePicUrl, context) {
-        data.owner?.profilePicUrl?.let {
+    val ownerImageUrl = remember(user) {
+        user?.profilePicUrl
+    }
+    val ownerImageRequest = remember(ownerImageUrl, context) {
+        ownerImageUrl?.let {
             ImageRequest.Builder(context)
                 .data(it)
                 .crossfade(true)
@@ -356,8 +370,8 @@ fun StoryPage(
                     val containerHeight = maxHeight
 
                     // 1. Image / Video Player rendering
-                    if (data.typename == "GraphStoryVideo") {
-                        val videoUrl = data.videoResources?.getOrNull(0)?.src ?: ""
+                    if (data.mediaType == 2) {
+                        val videoUrl = data.videoVersions?.firstOrNull()?.url ?: ""
                         VideoPlayer(
                             videoUrl = videoUrl,
                             isActive = isActive,
@@ -392,11 +406,23 @@ fun StoryPage(
                             placeholder = painterResource(R.drawable.avatar_instagram_user),
                             error = painterResource(R.drawable.avatar_instagram_user)
                         )
-                        Text(
-                            text = data.owner?.username ?: "",
-                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                            color = Color.White
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = user?.username ?: "",
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                                color = Color.White
+                            )
+                            if (user?.isVerified == true) {
+                                Image(
+                                    painter = painterResource(R.drawable.ic_verified),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
                     }
 
                     // 4. Mentions Search Shimmer/Progress overlay
@@ -411,17 +437,18 @@ fun StoryPage(
                     }
 
                     // 5. Active Mention overlay positioned relatively
-                    activeMention?.let { mention ->
+                    activeMention?.let { sticker ->
                         val density = LocalDensity.current
                         val containerWidthPx = with(density) { containerWidth.toPx() }
                         val containerHeightPx = with(density) { containerHeight.toPx() }
 
-                        val xPos = mention.x.toFloat() * containerWidthPx
-                        val yPos = mention.y.toFloat() * containerHeightPx
+                        val xPos = sticker.x.toFloat() * containerWidthPx
+                        val yPos = sticker.y.toFloat() * containerHeightPx
 
+                        val mention = sticker.bloksSticker?.stickerData?.igMention
                         MentionPopup(
-                            username = mention.username ?: "",
-                            fullName = mention.fullName ?: "",
+                            username = mention?.username ?: "",
+                            fullName = mention?.fullName ?: "",
                             xOffset = xPos,
                             yOffset = yPos,
                             onDismiss = {
@@ -429,7 +456,7 @@ fun StoryPage(
                             },
                             onClick = {
                                 analyticsLogger.logEvent(AnalyticsEvent.OPEN_ACCOUNT)
-                                onMentionClick(mention.username ?: "")
+                                onMentionClick(mention?.username ?: "")
                             }
                         )
                     }
@@ -518,8 +545,8 @@ fun StoryPage(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(5.dp),
                         modifier = Modifier.clickable {
-                            data.owner?.let { owner ->
-                                onHighlightClick(owner.id ?: "", owner.username ?: "")
+                            user?.let { u ->
+                                onHighlightClick(u.id ?: u.pk ?: "", u.username ?: "")
                             }
                         }
                     ) {
@@ -637,28 +664,42 @@ private fun openInstagramAccount(context: Context, username: String, accountUrlT
 @Composable
 fun StoryPagePreview() {
     val mockItem = Item(
-        typename = "GraphStoryImage",
         id = "12345",
-        takenAtTimeStamp = 1680000000L,
-        owner = Item.Owner(
-            id = "owner_id",
-            profilePicUrl = "https://example.com/pic.jpg",
-            username = "johndoe"
+        mediaType = 1,
+        takenAt = 1680000000L,
+        user = Item.ItemUser(
+            id = "owner_id"
         ),
-        displayUrl = "https://example.com/story.jpg",
-        tappableObjects = listOf(
-            Item.TappableObject(
-                typename = "GraphTappableMention",
+        imageVersions2 = UserStoryResponse.Data.ImageVersions(
+            candidates = listOf(
+                UserStoryResponse.Data.ImageVersions.Candidate(
+                    url = "https://example.com/story.jpg"
+                )
+            )
+        ),
+        storyBloksStickers = listOf(
+            UserStoryResponse.Data.StoryBloksSticker(
                 x = 0.5,
                 y = 0.5,
-                username = "janedoe",
-                fullName = "Jane Doe"
+                bloksSticker = UserStoryResponse.Data.StoryBloksSticker.BloksSticker(
+                    stickerData = UserStoryResponse.Data.StoryBloksSticker.BloksSticker.StickerData(
+                        igMention = UserStoryResponse.Data.StoryBloksSticker.BloksSticker.StickerData.IgMention(
+                            username = "janedoe",
+                            fullName = "Jane Doe"
+                        )
+                    )
+                )
             )
         )
     )
 
     StoryGhostTheme {
         StoryPage(
+            user = UserStoryResponse.Data.User(
+                id = "mock_user",
+                username = "johndoe",
+                profilePicUrl = "https://example.com/pic.jpg"
+            ),
             data = mockItem,
             currentCount = 0,
             totalCount = 1,

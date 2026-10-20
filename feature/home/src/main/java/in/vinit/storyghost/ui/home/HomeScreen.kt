@@ -78,7 +78,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import `in`.vinit.storyghost.core.ui.R
-import `in`.vinit.storyghost.data.model.StoryListResponse.Data.User.FeedReelsTray.EdgeReelsTrayToReel.Edge
+import `in`.vinit.storyghost.data.model.StoryUser
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.ErrorPlaceholder
 import `in`.vinit.storyghost.ui.component.MediaGridItem
@@ -182,7 +182,7 @@ fun HomeScreen(
 
 @Composable
 fun HomeContent(
-    displayList: UiState<List<Edge>>,
+    displayList: UiState<List<StoryUser>>,
     isHighlightMode: Boolean,
     profilePicUrl: String?,
     isPremium: Boolean,
@@ -312,22 +312,23 @@ fun HomeContent(
                             )
                         }
                     } else {
-                        items(displayList.data, key = { it.node?.id ?: it.hashCode() }) { user ->
-                            val reelUser = user.node?.user
-                            val username = reelUser?.username ?: ""
-                            val profilePicUrl = reelUser?.profilePicUrl ?: ""
+                        items(displayList.data, key = { it.id ?: it.hashCode() }) { user ->
+
+                            val username = user.username ?: ""
+                            val profilePicUrl = user.profilePicUrl ?: ""
 
                             MediaGridItem(
                                 title = username,
                                 coverUrl = profilePicUrl,
                                 onClick = {
                                     onStoryClick(
-                                        user.node?.id ?: "",
+                                        user.id ?: "",
                                         username,
                                         isHighlightMode
                                     )
                                 },
-                                prefixUsername = true
+                                prefixUsername = true,
+                                isVerified = user.isVerified
                             )
                         }
 
@@ -611,10 +612,10 @@ private fun HomeContentPreview() {
         HomeContent(
             displayList = UiState.Success(
                 listOf(
-                    Edge(Edge.Node("1", Edge.Node.ReelUser("1", "", "cristiano"))),
-                    Edge(Edge.Node("2", Edge.Node.ReelUser("2", "", "leomessi"))),
-                    Edge(Edge.Node("3", Edge.Node.ReelUser("3", "", "neymarjr"))),
-                    Edge(Edge.Node("4", Edge.Node.ReelUser("4", "", "taylorswift")))
+                    StoryUser("1", "cristiano", ""),
+                    StoryUser("2", "leomessi", ""),
+                    StoryUser("3", "neymarjr", ""),
+                    StoryUser("4", "taylorswift", "")
                 )
             ),
             isHighlightMode = false,

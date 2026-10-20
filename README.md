@@ -4,11 +4,13 @@ An open-source Android app to view Instagram stories anonymously, uncover hidden
 download media — built 100% with **Jetpack Compose**, **Material 3**, and modern multi-module
 architecture.
 
-[![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-3DDC84?logo=android&logoColor=white)](https://android.com)
-[![Google Play](https://img.shields.io/badge/Google_Play-Story_Ghost-414141?logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=in.vinit.storyghost)
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.4.0-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org)
-[![Jetpack Compose](https://img.shields.io/badge/Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
+[![GitHub Release](https://img.shields.io/github/v/release/vinit2510/Story-Ghost-Compose?color=0969DA&logo=github&logoColor=white)](https://github.com/vinit2510/Story-Ghost-Compose/releases/latest)
+[![Google Play Downloads](https://img.shields.io/endpoint?url=https://play.rajkumaar.co.in/downloads?id=in.vinit.storyghost&color=34A853&logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=in.vinit.storyghost)
+[![Google Play Rating](https://img.shields.io/endpoint?url=https://play.rajkumaar.co.in/rating?id=in.vinit.storyghost&color=FBBC04&logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=in.vinit.storyghost)
 [![CI](https://github.com/vinit2510/Story-Ghost-Compose/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/vinit2510/Story-Ghost-Compose/actions/workflows/ci.yml)
+[![CD](https://github.com/vinit2510/Story-Ghost-Compose/actions/workflows/release.yml/badge.svg)](https://github.com/vinit2510/Story-Ghost-Compose/actions/workflows/release.yml)
+[![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-3DDC84?logo=android&logoColor=white)](https://android.com)
+[![Jetpack Compose](https://img.shields.io/badge/Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ![Story Ghost Features Showcase](.github/assets/banner.png)
@@ -38,32 +40,40 @@ Story Ghost gives you a clean, private, and ad-minimal way to:
 ## Features
 
 - **Anonymous Story Viewer**: Watch stories and highlights without appearing on the account's viewer
-  list.
-- **Hidden Mention Inspector**: Automatically identifies hidden, transparent, or tiny mentions
-  placed on stories and presents them in an easy-to-tap card.
+  list or sending seen receipts.
+- **Hidden Mention Inspector**: Automatically scans story sticker data to identify hidden,
+  transparent, or micro-sized mentions and reveals tagged accounts in an interactive popup.
 - **Direct Media Downloads**: Save story photos and full-resolution MP4 videos directly to your
-  gallery via Android's MediaStore.
-- **ExoPlayer Video Playback**: Smooth, hardware-accelerated playback powered by AndroidX Media3
-  with progress tracking and mute/unmute toggle.
-- **User Search & Highlights**: Search any username to view their active 24-hour stories and pinned
-  highlight collections.
-- **Flexible Sign-in**: Log in through an in-app WebView session or paste your session cookies
-  directly. Your credentials stay strictly on your device.
+  device's public `Download/Story Ghost/` directory via Android's `DownloadManager` with real-time
+  download notification progress.
+- **ExoPlayer Video Playback**: Smooth, hardware-accelerated looping video playback powered by
+  AndroidX Media3 (`ExoPlayer`), featuring lifecycle-aware auto-pausing and shimmer buffering
+  loaders.
+- **User Search & Highlights**: Search any public profile to inspect their active 24-hour stories
+  and browse chronologically ordered highlight reels.
+- **Flexible Sign-in**: Log in securely through an in-app WebView session or paste your session
+  cookies (`sessionid` & `ds_user_id`) directly. Credentials stay strictly stored in local
+  DataStore.
 - **Offline Downloads Gallery**: View and manage all your saved media inside the app with quick
-  options to share or delete.
-- **Seamless DataStore Migration**: Automatic migration from legacy SharedPreferences to Jetpack
-  DataStore ensures existing users receive a smooth, uninterrupted update without session loss.
+  options to preview, share, or delete downloaded files.
+- **In-App Purchases (Premium)**: In-app billing powered by Google Play Billing Client (
+  `:data:billing`, `:feature:subscription`) to unlock hidden mention inspection and remove all
+  interstitial and open ads.
+- **Seamless DataStore Migration**: Automated, backward-compatible migration from legacy
+  `SharedPreferences` to Jetpack DataStore Preferences ensures zero session loss for upgrading
+  users.
 - **Multilingual Support**: Fully localized in 8 languages (English, Arabic, French, Indonesian,
-  Italian, Portuguese, Spanish, and Turkish) — with community contributions for additional
-  languages welcome!
-- **Material 3 UI**: Clean dark theme with edge-to-edge support and smooth Compose animations.
+  Italian, Portuguese, Spanish, and Turkish) — with community contributions for additional languages
+  welcome!
+- **Modern Material 3 UI**: Clean dark theme with edge-to-edge support, custom shimmer placeholders,
+  and fluid Compose transitions.
 
 ---
 
 ## Architecture
 
-Story Ghost is built using a modern **multi-module architecture** following Clean Architecture
-principles and Unidirectional Data Flow (UDF).
+Story Ghost is built using a modern **multi-module architecture** (22 modules) following Clean
+Architecture principles and Unidirectional Data Flow (UDF).
 
 ```mermaid
 graph TD
@@ -113,42 +123,47 @@ graph TD
 ### Module Structure
 
 ```text
-├── app/                  # Application class, root DI graph, Navigation 3 backstack
+├── app/                  # Application entry point, root Koin DI graph, Navigation 3 backstack
 ├── feature/              # Independent UI features (Compose + ViewModels)
-│   ├── home/             # Story feed, search, and highlight mode
+│   ├── home/             # Story feed, following list, and profile search
 │   ├── story/            # Fullscreen story viewer & ExoPlayer integration
 │   ├── highlight/        # User highlight reels
 │   ├── downloads/        # Saved media gallery
-│   ├── login/            # WebView login & cookie parser
-│   ├── onboarding/       # First-launch introduction
-│   └── subscription/     # In-app purchase & billing options
+│   ├── login/            # WebView login & cookie parser dialogs
+│   ├── onboarding/       # First-launch onboarding flow
+│   ├── subscription/     # In-app purchase & Google Play Billing UI
+│   └── forceupdate/      # Mandatory app update prompt screen
 ├── data/                 # Repositories and data sources
-│   ├── story/            # Story & highlight API integration
-│   ├── user/             # User search & profile fetching
-│   ├── downloads/        # MediaStore & DownloadManager operations
+│   ├── story/            # Story & highlight API repository (modern Relay query)
+│   ├── user/             # User profile & following list repository
+│   ├── downloads/        # Decoupled DownloadManager repository
 │   ├── billing/          # Google Play Billing Client integration
 │   ├── config/           # Firebase Remote Config repository
 │   └── local/            # Local data source abstraction
-└── core/                 # Shared low-level modules
-    ├── ui/               # Reusable Composables, theme, and VideoPlayer
-    ├── model/            # Plain Kotlin domain data models
-    ├── network/          # OkHttp, Retrofit, interceptors, and mock handlers
-    ├── common/           # DataStore LocalStorage, file helpers, logger
+└── core/                 # Reusable low-level foundations
+    ├── ui/               # Design system, theme, reusable components & VideoPlayer
+    ├── model/            # Domain models (DTOs, entity models)
+    ├── network/          # OkHttp, Retrofit, SafeApiCall & MockInterceptor
+    ├── common/           # LocalStorage DataStore, Logger, TimeUtils
     ├── ads/              # AdMob & Meta Audience Network integration
     ├── analytics/        # Firebase Analytics abstraction
     └── play/             # In-App Review & In-App Update helpers
 ```
 
-### Key Libraries
+### Key Libraries & Tooling
 
 - **UI:** Jetpack Compose, Material 3, Compose Foundation
 - **Navigation:** AndroidX Navigation 3 (`androidx.navigation3`)
 - **Dependency Injection:** [Koin](https://insert-koin.io/)
 - **Media Playback:** AndroidX Media3 (ExoPlayer)
-- **Image Loading:** Coil 3 (with video thumbnail decoding)
-- **Networking:** Retrofit 2, OkHttp 3, Gson
-- **Local Storage:** Jetpack DataStore Preferences (with automated SharedPreferences migration)
-- **Testing:** JUnit 4, MockK, Cash App Turbine
+- **Image Loading:** Coil 3 (with OkHttp integration)
+- **Networking:** Retrofit, OkHttp, Gson
+- **In-App Billing:** Google Play Billing Client
+- **Local Storage:** Jetpack DataStore Preferences
+- **Analytics & Crashlytics:** Firebase Analytics & Crashlytics
+- **Push Notifications:** OneSignal
+- **Monetization:** Google AdMob & Meta Audience Network (FAN)
+- **Testing:** JUnit, MockK, Cash App Turbine, Coroutines Test
 
 ---
 
@@ -157,8 +172,9 @@ graph TD
 ### Prerequisites
 
 - **Android Studio:** Ladybug (2024.2+) or newer
-- **JDK:** Java 21 (bundled with Android Studio)
-- **Android SDK:** Compile SDK 35/37, Min SDK 26 (Android 8.0 Oreo)
+- **JDK:** Java 21 (bundled with Android Studio / JBR)
+- **Android SDK:** Compile SDK 37, Target SDK 37, Min SDK 26 (Android 8.0 Oreo)
+- **NDK:** Configured in `app/build.gradle.kts` with native debug symbols for release builds
 
 ---
 
@@ -187,15 +203,23 @@ cp .env.example .env
 > **Note:** If you skip this step, Gradle's build script (`readEnv.gradle`) will automatically copy
 `.env.example` to `.env` on your first build so the project compiles immediately.
 
-##### Key Environment Variables:
+##### Explanation of Environment Variables
 
-| Variable            | Description                                                                                                                      | Default in `.env.example`      |
-|:--------------------|:---------------------------------------------------------------------------------------------------------------------------------|:-------------------------------|
-| `IS_MOCK`           | When `true`, uses bundled offline JSON fixtures. Set to `false` for live Instagram network calls.                                | `true`                         |
-| `BASE_URL`          | Base endpoint URL for network requests.                                                                                          | `https://www.mock-server.com/` |
-| `FIREBASE_BASE64`   | Base64-encoded `google-services.json`. The build script automatically decodes this into `app/google-services.json` during build. | Included mock configuration    |
-| `QH_*`              | Instagram GraphQL query hashes for stories, highlights, and profile endpoints.                                                   | Pre-configured                 |
-| `ADMOB_*` / `FAN_*` | Ad unit IDs. Populated with official Google test ad unit IDs.                                                                    | Test ad IDs                    |
+| Variable                            | Description                                                                                                                                                                                                             | Default in `.env.example`                |
+|:------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------|
+| `IS_MOCK`                           | When `true`, `MockInterceptor` intercepts requests and serves local assets from `app/src/main/assets/mock_*.json`. Set to `false` for live Instagram network calls.                                                     | `true`                                   |
+| `BASE_URL`                          | Base URL for Instagram's main web domain. Points to mock server in mock mode (`https://www.mock-server.com/`) or live Instagram web endpoints in production.                                                            | `https://www.mock-server.com/`           |
+| `I_BASE_URL`                        | Secondary base URL for the mobile API domain. Used for user following lists and profile queries.                                                                                          | `https://i.mock-server.com/`             |
+| `QH_USER_INFO`                      | Instagram GraphQL query hash / document identifier for fetching detailed user profile metadata.                                                                                                                         | `user_info`                              |
+| `DOC_ID_STORY_AND_HIGHLIGHT`        | Instagram Relay Query document ID for the unified story and highlight media feed (`xdt_api__v1__feed__reels_media`).                                                                                                    | `story_and_highlight`                    |
+| `QH_HIGHLIGHT_LIST`                 | Instagram GraphQL query hash for fetching the user's pinned highlight reel collections (`edge_highlight_reels`).                                                                                                        | `highlight_list`                         |
+| `FIREBASE_BASE64`                   | Base64-encoded string of `google-services.json`. Automatically decoded by `readEnv.gradle` into `app/google-services.json` at build time so local builds compile without needing manual Firebase console configuration. | Included mock configuration              |
+| `ONESIGNAL_APP_ID`                  | Application ID for OneSignal push notification service.                                                                                                                                                                 | `test_one_singal_id`                     |
+| `ADMOB_APP_ID`                      | Google AdMob Application ID (pre-configured with Google's official test app ID).                                                                                                                                        | `ca-app-pub-3940256099942544~3347511713` |
+| `FAN_REWARDED_INTERSTITIAL_AD_ID`   | Meta (Facebook) Audience Network placement ID for rewarded interstitial ads (pre-configured with official test ID).                                                                                                     | `VID_HD_9_16_39S_APP_INSTALL`            |
+| `ADMOB_REWARDED_INTERSTITIAL_AD_ID` | Google AdMob Ad Unit ID for rewarded interstitial ads (pre-configured with official test ad unit ID).                                                                                                                   | `ca-app-pub-3940256099942544/5354046379` |
+| `ADMOB_INTERSTITIAL_AD_ID`          | Google AdMob Ad Unit ID for standard interstitial ads shown after downloading stories for non-premium users.                                                                                                            | `ca-app-pub-3940256099942544/1033173712` |
+| `ADMOB_APP_OPEN_AD_ID`              | Google AdMob Ad Unit ID for App Open ads displayed when launching or resuming the app.                                                                                                                                  | `ca-app-pub-3940256099942544/9257395921` |
 
 #### 3. Build & Run
 
@@ -213,7 +237,9 @@ cp .env.example .env
 - **Mock Mode (`IS_MOCK=true`):**  
   No Instagram account or live internet connection is needed. The app's `MockInterceptor` intercepts
   requests and serves realistic mock data (story feeds, user profiles, video reels, and highlights)
-  directly from local JSON assets. This is ideal for testing UI components, animations, and flows.
+  directly from local JSON assets. All bundled mock media URLs are verified public links (Unsplash
+  images and VideoJS MP4 videos) that render immediately. This is ideal for testing UI components,
+  animations, and flows.
 - **Live Mode (`IS_MOCK=false`):**  
   The app makes real network calls to Instagram. Sign in using the in-app WebView or paste your
   session cookies to browse live stories.
@@ -222,7 +248,7 @@ cp .env.example .env
 
 ## Running Tests
 
-To run the full unit test suite across all modules:
+To run the full unit test suite across all 22 modules:
 
 ```bash
 ./gradlew testDebugUnitTest
@@ -261,8 +287,9 @@ In addition
 to [Google Play Store](https://play.google.com/store/apps/details?id=in.vinit.storyghost) releases,
 production builds are automatically published on GitHub:
 
-- When a new release tag (e.g., `v1.0.0`) is pushed to `master`, GitHub Actions automatically
-  builds, signs, and publishes a new **GitHub Release** with the production APK.
+- When a new release tag (e.g., `vX.Y.Z`) is pushed to `master` or triggered via workflow dispatch,
+  GitHub Actions automatically builds, signs, and publishes a new **GitHub Release** with both the
+  signed production AAB and universal APK.
 - Users and testers can download and install updates directly from
   the [GitHub Releases page](https://github.com/vinit2510/Story-Ghost-Compose/releases) to get the
   latest features without waiting for app store review delays.

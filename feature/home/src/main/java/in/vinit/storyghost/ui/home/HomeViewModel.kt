@@ -8,7 +8,7 @@ import `in`.vinit.storyghost.core.common.network.ApiException
 import `in`.vinit.storyghost.core.common.storage.LocalStorage
 import `in`.vinit.storyghost.core.network.makeApiCall
 import `in`.vinit.storyghost.data.billing.BillingRepository
-import `in`.vinit.storyghost.data.model.StoryListResponse.Data.User.FeedReelsTray.EdgeReelsTrayToReel.Edge
+import `in`.vinit.storyghost.data.model.StoryUser
 import `in`.vinit.storyghost.data.model.UserInfoResponse
 import `in`.vinit.storyghost.data.story.StoryRepository
 import `in`.vinit.storyghost.data.user.UserRepository
@@ -52,9 +52,9 @@ class HomeViewModel(
     private val logger: Logger
 ) : ViewModel() {
 
-    private val _storyList = MutableStateFlow<UiState<List<Edge>>>(UiState.Loading)
+    private val _storyList = MutableStateFlow<UiState<List<StoryUser>>>(UiState.Loading)
 
-    private val _searchResults = MutableStateFlow<UiState<List<Edge>>>(UiState.Success(emptyList()))
+    private val _searchResults = MutableStateFlow<UiState<List<StoryUser>>>(UiState.Success(emptyList()))
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
@@ -70,7 +70,7 @@ class HomeViewModel(
     private var isLoadingFollowing: Boolean = false
     private val _isPaginating = MutableStateFlow(false)
     val isPaginating = _isPaginating.asStateFlow()
-    private val storyDataset = mutableListOf<Edge>()
+    private val storyDataset = mutableListOf<StoryUser>()
 
     fun onLoginDialogTriggerHandled() {
         _showLoginDialogTrigger.update { false }
@@ -111,8 +111,8 @@ class HomeViewModel(
                 results
             } else {
                 if (storiesState is UiState.Success) {
-                    val filtered = storiesState.data.filter { edge ->
-                        edge.node?.user?.username?.lowercase()?.contains(query.lowercase()) == true
+                    val filtered = storiesState.data.filter { user ->
+                        user.username?.lowercase()?.contains(query.lowercase()) == true
                     }
                     UiState.Success(filtered)
                 } else {
@@ -171,15 +171,11 @@ class HomeViewModel(
                     val newActiveStories = response.users
                         ?.filter { (it.latestReelMedia ?: 0L) != 0L }
                         ?.map { user ->
-                            Edge(
-                                node = Edge.Node(
-                                    id = user.id ?: user.pkId?.toString(),
-                                    user = Edge.Node.ReelUser(
-                                        id = user.id ?: user.pkId?.toString(),
-                                        username = user.username,
-                                        profilePicUrl = user.profilePicUrl
-                                    )
-                                )
+                            StoryUser(
+                                id = user.id ?: user.pkId?.toString(),
+                                username = user.username,
+                                profilePicUrl = user.profilePicUrl,
+                                isVerified = user.isVerified == true
                             )
                         } ?: emptyList()
 
@@ -196,7 +192,7 @@ class HomeViewModel(
                     }
                     logger.e(TAG, "loadStoryList: Failed to load following story list", ex)
                     if (storyDataset.isEmpty()) {
-                        _storyList.update { result.map { emptyList<Edge>() }.toUiState() }
+                        _storyList.update { result.map { emptyList<StoryUser>() }.toUiState() }
                     }
                 }
             )
@@ -227,15 +223,11 @@ class HomeViewModel(
                     val newActiveStories = response.users
                         ?.filter { (it.latestReelMedia ?: 0L) != 0L }
                         ?.map { user ->
-                            Edge(
-                                node = Edge.Node(
-                                    id = user.id ?: user.pkId?.toString(),
-                                    user = Edge.Node.ReelUser(
-                                        id = user.id ?: user.pkId?.toString(),
-                                        username = user.username,
-                                        profilePicUrl = user.profilePicUrl
-                                    )
-                                )
+                            StoryUser(
+                                id = user.id ?: user.pkId?.toString(),
+                                username = user.username,
+                                profilePicUrl = user.profilePicUrl,
+                                isVerified = user.isVerified == true
                             )
                         } ?: emptyList()
 
@@ -294,15 +286,11 @@ class HomeViewModel(
                 response.allUsers.mapNotNull { data ->
                     val user = data.user ?: return@mapNotNull null
                     val userId = user.userId ?: return@mapNotNull null
-                    Edge(
-                        node = Edge.Node(
-                            id = userId,
-                            user = Edge.Node.ReelUser(
-                                id = userId,
-                                username = user.username,
-                                profilePicUrl = user.profilePicUrl
-                            )
-                        )
+                    StoryUser(
+                        id = userId,
+                        username = user.username,
+                        profilePicUrl = user.profilePicUrl,
+                        isVerified = user.isVerified == true
                     )
                 }
             }

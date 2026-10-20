@@ -4,12 +4,11 @@ import com.google.gson.Gson
 import `in`.vinit.storyghost.config.AppConfig
 import `in`.vinit.storyghost.data.model.FollowingResponse
 import `in`.vinit.storyghost.data.model.HighlightsResponse
-import `in`.vinit.storyghost.data.model.StoryListResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
 import `in`.vinit.storyghost.data.remote.story.StoryAPI
 
 /**
- * Concrete implementation of [StoryRepository] interacting with [in.vinit.storyghost.data.remote.story.StoryAPI].
+ * Concrete implementation of [StoryRepository] interacting with [StoryAPI].
  */
 class StoryRepositoryImpl(
     private val api: StoryAPI,
@@ -23,24 +22,13 @@ class StoryRepositoryImpl(
         return api.getFollowing(url, maxId)
     }
 
-    @Deprecated("Deprecated by Instagram GraphQL changes. Use getFollowing instead.")
-    @Suppress("DEPRECATION")
-    override suspend fun getStoryFromFeed(): StoryListResponse {
-        val queryHash = appConfig.qhStoryList
-        val vars = mapOf(
-            "has_stories" to true,
-            "fetch_media_item_count" to 0
-        )
-        return api.getStoryFromFeed(queryHash, Gson().toJson(vars))
-    }
-
     override suspend fun getStoryByUserId(userId: String): UserStoryResponse {
-        val queryHash = appConfig.qhUserStory
         val vars = mapOf(
-            "reel_ids" to listOf(userId),
-            "precomposed_overlay" to false
+            "media_id" to null,
+            "reel_ids_arr" to listOf(userId),
+            "__relay_internal__pv__PolarisCommunityNoteStoriesLabelEnabledrelayprovider" to false
         )
-        return api.getStoryByUserId(queryHash, Gson().toJson(vars))
+        return api.getStories(appConfig.docIdStoryAndHighlight, Gson().toJson(vars))
     }
 
     override suspend fun getHighlightReelsByUserId(userId: String): HighlightsResponse {
@@ -58,11 +46,12 @@ class StoryRepositoryImpl(
     }
 
     override suspend fun getHighlightStoryByReelId(highlightReelId: String): UserStoryResponse {
-        val queryHash = appConfig.qhHighlightStory
+        val reelId = if (highlightReelId.startsWith("highlight:")) highlightReelId else "highlight:$highlightReelId"
         val vars = mapOf(
-            "highlight_reel_ids" to listOf(highlightReelId),
-            "precomposed_overlay" to false
+            "media_id" to null,
+            "reel_ids_arr" to listOf(reelId),
+            "__relay_internal__pv__PolarisCommunityNoteStoriesLabelEnabledrelayprovider" to false
         )
-        return api.getHighlightStoryByReelId(queryHash, Gson().toJson(vars))
+        return api.getStories(appConfig.docIdStoryAndHighlight, Gson().toJson(vars))
     }
 }

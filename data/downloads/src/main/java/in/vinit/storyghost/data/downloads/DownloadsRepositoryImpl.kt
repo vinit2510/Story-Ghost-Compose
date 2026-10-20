@@ -7,13 +7,11 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.core.ui.R
-import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
 private const val TAG = "DownloadsRepository"
-private const val STORY_TYPE_VIDEO = "GraphStoryVideo"
 
 class DownloadsRepositoryImpl(
     private val context: Context,
@@ -39,19 +37,13 @@ class DownloadsRepositoryImpl(
     }
 
     override fun downloadFile(
-        data: Item,
+        url: String,
+        filename: String,
+        title: String,
         onSuccess: () -> Unit
     ) {
         try {
-            var extension = ".mp4"
-            val url = if (data.typename == STORY_TYPE_VIDEO) {
-                data.videoResources?.getOrNull(0)?.src
-            } else {
-                extension = ".jpg"
-                data.displayUrl
-            }
-
-            if (url == null) {
+            if (url.isBlank()) {
                 Toast.makeText(context, R.string.toast_download_url_not_found, Toast.LENGTH_SHORT)
                     .show()
                 return
@@ -65,15 +57,17 @@ class DownloadsRepositoryImpl(
                 mFolder.mkdirs()
             }
 
+            val sanitizedFilename = filename.trim().ifEmpty { "instagram" }
+            val downloadTitle = title.trim().ifEmpty { sanitizedFilename }
+
             val request = DownloadManager.Request(url.toUri())
-            val filename = "${data.owner?.username}_story_${data.id}$extension"
             with(request) {
-                setTitle("@${data.owner?.username} story")
+                setTitle(downloadTitle)
                 setDescription("Downloading...")
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 setDestinationInExternalPublicDir(
                     Environment.DIRECTORY_DOWNLOADS,
-                    "/${context.getString(R.string.app_name)}/$filename"
+                    "/${context.getString(R.string.app_name)}/$sanitizedFilename"
                 )
             }
             val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
@@ -81,7 +75,7 @@ class DownloadsRepositoryImpl(
 
             onSuccess()
         } catch (e: Exception) {
-            logger.e(TAG, "downloadStory: Failed to enqueue download request", e)
+            logger.e(TAG, "downloadFile: Failed to enqueue download request", e)
             Toast.makeText(context, R.string.toast_failed_to_download, Toast.LENGTH_SHORT).show()
         }
     }

@@ -14,8 +14,8 @@ android {
         applicationId = "in.vinit.storyghost"
         minSdk = 26
         targetSdk = 37
-        versionCode = 20
-        versionName = "3.0.0"
+        versionCode = 21
+        versionName = "3.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -28,6 +28,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
             manifestPlaceholders["is_release_build"] = "true"
         }
         debug {
@@ -43,6 +46,7 @@ android {
         compose = true
         buildConfig = true
     }
+    ndkVersion = "30.0.16248370"
 }
 
 apply(from = "readEnv.gradle")

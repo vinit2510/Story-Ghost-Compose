@@ -3,7 +3,6 @@ package `in`.vinit.storyghost.data.remote.story
 import `in`.vinit.storyghost.config.AppConfig
 import `in`.vinit.storyghost.data.model.FollowingResponse
 import `in`.vinit.storyghost.data.model.HighlightsResponse
-import `in`.vinit.storyghost.data.model.StoryListResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
 import `in`.vinit.storyghost.data.story.StoryRepositoryImpl
 import io.mockk.coEvery
@@ -55,30 +54,19 @@ class StoryRepositoryTest {
         coVerify(exactly = 1) { api.getFollowing(expectedUrl, null) }
     }
 
-    @Suppress("DEPRECATION")
     @Test
-    fun `getStoryFromFeed delegates to API with expected params`() = runTest {
-        val expected = StoryListResponse()
-        coEvery { api.getStoryFromFeed(any(), any()) } returns expected
-
-        val result = repository.getStoryFromFeed()
-
-        assertNotNull(result)
-        assertEquals(expected, result)
-        coVerify(exactly = 1) { api.getStoryFromFeed(any(), any()) }
-    }
-
-    @Test
-    fun `getStoryByUserId delegates to API with user ID`() = runTest {
+    fun `getStoryByUserId delegates to modern getStories with configured docIdStoryAndHighlight`() = runTest {
+        val testDocId = "mock_story_doc_id"
+        every { appConfig.docIdStoryAndHighlight } returns testDocId
         val userId = "user_99"
         val expected = UserStoryResponse()
-        coEvery { api.getStoryByUserId(any(), any()) } returns expected
+        coEvery { api.getStories(testDocId, any()) } returns expected
 
         val result = repository.getStoryByUserId(userId)
 
         assertNotNull(result)
         assertEquals(expected, result)
-        coVerify(exactly = 1) { api.getStoryByUserId(any(), any()) }
+        coVerify(exactly = 1) { api.getStories(testDocId, match { it.contains("user_99") }) }
     }
 
     @Test
@@ -95,15 +83,17 @@ class StoryRepositoryTest {
     }
 
     @Test
-    fun `getHighlightStoryByReelId delegates to API with highlight reel ID`() = runTest {
-        val reelId = "highlight_123"
+    fun `getHighlightStoryByReelId appends highlight prefix and delegates to modern getStories`() = runTest {
+        val testDocId = "mock_story_doc_id"
+        every { appConfig.docIdStoryAndHighlight } returns testDocId
+        val rawReelId = "12345"
         val expected = UserStoryResponse()
-        coEvery { api.getHighlightStoryByReelId(any(), any()) } returns expected
+        coEvery { api.getStories(testDocId, any()) } returns expected
 
-        val result = repository.getHighlightStoryByReelId(reelId)
+        val result = repository.getHighlightStoryByReelId(rawReelId)
 
         assertNotNull(result)
         assertEquals(expected, result)
-        coVerify(exactly = 1) { api.getHighlightStoryByReelId(any(), any()) }
+        coVerify(exactly = 1) { api.getStories(testDocId, match { it.contains("highlight:12345") }) }
     }
 }
