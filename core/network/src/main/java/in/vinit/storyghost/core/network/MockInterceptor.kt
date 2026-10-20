@@ -18,7 +18,6 @@ import java.io.IOException
  * - Reproducible automated unit and integration tests.
  *
  * Matches incoming GraphQL query hashes and REST endpoints to specific JSON assets:
- * - Story list: `mock_story_list.json`
  * - User stories: `mock_user_story.json`
  * - Highlights: `mock_highlights.json`
  * - Search: `mock_search_user.json`
@@ -44,7 +43,6 @@ class MockInterceptor(
                     ?: ""
 
                 when {
-                    queryHash == appConfig.qhStoryList -> "mock_story_list.json"
                     queryHash == appConfig.qhHighlightList && variables.contains("\"include_highlight_reels\":true") -> "mock_highlights.json"
                     queryHash == appConfig.qhUserInfo && variables.contains("\"include_highlight_reels\":false") -> "mock_user_info.json"
                     variables.contains("highlight:") -> "mock_user_highlights.json"

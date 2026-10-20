@@ -3,7 +3,6 @@ package `in`.vinit.storyghost.data.remote.story
 import `in`.vinit.storyghost.config.AppConfig
 import `in`.vinit.storyghost.data.model.FollowingResponse
 import `in`.vinit.storyghost.data.model.HighlightsResponse
-import `in`.vinit.storyghost.data.model.StoryListResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
 import `in`.vinit.storyghost.data.story.StoryRepositoryImpl
 import io.mockk.coEvery
@@ -53,19 +52,6 @@ class StoryRepositoryTest {
         assertNotNull(result)
         assertEquals(expected, result)
         coVerify(exactly = 1) { api.getFollowing(expectedUrl, null) }
-    }
-
-    @Suppress("DEPRECATION")
-    @Test
-    fun `getStoryFromFeed delegates to API with expected params`() = runTest {
-        val expected = StoryListResponse()
-        coEvery { api.getStoryFromFeed(any(), any()) } returns expected
-
-        val result = repository.getStoryFromFeed()
-
-        assertNotNull(result)
-        assertEquals(expected, result)
-        coVerify(exactly = 1) { api.getStoryFromFeed(any(), any()) }
     }
 
     @Test

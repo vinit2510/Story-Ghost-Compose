@@ -97,7 +97,7 @@ class HomeViewModelTest {
             assertTrue(state is UiState.Success)
             val list = (state as UiState.Success).data
             assertEquals(1, list.size)
-            assertEquals("alice", list[0].node?.user?.username)
+            assertEquals("alice", list[0].username)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -153,7 +153,7 @@ class HomeViewModelTest {
             assertTrue(state is UiState.Success)
             val list = (state as UiState.Success).data
             assertEquals(1, list.size)
-            assertEquals("charlie", list[0].node?.user?.username)
+            assertEquals("charlie", list[0].username)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -195,7 +195,7 @@ class HomeViewModelTest {
             assertTrue(state is UiState.Success)
             val list = (state as UiState.Success).data
             assertEquals(1, list.size)
-            assertEquals("remote_user", list[0].node?.user?.username)
+            assertEquals("remote_user", list[0].username)
             cancelAndIgnoreRemainingEvents()
         }
     }

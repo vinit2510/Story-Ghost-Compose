@@ -37,7 +37,6 @@ val appConfigModule = module {
             iBaseUrl = BuildConfig.I_BASE_URL,
             isMock = BuildConfig.IS_MOCK,
             onesignalAppId = BuildConfig.ONESIGNAL_APP_ID,
-            qhStoryList = BuildConfig.QH_STORY_LIST,
             docIdStoryAndHighlight = BuildConfig.DOC_ID_STORY_AND_HIGHLIGHT,
             qhHighlightList = BuildConfig.QH_HIGHLIGHT_LIST,
             qhUserInfo = BuildConfig.QH_USER_INFO,

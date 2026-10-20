@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import `in`.vinit.storyghost.config.AppConfig
 import `in`.vinit.storyghost.data.model.FollowingResponse
 import `in`.vinit.storyghost.data.model.HighlightsResponse
-import `in`.vinit.storyghost.data.model.StoryListResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
 import `in`.vinit.storyghost.data.remote.story.StoryAPI
 
@@ -21,17 +20,6 @@ class StoryRepositoryImpl(
             if (appConfig.iBaseUrl.endsWith("/")) appConfig.iBaseUrl else "${appConfig.iBaseUrl}/"
         val url = "${base}api/v1/friendships/$userId/following/"
         return api.getFollowing(url, maxId)
-    }
-
-    @Deprecated("Deprecated by Instagram GraphQL changes. Use getFollowing instead.")
-    @Suppress("DEPRECATION")
-    override suspend fun getStoryFromFeed(): StoryListResponse {
-        val queryHash = appConfig.qhStoryList
-        val vars = mapOf(
-            "has_stories" to true,
-            "fetch_media_item_count" to 0
-        )
-        return api.getStoryFromFeed(queryHash, Gson().toJson(vars))
     }
 
     override suspend fun getStoryByUserId(userId: String): UserStoryResponse {

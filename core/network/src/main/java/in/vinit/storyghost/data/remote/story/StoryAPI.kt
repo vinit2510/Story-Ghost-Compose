@@ -2,7 +2,6 @@ package `in`.vinit.storyghost.data.remote.story
 
 import `in`.vinit.storyghost.data.model.FollowingResponse
 import `in`.vinit.storyghost.data.model.HighlightsResponse
-import `in`.vinit.storyghost.data.model.StoryListResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -28,20 +27,6 @@ interface StoryAPI {
         @Url url: String,
         @Query("max_id") maxId: String? = null
     ): FollowingResponse
-
-    /**
-     * Fetches the home feed reels tray containing current stories from followed accounts.
-     *
-     * @param queryHash The GraphQL query hash for the story feed query.
-     * @param variables Serialized JSON string containing query parameters.
-     * @return [StoryListResponse] containing active feed story items.
-     */
-    @Deprecated("API response feed_reels_tray no more available")
-    @GET("graphql/query/")
-    suspend fun getStoryFromFeed(
-        @Query("query_hash") queryHash: String,
-        @Query("variables") variables: String
-    ): StoryListResponse
 
     /**
      * Fetches story or highlight media items using Instagram Relay doc_id query.

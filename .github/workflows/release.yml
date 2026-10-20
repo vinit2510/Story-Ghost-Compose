@@ -38,7 +38,6 @@ jobs:
           echo "I_BASE_URL=${{ secrets.I_BASE_URL }}" >> .env
           echo "IS_MOCK=${{ secrets.IS_MOCK }}" >> .env
           echo "QH_USER_INFO=${{ secrets.QH_USER_INFO }}" >> .env
-          echo "QH_STORY_LIST=${{ secrets.QH_STORY_LIST }}" >> .env
           echo "DOC_ID_STORY_AND_HIGHLIGHT=${{ secrets.DOC_ID_STORY_AND_HIGHLIGHT }}" >> .env
           echo "QH_HIGHLIGHT_LIST=${{ secrets.QH_HIGHLIGHT_LIST }}" >> .env
           echo "FIREBASE_BASE64=${{ secrets.FIREBASE_BASE64 }}" >> .env
