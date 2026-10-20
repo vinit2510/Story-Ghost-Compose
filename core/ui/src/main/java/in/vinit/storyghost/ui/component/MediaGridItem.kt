@@ -1,15 +1,19 @@
 package `in`.vinit.storyghost.ui.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -40,7 +44,8 @@ fun MediaGridItem(
     coverUrl: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    prefixUsername: Boolean = false
+    prefixUsername: Boolean = false,
+    isVerified: Boolean = false
 ) {
     val context = LocalContext.current
     val imageRequest = remember(coverUrl, context) {
@@ -104,16 +109,30 @@ fun MediaGridItem(
                     } else {
                         title
                     }
-                    Text(
-                        text = displayText,
+                    Row(
                         modifier = Modifier
                             .padding(horizontal = 10.dp, vertical = 5.dp),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 2
-                    )
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = displayText,
+                            modifier = Modifier.weight(1f, fill = false),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 2
+                        )
+                        if (isVerified) {
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Image(
+                                painter = painterResource(R.drawable.ic_verified),
+                                contentDescription = null,
+                                modifier = Modifier.size(14.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -127,7 +146,8 @@ private fun MediaGridItemPreview() {
         MediaGridItem(
             title = "Vacation",
             coverUrl = "",
-            onClick = {}
+            onClick = {},
+            isVerified = true
         )
     }
 }

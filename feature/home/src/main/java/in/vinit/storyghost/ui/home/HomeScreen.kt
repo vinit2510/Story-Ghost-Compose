@@ -327,7 +327,8 @@ fun HomeContent(
                                         isHighlightMode
                                     )
                                 },
-                                prefixUsername = true
+                                prefixUsername = true,
+                                isVerified = user.isVerified
                             )
                         }
 

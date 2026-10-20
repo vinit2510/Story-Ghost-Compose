@@ -174,7 +174,8 @@ class HomeViewModel(
                             StoryUser(
                                 id = user.id ?: user.pkId?.toString(),
                                 username = user.username,
-                                profilePicUrl = user.profilePicUrl
+                                profilePicUrl = user.profilePicUrl,
+                                isVerified = user.isVerified == true
                             )
                         } ?: emptyList()
 
@@ -225,7 +226,8 @@ class HomeViewModel(
                             StoryUser(
                                 id = user.id ?: user.pkId?.toString(),
                                 username = user.username,
-                                profilePicUrl = user.profilePicUrl
+                                profilePicUrl = user.profilePicUrl,
+                                isVerified = user.isVerified == true
                             )
                         } ?: emptyList()
 
@@ -287,7 +289,8 @@ class HomeViewModel(
                     StoryUser(
                         id = userId,
                         username = user.username,
-                        profilePicUrl = user.profilePicUrl
+                        profilePicUrl = user.profilePicUrl,
+                        isVerified = user.isVerified == true
                     )
                 }
             }

@@ -9,5 +9,6 @@ import androidx.compose.runtime.Immutable
 data class StoryUser(
     val id: String? = null,
     val username: String? = null,
-    val profilePicUrl: String? = null
+    val profilePicUrl: String? = null,
+    val isVerified: Boolean = false
 )
