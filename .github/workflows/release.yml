@@ -1,4 +1,4 @@
-name: Android Release (Internal Track & GitHub Release)
+name: CD
 
 on:
   push:
