@@ -6,6 +6,7 @@ import `in`.vinit.storyghost.core.common.storage.LocalStorage
 import `in`.vinit.storyghost.core.play.InAppReviewManager
 import `in`.vinit.storyghost.data.downloads.DownloadsRepository
 import `in`.vinit.storyghost.data.model.UserStoryResponse
+import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia
 import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.data.story.StoryRepository
@@ -66,11 +67,18 @@ class StoryViewModelTest {
         val mockItems = listOf(
             Item(id = "item_1", mediaType = 1)
         )
+        val mockUser = UserStoryResponse.Data.User(
+            id = userId,
+            username = "ghost_hunter",
+            profilePicUrl = "https://example.com/pic.jpg"
+        )
         val mockResponse = UserStoryResponse(
             data = UserStoryResponse.Data(
                 xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
                     reelsMedia = listOf(
-                        UserStoryResponse.Data.ReelsMedia(
+                        ReelsMedia(
+                            id = userId,
+                            user = mockUser,
                             items = mockItems
                         )
                     )
@@ -85,7 +93,9 @@ class StoryViewModelTest {
         coVerify(exactly = 1) { storyRepository.getStoryByUserId(userId) }
         val state = viewModel.uiState.value
         assertTrue(state is UiState.Success)
-        assertEquals(mockItems, (state as UiState.Success).data)
+        val reel = (state as UiState.Success).data
+        assertEquals(mockItems, reel.items)
+        assertEquals(mockUser, reel.user)
     }
 
     @Test
@@ -99,7 +109,7 @@ class StoryViewModelTest {
                 data = UserStoryResponse.Data(
                     xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
                         reelsMedia = listOf(
-                            UserStoryResponse.Data.ReelsMedia(
+                            ReelsMedia(
                                 items = mockItems
                             )
                         )
@@ -121,7 +131,7 @@ class StoryViewModelTest {
             coVerify(exactly = 1) { storyRepository.getStoryByUserId(userId) }
             val state = viewModel.uiState.value
             assertTrue(state is UiState.Success)
-            assertEquals(mockItems, (state as UiState.Success).data)
+            assertEquals(mockItems, (state as UiState.Success).data.items)
         }
 
     @Test
@@ -131,7 +141,7 @@ class StoryViewModelTest {
             data = UserStoryResponse.Data(
                 xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
                     reelsMedia = listOf(
-                        UserStoryResponse.Data.ReelsMedia(
+                        ReelsMedia(
                             items = emptyList()
                         )
                     )
@@ -164,7 +174,7 @@ class StoryViewModelTest {
                 data = UserStoryResponse.Data(
                     xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
                         reelsMedia = listOf(
-                            UserStoryResponse.Data.ReelsMedia(
+                            ReelsMedia(
                                 items = emptyList()
                             )
                         )
@@ -196,7 +206,7 @@ class StoryViewModelTest {
                 data = UserStoryResponse.Data(
                     xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
                         reelsMedia = listOf(
-                            UserStoryResponse.Data.ReelsMedia(
+                            ReelsMedia(
                                 items = listOf(item1, item2, item3)
                             )
                         )
@@ -210,7 +220,7 @@ class StoryViewModelTest {
 
             val state = viewModel.uiState.value
             assertTrue(state is UiState.Success)
-            assertEquals(listOf(item3, item2, item1), (state as UiState.Success).data)
+            assertEquals(listOf(item3, item2, item1), (state as UiState.Success).data.items)
         }
 
     @Test
@@ -241,11 +251,49 @@ class StoryViewModelTest {
     }
 
     @Test
-    fun `downloadStory delegates to downloadsRepository`() {
-        val item = Item(id = "item_1", mediaType = 1)
+    fun `downloadStory delegates to downloadsRepository with url, filename and title`() {
+        val item = Item(
+            id = "item_1",
+            mediaType = 1,
+            imageVersions2 = UserStoryResponse.Data.ImageVersions(
+                candidates = listOf(
+                    UserStoryResponse.Data.ImageVersions.Candidate(url = "https://example.com/photo.jpg")
+                )
+            )
+        )
         val onSuccess: () -> Unit = {}
-        viewModel.downloadStory(item, onSuccess)
-        coVerify(exactly = 1) { downloadsRepository.downloadFile(item, onSuccess) }
+        viewModel.downloadStory(item, "ghost_hunter", onSuccess)
+        coVerify(exactly = 1) {
+            downloadsRepository.downloadFile(
+                "https://example.com/photo.jpg",
+                "ghost_hunter_story_item_1.jpg",
+                "@ghost_hunter story",
+                onSuccess
+            )
+        }
+    }
+
+    @Test
+    fun `downloadStory defaults to instagram filename and title when username is null`() {
+        val item = Item(
+            id = "item_2",
+            mediaType = 1,
+            imageVersions2 = UserStoryResponse.Data.ImageVersions(
+                candidates = listOf(
+                    UserStoryResponse.Data.ImageVersions.Candidate(url = "https://example.com/photo2.jpg")
+                )
+            )
+        )
+        val onSuccess: () -> Unit = {}
+        viewModel.downloadStory(item, null, onSuccess)
+        coVerify(exactly = 1) {
+            downloadsRepository.downloadFile(
+                "https://example.com/photo2.jpg",
+                "instagram_story_item_2.jpg",
+                "@instagram story",
+                onSuccess
+            )
+        }
     }
 
     @Test
@@ -259,4 +307,3 @@ class StoryViewModelTest {
         assertTrue(viewModel.uiState.value is UiState.Error)
     }
 }
-

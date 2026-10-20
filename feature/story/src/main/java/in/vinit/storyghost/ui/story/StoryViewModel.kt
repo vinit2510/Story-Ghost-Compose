@@ -9,6 +9,7 @@ import `in`.vinit.storyghost.core.common.storage.LocalStorage
 import `in`.vinit.storyghost.core.network.makeApiCall
 import `in`.vinit.storyghost.core.play.InAppReviewManager
 import `in`.vinit.storyghost.data.downloads.DownloadsRepository
+import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia
 import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.data.story.StoryRepository
@@ -46,8 +47,8 @@ class StoryViewModel(
 
     var currentPageIndex = 0
 
-    private val _uiState = MutableStateFlow<UiState<List<Item>>>(UiState.Loading)
-    val uiState: StateFlow<UiState<List<Item>>> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<UiState<ReelsMedia>>(UiState.Loading)
+    val uiState: StateFlow<UiState<ReelsMedia>> = _uiState.asStateFlow()
 
     val isPremium = localStorage.isPremium()
         .stateIn(
@@ -74,8 +75,21 @@ class StoryViewModel(
         return remoteConfigRepository.getInstagramAccountUrl()
     }
 
-    fun downloadStory(item: Item, onSuccess: () -> Unit) {
-        downloadsRepository.downloadFile(item, onSuccess)
+    fun downloadStory(item: Item, username: String?, onSuccess: () -> Unit) {
+        val isVideo = item.mediaType == 2
+        val url = if (isVideo) {
+            item.videoVersions?.firstOrNull()?.url
+        } else {
+            item.imageVersions2?.candidates?.firstOrNull()?.url
+        }
+        if (url.isNullOrEmpty()) {
+            return
+        }
+        val safeUsername = username?.trim()?.ifEmpty { "instagram" } ?: "instagram"
+        val extension = if (isVideo) ".mp4" else ".jpg"
+        val filename = "${safeUsername}_story_${item.id ?: System.currentTimeMillis()}$extension"
+        val title = "@$safeUsername story"
+        downloadsRepository.downloadFile(url = url, filename = filename, title = title, onSuccess = onSuccess)
     }
 
     fun loadStories(storyId: String, isHighlight: Boolean) {
@@ -95,8 +109,8 @@ class StoryViewModel(
             val result = makeApiCall { storyRepository.getStoryByUserId(userId) }
             result.fold(
                 onSuccess = { data ->
-                    val items = data.data?.xdtReelsMedia?.reelsMedia?.firstOrNull()?.items ?: emptyList()
-                    _uiState.update { UiState.Success(items) }
+                    val reel = data.data?.xdtReelsMedia?.reelsMedia?.firstOrNull() ?: ReelsMedia(items = emptyList())
+                    _uiState.update { UiState.Success(reel) }
                 },
                 onFailure = { ex ->
                     logger.e(TAG, "loadUserStories: Failed to load stories for user $userId", ex)
@@ -112,9 +126,9 @@ class StoryViewModel(
             val result = makeApiCall { storyRepository.getHighlightStoryByReelId(highlightId) }
             result.fold(
                 onSuccess = { data ->
-                    val items =
-                        data.data?.xdtReelsMedia?.reelsMedia?.firstOrNull()?.items?.reversed() ?: emptyList()
-                    _uiState.update { UiState.Success(items) }
+                    val reel = data.data?.xdtReelsMedia?.reelsMedia?.firstOrNull()
+                    val reversedReel = reel?.copy(items = reel.items?.reversed() ?: emptyList()) ?: ReelsMedia(items = emptyList())
+                    _uiState.update { UiState.Success(reversedReel) }
                 },
                 onFailure = { ex ->
                     logger.e(TAG, "loadHighlightStory: Failed to load highlight $highlightId", ex)

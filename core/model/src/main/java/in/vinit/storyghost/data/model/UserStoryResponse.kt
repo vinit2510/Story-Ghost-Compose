@@ -19,20 +19,36 @@ data class UserStoryResponse(
         @Immutable
         data class ReelsMedia(
             @SerializedName("id") val id: String? = null,
+            @SerializedName("reel_type") val reelType: String? = null,
             @SerializedName("user") val user: User? = null,
-            @SerializedName("items") val items: List<Item>? = null
+            @SerializedName("items") val items: List<Item>? = null,
+            @SerializedName("latest_reel_media") val latestReelMedia: Long? = null,
+            @SerializedName("seen") val seen: Long? = null,
+            @SerializedName("can_reshare") val canReshare: Boolean? = null
         ) {
             @Immutable
             data class Item(
                 @SerializedName("id") val id: String? = null,
                 @SerializedName("pk") val pk: String? = null,
                 @SerializedName("media_type") val mediaType: Int? = null,
+                @SerializedName("original_width") val originalWidth: Int? = null,
+                @SerializedName("original_height") val originalHeight: Int? = null,
                 @SerializedName("taken_at") val takenAt: Long? = null,
-                @SerializedName("user") val user: User? = null,
+                @SerializedName("expiring_at") val expiringAt: Long? = null,
+                @SerializedName("user") val user: ItemUser? = null,
                 @SerializedName("image_versions2") val imageVersions2: ImageVersions? = null,
                 @SerializedName("video_versions") val videoVersions: List<VideoVersion>? = null,
                 @SerializedName("story_bloks_stickers") val storyBloksStickers: List<StoryBloksSticker>? = null
-            )
+            ) {
+                @Immutable
+                data class ItemUser(
+                    @SerializedName("id") val id: String? = null,
+                    @SerializedName("pk") val pk: String? = null,
+                    @SerializedName("is_ai_user") val isAiUser: Boolean? = null,
+                    @SerializedName("instagram_pk") val instagramPk: String? = null,
+                    @SerializedName("interop_messaging_user_fbid") val interopMessagingUserFbid: String? = null
+                )
+            }
         }
 
         @Immutable
@@ -40,7 +56,9 @@ data class UserStoryResponse(
             @SerializedName("id") val id: String? = null,
             @SerializedName("pk") val pk: String? = null,
             @SerializedName("username") val username: String? = null,
-            @SerializedName("profile_pic_url") val profilePicUrl: String? = null
+            @SerializedName("profile_pic_url") val profilePicUrl: String? = null,
+            @SerializedName("is_verified") val isVerified: Boolean? = null,
+            @SerializedName("is_private") val isPrivate: Boolean? = null
         )
 
         @Immutable

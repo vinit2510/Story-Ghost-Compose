@@ -1,6 +1,5 @@
 package `in`.vinit.storyghost.data.downloads
 
-import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import java.io.File
 
 /**
@@ -12,7 +11,7 @@ import java.io.File
 interface DownloadsRepository {
 
     /**
-     * Scans and returns all locally saved story media files sorted by date modified.
+     * Scans and returns all locally saved media files sorted by date modified.
      */
     suspend fun getDownloadedFiles(): List<File>
 
@@ -24,10 +23,12 @@ interface DownloadsRepository {
     suspend fun deleteFile(file: File): Boolean
 
     /**
-     * Enqueues a download for a story media [data] item via Android's DownloadManager.
+     * Enqueues a download for a media file via Android's DownloadManager.
      *
-     * @param data The story item containing video or photo URLs and user metadata.
+     * @param url Direct download URL for the media asset (photo or video).
+     * @param filename Desired name of the downloaded file.
+     * @param title Title displayed in the Android system download notification.
      * @param onSuccess Callback triggered when the download request has been successfully enqueued.
      */
-    fun downloadFile(data: Item, onSuccess: () -> Unit)
+    fun downloadFile(url: String, filename: String, title: String, onSuccess: () -> Unit)
 }

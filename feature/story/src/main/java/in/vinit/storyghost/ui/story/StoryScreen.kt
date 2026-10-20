@@ -60,6 +60,7 @@ import `in`.vinit.storyghost.core.analytics.AnalyticsEvent
 import `in`.vinit.storyghost.core.analytics.LocalAnalyticsLogger
 import `in`.vinit.storyghost.core.ui.R
 import `in`.vinit.storyghost.data.model.UserStoryResponse
+import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia
 import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.ErrorPlaceholder
@@ -121,7 +122,7 @@ fun StoryScreen(
                 }
 
                 is UiState.Success -> {
-                    if (state.data.isEmpty()) {
+                    if (state.data.items.isNullOrEmpty()) {
                         ErrorPlaceholder(
                             message = if (isHighlight)
                                 stringResource(R.string.highlight_not_available)
@@ -130,7 +131,7 @@ fun StoryScreen(
                         )
                     } else {
                         StoryContent(
-                            stories = state.data,
+                            reel = state.data,
                             isHighlight = isHighlight,
                             isPremium = isPremium,
                             initialPage = viewModel.currentPageIndex,
@@ -138,7 +139,7 @@ fun StoryScreen(
                             onHighlightClick = onHighlightClick,
                             onDownloadClick = { item, onSuccess ->
                                 analyticsLogger.logEvent(AnalyticsEvent.STORY_DOWNLOAD)
-                                viewModel.downloadStory(item, onSuccess)
+                                viewModel.downloadStory(item, state.data.user?.username, onSuccess)
                             },
                             onShowAd = viewModel::showAd,
                             onMentionClick = { username ->
@@ -158,7 +159,7 @@ fun StoryScreen(
 
 @Composable
 fun StoryContent(
-    stories: List<Item>,
+    reel: ReelsMedia,
     isHighlight: Boolean,
     isPremium: Boolean,
     initialPage: Int,
@@ -169,6 +170,7 @@ fun StoryContent(
     onMentionClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val stories = reel.items.orEmpty()
     val pagerState = rememberPagerState(
         initialPage = initialPage,
         pageCount = { stories.size }
@@ -196,6 +198,7 @@ fun StoryContent(
                 modifier = Modifier.fillMaxSize()
             ) {
                 StoryPage(
+                    user = reel.user,
                     data = stories[page],
                     currentCount = page,
                     totalCount = stories.size,
@@ -250,6 +253,7 @@ fun StoryContent(
 
 @Composable
 fun StoryPage(
+    user: UserStoryResponse.Data.User?,
     data: Item,
     currentCount: Int,
     totalCount: Int,
@@ -303,8 +307,8 @@ fun StoryPage(
         }
     }
 
-    val ownerImageUrl = remember(data) {
-        data.user?.profilePicUrl
+    val ownerImageUrl = remember(user) {
+        user?.profilePicUrl
     }
     val ownerImageRequest = remember(ownerImageUrl, context) {
         ownerImageUrl?.let {
@@ -402,7 +406,7 @@ fun StoryPage(
                             error = painterResource(R.drawable.avatar_instagram_user)
                         )
                         Text(
-                            text = data.user?.username ?: "",
+                            text = user?.username ?: "",
                             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                             color = Color.White
                         )
@@ -528,8 +532,8 @@ fun StoryPage(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(5.dp),
                         modifier = Modifier.clickable {
-                            data.user?.let { user ->
-                                onHighlightClick(user.id ?: user.pk ?: "", user.username ?: "")
+                            user?.let { u ->
+                                onHighlightClick(u.id ?: u.pk ?: "", u.username ?: "")
                             }
                         }
                     ) {
@@ -650,10 +654,8 @@ fun StoryPagePreview() {
         id = "12345",
         mediaType = 1,
         takenAt = 1680000000L,
-        user = UserStoryResponse.Data.User(
-            id = "owner_id",
-            profilePicUrl = "https://example.com/pic.jpg",
-            username = "johndoe"
+        user = Item.ItemUser(
+            id = "owner_id"
         ),
         imageVersions2 = UserStoryResponse.Data.ImageVersions(
             candidates = listOf(
@@ -680,6 +682,11 @@ fun StoryPagePreview() {
 
     StoryGhostTheme {
         StoryPage(
+            user = UserStoryResponse.Data.User(
+                id = "mock_user",
+                username = "johndoe",
+                profilePicUrl = "https://example.com/pic.jpg"
+            ),
             data = mockItem,
             currentCount = 0,
             totalCount = 1,
