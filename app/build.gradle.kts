@@ -94,10 +94,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.process)
 
-    // Firebase crashlytics
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics)
-
     // Dependency Injection (Koin) & Coil Image Loading
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
