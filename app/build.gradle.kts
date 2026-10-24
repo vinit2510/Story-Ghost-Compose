@@ -1,9 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.firebase.perf)
 }
 
 android {
@@ -94,9 +95,10 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.process)
 
-    // Firebase crashlytics
+    // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.perf)
 
     // Dependency Injection (Koin) & Coil Image Loading
     implementation(libs.koin.android)
