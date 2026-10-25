@@ -1,7 +1,10 @@
 package `in`.vinit.storyghost.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.mutableStateOf
+import `in`.vinit.storyghost.ui.navigation.Route
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,6 +34,7 @@ class MainActivity : ComponentActivity() {
 
     private val appOpenAdManager: AppOpenAdManager by inject()
     private val inAppUpdateManager: InAppUpdateManager by inject()
+    private val deepLinkRoute = mutableStateOf<Route?>(null)
 
     private val updateLauncher = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
@@ -45,14 +49,31 @@ class MainActivity : ComponentActivity() {
         // Check for Google Play in-app updates
         inAppUpdateManager.checkForUpdate(this, updateLauncher)
 
+        handleNotificationIntent(intent)
+
         setContent {
             CompositionLocalProvider(LocalAnalyticsLogger provides koinInject()) {
                 StoryGhostTheme {
                     App(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        deepLinkRoute = deepLinkRoute.value,
+                        onDeepLinkConsumed = { deepLinkRoute.value = null }
                     )
                 }
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleNotificationIntent(intent)
+    }
+
+    private fun handleNotificationIntent(intent: Intent?) {
+        val resolvedRoute = Route.fromDeepLink(intent?.dataString)
+        if (resolvedRoute != null) {
+            deepLinkRoute.value = resolvedRoute
         }
     }
 

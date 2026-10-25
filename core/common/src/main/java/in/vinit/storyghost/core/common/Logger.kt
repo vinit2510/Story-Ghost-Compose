@@ -12,7 +12,7 @@ interface Logger {
     fun d(tag: String, message: String)
 
     /** Logs a warning message with the specified [tag]. */
-    fun w(tag: String, message: String)
+    fun w(tag: String, message: String, throwable: Throwable? = null)
 
     /** Logs an error message and optional [throwable] cause with the specified [tag]. */
     fun e(tag: String, message: String, throwable: Throwable? = null)
@@ -26,8 +26,12 @@ class TimberLoggerImpl : Logger {
         Timber.tag(tag).d(message)
     }
 
-    override fun w(tag: String, message: String) {
-        Timber.tag(tag).w(message)
+    override fun w(tag: String, message: String, throwable: Throwable?) {
+        if (throwable != null) {
+            Timber.tag(tag).w(throwable, message)
+        } else {
+            Timber.tag(tag).w(message)
+        }
     }
 
     override fun e(tag: String, message: String, throwable: Throwable?) {

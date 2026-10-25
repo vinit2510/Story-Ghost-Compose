@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.navigation3.runtime.NavKey
 import `in`.vinit.storyghost.core.analytics.AnalyticsScreen
 import kotlinx.serialization.Serializable
+import androidx.core.net.toUri
 
 /**
  * Sealed interface representing type-safe navigation destinations for the app.
@@ -63,5 +64,51 @@ sealed interface Route : NavKey {
         val userName: String
     ) : Route, NavKey {
         override val analyticsScreenName: String get() = AnalyticsScreen.HIGHLIGHT
+    }
+
+    companion object {
+        /**
+         * Resolves a deep-link URI into a typed [Route].
+         *
+         * Supported schemes:
+         * - `storyghost://subscription` -> [Route.Subscription]
+         * - `storyghost://downloads` -> [Route.Downloads]
+         * - `storyghost://home` -> [Route.Home]
+         * - `storyghost://story?id={id}&isHighlight={boolean}` -> [Route.Story]
+         * - `storyghost://highlight?userId={id}&userName={name}` -> [Route.Highlight]
+         */
+        fun fromDeepLink(urlString: String?): Route? {
+            if (urlString.isNullOrBlank()) return null
+            val uri = try {
+                urlString.toUri()
+            } catch (_: Exception) {
+                return null
+            }
+
+            if (uri.scheme?.lowercase() != "storyghost") return null
+
+            val host = uri.host?.lowercase() ?: uri.path?.trimStart('/')?.lowercase()
+
+            return when (host) {
+                "subscription" -> Subscription
+                "downloads" -> Downloads
+                "home" -> Home
+                "story" -> {
+                    val id = uri.getQueryParameter("id") ?: uri.getQueryParameter("storyId")
+                    if (!id.isNullOrBlank()) {
+                        val isHighlight = uri.getBooleanQueryParameter("isHighlight", false)
+                        Story(storyId = id, isHighlight = isHighlight)
+                    } else null
+                }
+                "highlight" -> {
+                    val userId = uri.getQueryParameter("userId") ?: uri.getQueryParameter("id")
+                    val userName = uri.getQueryParameter("userName") ?: uri.getQueryParameter("username") ?: ""
+                    if (!userId.isNullOrBlank()) {
+                        Highlight(userId = userId, userName = userName)
+                    } else null
+                }
+                else -> null
+            }
+        }
     }
 }

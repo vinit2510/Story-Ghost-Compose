@@ -9,12 +9,14 @@ class AppInitializer(
     private val appConfig: AppConfig,
     private val firebaseInitializer: FirebaseInitializer,
     private val adInitializer: AdInitializer,
+    private val notificationInitializer: NotificationInitializer? = null,
     private val logger: Logger
 ) {
     fun initializeAll() {
         initTimber()
         initFirebase()
         initAds()
+        initNotifications()
     }
 
     private fun initTimber() {
@@ -29,5 +31,9 @@ class AppInitializer(
 
     private fun initAds() {
         adInitializer.initialize()
+    }
+
+    private fun initNotifications() {
+        notificationInitializer?.initialize()
     }
 }

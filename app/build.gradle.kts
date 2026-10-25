@@ -61,6 +61,7 @@ dependencies {
     implementation(project(":core:analytics"))
     implementation(project(":core:ads"))
     implementation(project(":core:play"))
+    implementation(project(":core:notification"))
 
     // Data Modules
     implementation(project(":data:local"))
