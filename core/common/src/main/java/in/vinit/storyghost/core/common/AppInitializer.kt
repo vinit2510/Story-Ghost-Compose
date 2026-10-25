@@ -1,7 +1,6 @@
 package `in`.vinit.storyghost.core.common
 
 import android.content.Context
-import com.onesignal.OneSignal
 import `in`.vinit.storyghost.config.AppConfig
 import timber.log.Timber
 
@@ -15,7 +14,6 @@ class AppInitializer(
     fun initializeAll() {
         initTimber()
         initFirebase()
-        initOneSignal()
         initAds()
     }
 
@@ -27,14 +25,6 @@ class AppInitializer(
 
     private fun initFirebase() {
         firebaseInitializer.initialize()
-    }
-
-    private fun initOneSignal() {
-        try {
-            OneSignal.initWithContext(context, appConfig.onesignalAppId)
-        } catch (e: Exception) {
-            logger.e("AppInitializer", "Failed to initialize OneSignal", e)
-        }
     }
 
     private fun initAds() {
