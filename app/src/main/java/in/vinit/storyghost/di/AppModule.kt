@@ -5,7 +5,10 @@ import `in`.vinit.storyghost.config.AppConfig
 import `in`.vinit.storyghost.core.ads.adsModule
 import `in`.vinit.storyghost.core.analytics.analyticsModule
 import `in`.vinit.storyghost.core.common.di.commonCoreModule
+import `in`.vinit.storyghost.core.common.storage.LocalStorage
 import `in`.vinit.storyghost.core.network.di.networkModule
+import `in`.vinit.storyghost.core.notification.NotificationConstraintProvider
+import `in`.vinit.storyghost.core.notification.di.notificationModule
 import `in`.vinit.storyghost.core.play.di.playModule
 import `in`.vinit.storyghost.data.billing.billingDataModule
 import `in`.vinit.storyghost.data.downloads.downloadsDataModule
@@ -21,6 +24,7 @@ import `in`.vinit.storyghost.ui.main.StartupViewModel
 import `in`.vinit.storyghost.ui.onboarding.onboardingFeatureModule
 import `in`.vinit.storyghost.ui.story.storyFeatureModule
 import `in`.vinit.storyghost.ui.subscription.subscriptionFeatureModule
+import kotlinx.coroutines.flow.first
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -36,7 +40,6 @@ val appConfigModule = module {
             baseUrl = BuildConfig.BASE_URL,
             iBaseUrl = BuildConfig.I_BASE_URL,
             isMock = BuildConfig.IS_MOCK,
-            onesignalAppId = BuildConfig.ONESIGNAL_APP_ID,
             docIdStoryAndHighlight = BuildConfig.DOC_ID_STORY_AND_HIGHLIGHT,
             qhHighlightList = BuildConfig.QH_HIGHLIGHT_LIST,
             qhUserInfo = BuildConfig.QH_USER_INFO,
@@ -46,6 +49,18 @@ val appConfigModule = module {
             admobAppOpenAdId = BuildConfig.ADMOB_APP_OPEN_AD_ID,
             admobAppId = BuildConfig.ADMOB_APP_ID
         )
+    }
+}
+
+val appNotificationModule = module {
+    single<NotificationConstraintProvider> {
+        val appConfig: AppConfig = get()
+        val localStorage: LocalStorage = get()
+        object : NotificationConstraintProvider {
+            override val currentVersionCode: Int = appConfig.versionCode
+            override suspend fun isUserPremium(): Boolean = localStorage.isPremium().first()
+            override suspend fun isUserLoggedIn(): Boolean = localStorage.isLoggedIn().first()
+        }
     }
 }
 
@@ -64,6 +79,8 @@ val appModule = module {
         analyticsModule,
         networkModule,
         playModule,
+        notificationModule,
+        appNotificationModule,
         localDataModule,
         configDataModule,
         userDataModule,

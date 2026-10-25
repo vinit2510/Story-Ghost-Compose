@@ -38,7 +38,6 @@ android {
         buildConfigField "String", "QH_USER_INFO", "\"${getEnvValue('QH_USER_INFO')}\""
         buildConfigField "String", "QH_HIGHLIGHT_LIST", "\"${getEnvValue('QH_HIGHLIGHT_LIST')}\""
         buildConfigField "String", "DOC_ID_STORY_AND_HIGHLIGHT", "\"${getEnvValue('DOC_ID_STORY_AND_HIGHLIGHT')}\""
-        buildConfigField "String", "ONESIGNAL_APP_ID", "\"${getEnvValue('ONESIGNAL_APP_ID')}\""
         buildConfigField "String", "FAN_REWARDED_INTERSTITIAL_AD_ID", "\"${getEnvValue('FAN_REWARDED_INTERSTITIAL_AD_ID')}\""
         buildConfigField "String", "ADMOB_REWARDED_INTERSTITIAL_AD_ID", "\"${getEnvValue('ADMOB_REWARDED_INTERSTITIAL_AD_ID')}\""
         buildConfigField "String", "ADMOB_INTERSTITIAL_AD_ID", "\"${getEnvValue('ADMOB_INTERSTITIAL_AD_ID')}\""

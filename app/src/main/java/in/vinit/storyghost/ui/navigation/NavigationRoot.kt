@@ -39,7 +39,9 @@ import `in`.vinit.storyghost.ui.subscription.SubscriptionScreen
 @Composable
 fun NavigationRoot(
     initialRoute: Route,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    deepLinkRoute: Route? = null,
+    onDeepLinkConsumed: () -> Unit = {}
 ) {
     val backStack = rememberNavBackStack(initialRoute)
     val popBackStack: () -> Unit = { backStack.removeLastOrNull() }
@@ -50,6 +52,15 @@ fun NavigationRoot(
     LaunchedEffect(currentRoute) {
         val route = currentRoute as? Route ?: return@LaunchedEffect
         analyticsLogger.logScreenView(route.analyticsScreenName)
+    }
+
+    LaunchedEffect(deepLinkRoute) {
+        deepLinkRoute?.let { target ->
+            if (backStack.lastOrNull() != target) {
+                backStack.add(target)
+            }
+            onDeepLinkConsumed()
+        }
     }
 
     NavDisplay(

@@ -41,7 +41,6 @@ jobs:
           echo "DOC_ID_STORY_AND_HIGHLIGHT=${{ secrets.DOC_ID_STORY_AND_HIGHLIGHT }}" >> .env
           echo "QH_HIGHLIGHT_LIST=${{ secrets.QH_HIGHLIGHT_LIST }}" >> .env
           echo "FIREBASE_BASE64=${{ secrets.FIREBASE_BASE64 }}" >> .env
-          echo "ONESIGNAL_APP_ID=${{ secrets.ONESIGNAL_APP_ID }}" >> .env
           echo "ADMOB_APP_ID=${{ secrets.ADMOB_APP_ID }}" >> .env
           echo "ADMOB_APP_OPEN_AD_ID=${{ secrets.ADMOB_APP_OPEN_AD_ID }}" >> .env
           echo "ADMOB_INTERSTITIAL_AD_ID=${{ secrets.ADMOB_INTERSTITIAL_AD_ID }}" >> .env
@@ -122,14 +121,14 @@ jobs:
         run: rm -f release.keystore
 
       - name: Upload Signed AAB as GitHub Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: storyghost-release-aab
           path: ${{ steps.sign_aab.outputs.signedReleaseFile }}
           if-no-files-found: error
 
       - name: Upload Signed APK as GitHub Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: storyghost-release-apk
           path: ${{ steps.sign_apk.outputs.signedReleaseFile }}

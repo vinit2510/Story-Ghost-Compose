@@ -12,7 +12,11 @@ class FirebaseInitializerImpl(
         try {
             FirebaseApp.initializeApp(context)
         } catch (e: Exception) {
-            logger.e("FirebaseInitializerImpl", "Failed to initialize FirebaseApp", e)
+            logger.e(TAG, "Failed to initialize FirebaseApp", e)
         }
+    }
+
+    companion object {
+        private const val TAG = "FirebaseInitializer"
     }
 }

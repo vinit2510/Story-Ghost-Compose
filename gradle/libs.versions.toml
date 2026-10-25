@@ -1,8 +1,8 @@
 [versions]
 agp = "9.2.1"
 converterGson = "3.0.0"
-datastorePreferences = "1.2.1"
-firebaseBom = "35.0.2"
+datastorePreferences = "1.3.0"
+firebaseBom = "35.1.0"
 koin = "4.2.2"
 kotlin = "2.4.21"
 coreKtx = "1.19.1"
@@ -21,14 +21,14 @@ timber = "5.0.1"
 coil = "3.6.3"
 media3 = "1.11.1"
 billing = "9.1.0"
-onesignal = "5.10.2"
 appUpdate = "2.1.0"
-admobNextGen = "1.5.0"
+admobNextGen = "1.6.0"
 facebookAudienceNetwork = "6.+"
 playReview = "2.0.2"
 mockk = "1.14.11"
 coroutinesTest = "1.11.0"
 turbine = "1.2.1"
+googleFirebasePerf = "2.0.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,6 +40,9 @@ androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", vers
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-config = { module = "com.google.firebase:firebase-config" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-perf = { module = "com.google.firebase:firebase-perf" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -70,7 +73,6 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" 
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 coil-video = { module = "io.coil-kt.coil3:coil-video", version.ref = "coil" }
 play-billing = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
-onesignal = { group = "com.onesignal", name = "OneSignal", version.ref = "onesignal" }
 play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "appUpdate" }
 admob-next-gen = { group = "com.google.android.libraries.ads.mobile.sdk", name = "ads-mobile-sdk", version.ref = "admobNextGen" }
 facebook-audience-network = { group = "com.facebook.android", name = "audience-network-sdk", version.ref = "facebookAudienceNetwork" }
@@ -86,4 +88,5 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }
+google-firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "googleFirebasePerf" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
