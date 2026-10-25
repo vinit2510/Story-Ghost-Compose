@@ -18,6 +18,13 @@ val commonCoreModule = module {
     }
 
     single(createdAtStart = true) {
-        AppInitializer(androidContext(), get(), get(), get(), get()).apply { initializeAll() }
+        AppInitializer(
+            context = androidContext(),
+            appConfig = get(),
+            firebaseInitializer = get(),
+            adInitializer = get(),
+            notificationInitializer = getOrNull(),
+            logger = get()
+        ).apply { initializeAll() }
     }
 }

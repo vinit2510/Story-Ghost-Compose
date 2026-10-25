@@ -1,0 +1,128 @@
+name: Push Notification
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: 'Notification Title'
+        required: true
+        type: string
+      body:
+        description: 'Notification Body / Message'
+        required: true
+        type: string
+      topic:
+        description: 'Target Topic (e.g., all, general)'
+        required: true
+        default: 'all'
+        type: string
+      channel_id:
+        description: 'Notification Channel'
+        required: true
+        default: 'general'
+        type: choice
+        options:
+          - general
+          - promotions
+      launch_url:
+        description: 'Deep Link or Web URL (e.g., storyghost://subscription)'
+        required: false
+        type: string
+      image_url:
+        description: 'Big Picture Banner Image URL'
+        required: false
+        type: string
+      icon_url:
+        description: 'Avatar Large Icon Image URL'
+        required: false
+        type: string
+      btn1_text:
+        description: 'Action Button 1 Label'
+        required: false
+        type: string
+      btn1_url:
+        description: 'Action Button 1 Deep Link / URL'
+        required: false
+        type: string
+      btn2_text:
+        description: 'Action Button 2 Label'
+        required: false
+        type: string
+      btn2_url:
+        description: 'Action Button 2 Deep Link / URL'
+        required: false
+        type: string
+      constraint_min_version:
+        description: 'Constraint: Minimum App Version Code'
+        required: false
+        type: string
+      constraint_max_version:
+        description: 'Constraint: Maximum App Version Code'
+        required: false
+        type: string
+      constraint_tier:
+        description: 'Constraint: Target User Tier'
+        required: true
+        default: 'ALL'
+        type: choice
+        options:
+          - ALL
+          - PREMIUM_ONLY
+          - FREE_ONLY
+      constraint_auth:
+        description: 'Constraint: Target Auth State'
+        required: true
+        default: 'ANY'
+        type: choice
+        options:
+          - ANY
+          - LOGGED_IN_ONLY
+          - LOGGED_OUT_ONLY
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  send-notification:
+    name: Send FCM HTTP v1 Notification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - id: auth
+        name: Authenticate to Google Cloud / Firebase
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          token_format: 'access_token'
+          scopes: 'https://www.googleapis.com/auth/firebase.messaging'
+
+      - name: Dispatch FCM Push Notification
+        env:
+          ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+          PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+          FCM_TOPIC: ${{ inputs.topic }}
+          FCM_TITLE: ${{ inputs.title }}
+          FCM_BODY: ${{ inputs.body }}
+          FCM_CHANNEL_ID: ${{ inputs.channel_id }}
+          FCM_LAUNCH_URL: ${{ inputs.launch_url }}
+          FCM_IMAGE_URL: ${{ inputs.image_url }}
+          FCM_ICON_URL: ${{ inputs.icon_url }}
+          FCM_BTN1_TEXT: ${{ inputs.btn1_text }}
+          FCM_BTN1_URL: ${{ inputs.btn1_url }}
+          FCM_BTN2_TEXT: ${{ inputs.btn2_text }}
+          FCM_BTN2_URL: ${{ inputs.btn2_url }}
+          FCM_CONSTRAINT_MIN_VERSION: ${{ inputs.constraint_min_version }}
+          FCM_CONSTRAINT_MAX_VERSION: ${{ inputs.constraint_max_version }}
+          FCM_CONSTRAINT_TIER: ${{ inputs.constraint_tier }}
+          FCM_CONSTRAINT_AUTH: ${{ inputs.constraint_auth }}
+        run: |
+          python3 .github/scripts/send_fcm.py

@@ -29,6 +29,7 @@ include(
     ":core:analytics",
     ":core:ads",
     ":core:play",
+    ":core:notification",
 
     // Data Modules
     ":data:local",

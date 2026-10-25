@@ -121,14 +121,14 @@ jobs:
         run: rm -f release.keystore
 
       - name: Upload Signed AAB as GitHub Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: storyghost-release-aab
           path: ${{ steps.sign_aab.outputs.signedReleaseFile }}
           if-no-files-found: error
 
       - name: Upload Signed APK as GitHub Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: storyghost-release-apk
           path: ${{ steps.sign_apk.outputs.signedReleaseFile }}

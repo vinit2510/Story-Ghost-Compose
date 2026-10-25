@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.navigation.NavigationRoot
+import `in`.vinit.storyghost.ui.navigation.Route
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -25,6 +26,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun App(
     modifier: Modifier = Modifier,
+    deepLinkRoute: Route? = null,
+    onDeepLinkConsumed: () -> Unit = {},
     viewModel: StartupViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -41,6 +44,8 @@ fun App(
         is UiState.Success -> {
             NavigationRoot(
                 initialRoute = state.data,
+                deepLinkRoute = deepLinkRoute,
+                onDeepLinkConsumed = onDeepLinkConsumed,
                 modifier = modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)

@@ -59,6 +59,11 @@ Story Ghost gives you a clean, private, and ad-minimal way to:
 - **In-App Purchases (Premium)**: In-app billing powered by Google Play Billing Client (
   `:data:billing`, `:feature:subscription`) to unlock hidden mention inspection and remove all
   interstitial and open ads.
+- **Native Push Notifications (`:core:notification`)**: Standalone, 100% data-only push notification
+  system built on Firebase Cloud Messaging (FCM HTTP v1). Supports on-device constraint filtering (
+  app version code ranges, user subscription tiers, and auth states), asynchronous rich media
+  loading (BigPicture banners and LargeIcon avatars), interactive action buttons, and direct deep
+  link routing — completely decoupled from third-party push SDKs.
 - **Seamless DataStore Migration**: Automated, backward-compatible migration from legacy
   `SharedPreferences` to Jetpack DataStore Preferences ensures zero session loss for upgrading
   users.
@@ -72,7 +77,7 @@ Story Ghost gives you a clean, private, and ad-minimal way to:
 
 ## Architecture
 
-Story Ghost is built using a modern **multi-module architecture** (22 modules) following Clean
+Story Ghost is built using a modern **multi-module architecture** following Clean
 Architecture principles and Unidirectional Data Flow (UDF).
 
 ```mermaid
@@ -109,12 +114,15 @@ graph TD
     DataModules --> CoreModel
     DataModules --> CoreCommon
 
+    App --> CoreNotification[":core:notification"]
+
     subgraph Core["Core Modules (:core:*)"]
         CoreNetwork --> CoreModel
         CoreNetwork --> CoreCommon
         CoreAds[":core:ads"]
         CoreAnalytics[":core:analytics"]
         CorePlay[":core:play"]
+        CoreNotification
         CoreUI --> CoreModel
         CoreCommon
     end
@@ -147,7 +155,8 @@ graph TD
     ├── common/           # LocalStorage DataStore, Logger, TimeUtils
     ├── ads/              # AdMob & Meta Audience Network integration
     ├── analytics/        # Firebase Analytics abstraction
-    └── play/             # In-App Review & In-App Update helpers
+    ├── play/             # In-App Review & In-App Update helpers
+    └── notification/     # Standalone FCM push notifications, constraints & rich media
 ```
 
 ### Key Libraries & Tooling
@@ -160,6 +169,7 @@ graph TD
 - **Networking:** Retrofit, OkHttp, Gson
 - **In-App Billing:** Google Play Billing Client
 - **Local Storage:** Jetpack DataStore Preferences
+- **Push Notifications:** Firebase Cloud Messaging (FCM HTTP v1 data-only)
 - **Analytics, Crashlytics & Performance:** Firebase Analytics, Crashlytics, Performance
 - **Monetization:** Google AdMob & Meta Audience Network (FAN)
 - **Testing:** JUnit, MockK, Cash App Turbine, Coroutines Test
@@ -202,23 +212,6 @@ cp .env.example .env
 > **Note:** If you skip this step, Gradle's build script (`readEnv.gradle`) will automatically copy
 `.env.example` to `.env` on your first build so the project compiles immediately.
 
-##### Explanation of Environment Variables
-
-| Variable                            | Description                                                                                                                                                                                                             | Default in `.env.example`                |
-|:------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------|
-| `IS_MOCK`                           | When `true`, `MockInterceptor` intercepts requests and serves local assets from `app/src/main/assets/mock_*.json`. Set to `false` for live Instagram network calls.                                                     | `true`                                   |
-| `BASE_URL`                          | Base URL for Instagram's main web domain. Points to mock server in mock mode (`https://www.mock-server.com/`) or live Instagram web endpoints in production.                                                            | `https://www.mock-server.com/`           |
-| `I_BASE_URL`                        | Secondary base URL for the mobile API domain. Used for user following lists and profile queries.                                                                                          | `https://i.mock-server.com/`             |
-| `QH_USER_INFO`                      | Instagram GraphQL query hash / document identifier for fetching detailed user profile metadata.                                                                                                                         | `user_info`                              |
-| `DOC_ID_STORY_AND_HIGHLIGHT`        | Instagram Relay Query document ID for the unified story and highlight media feed (`xdt_api__v1__feed__reels_media`).                                                                                                    | `story_and_highlight`                    |
-| `QH_HIGHLIGHT_LIST`                 | Instagram GraphQL query hash for fetching the user's pinned highlight reel collections (`edge_highlight_reels`).                                                                                                        | `highlight_list`                         |
-| `FIREBASE_BASE64`                   | Base64-encoded string of `google-services.json`. Automatically decoded by `readEnv.gradle` into `app/google-services.json` at build time so local builds compile without needing manual Firebase console configuration. | Included mock configuration              |
-| `ADMOB_APP_ID`                      | Google AdMob Application ID (pre-configured with Google's official test app ID).                                                                                                                                        | `ca-app-pub-3940256099942544~3347511713` |
-| `FAN_REWARDED_INTERSTITIAL_AD_ID`   | Meta (Facebook) Audience Network placement ID for rewarded interstitial ads (pre-configured with official test ID).                                                                                                     | `VID_HD_9_16_39S_APP_INSTALL`            |
-| `ADMOB_REWARDED_INTERSTITIAL_AD_ID` | Google AdMob Ad Unit ID for rewarded interstitial ads (pre-configured with official test ad unit ID).                                                                                                                   | `ca-app-pub-3940256099942544/5354046379` |
-| `ADMOB_INTERSTITIAL_AD_ID`          | Google AdMob Ad Unit ID for standard interstitial ads shown after downloading stories for non-premium users.                                                                                                            | `ca-app-pub-3940256099942544/1033173712` |
-| `ADMOB_APP_OPEN_AD_ID`              | Google AdMob Ad Unit ID for App Open ads displayed when launching or resuming the app.                                                                                                                                  | `ca-app-pub-3940256099942544/9257395921` |
-
 #### 3. Build & Run
 
 - **In Android Studio:**  
@@ -246,11 +239,29 @@ cp .env.example .env
 
 ## Running Tests
 
-To run the full unit test suite across all 22 modules:
+To run the full unit test suite across all modules:
 
 ```bash
 ./gradlew testDebugUnitTest
 ```
+
+---
+
+## Push Notifications
+
+Story Ghost uses a native, 100% data-only push notification module (`:core:notification`) built on **Firebase Cloud Messaging (FCM HTTP v1)** — replacing third-party SDKs like OneSignal with a lightweight, zero-tracking solution that gives complete control over custom layouts, deep links, and on-device targeting.
+
+### Triggering Notifications via GitHub Actions
+
+Broadcast notifications are sent directly through the [push_notification.yml](.github/workflows/push_notification.yml) workflow:
+
+1. Navigate to **Actions &rarr; "Push Notification" &rarr; "Run workflow"**.
+2. Fill in the parameters (Title, Body, Channel, Deep Link, Banner/Icon URLs, or client filters like `constraint_tier`).
+3. Click **Run workflow** to dispatch.
+
+> **Required Secret:** Add your Firebase service account private key JSON as a repository secret named `FIREBASE_SERVICE_ACCOUNT` (*Firebase Console &rarr; Project Settings &rarr; Service accounts*).
+
+*(For local testing, the bundled CLI script `.github/scripts/send_fcm.py` is also available.)*
 
 ---
 
