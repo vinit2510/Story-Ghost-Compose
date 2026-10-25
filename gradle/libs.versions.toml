@@ -21,7 +21,6 @@ timber = "5.0.1"
 coil = "3.6.3"
 media3 = "1.11.1"
 billing = "9.1.0"
-onesignal = "5.10.2"
 appUpdate = "2.1.0"
 admobNextGen = "1.5.0"
 facebookAudienceNetwork = "6.+"
@@ -73,7 +72,6 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" 
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 coil-video = { module = "io.coil-kt.coil3:coil-video", version.ref = "coil" }
 play-billing = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
-onesignal = { group = "com.onesignal", name = "OneSignal", version.ref = "onesignal" }
 play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "appUpdate" }
 admob-next-gen = { group = "com.google.android.libraries.ads.mobile.sdk", name = "ads-mobile-sdk", version.ref = "admobNextGen" }
 facebook-audience-network = { group = "com.facebook.android", name = "audience-network-sdk", version.ref = "facebookAudienceNetwork" }

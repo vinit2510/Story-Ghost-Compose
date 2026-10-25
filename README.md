@@ -160,8 +160,7 @@ graph TD
 - **Networking:** Retrofit, OkHttp, Gson
 - **In-App Billing:** Google Play Billing Client
 - **Local Storage:** Jetpack DataStore Preferences
-- **Analytics & Crashlytics:** Firebase Analytics & Crashlytics
-- **Push Notifications:** OneSignal
+- **Analytics, Crashlytics & Performance:** Firebase Analytics, Crashlytics, Performance
 - **Monetization:** Google AdMob & Meta Audience Network (FAN)
 - **Testing:** JUnit, MockK, Cash App Turbine, Coroutines Test
 
@@ -214,7 +213,6 @@ cp .env.example .env
 | `DOC_ID_STORY_AND_HIGHLIGHT`        | Instagram Relay Query document ID for the unified story and highlight media feed (`xdt_api__v1__feed__reels_media`).                                                                                                    | `story_and_highlight`                    |
 | `QH_HIGHLIGHT_LIST`                 | Instagram GraphQL query hash for fetching the user's pinned highlight reel collections (`edge_highlight_reels`).                                                                                                        | `highlight_list`                         |
 | `FIREBASE_BASE64`                   | Base64-encoded string of `google-services.json`. Automatically decoded by `readEnv.gradle` into `app/google-services.json` at build time so local builds compile without needing manual Firebase console configuration. | Included mock configuration              |
-| `ONESIGNAL_APP_ID`                  | Application ID for OneSignal push notification service.                                                                                                                                                                 | `test_one_singal_id`                     |
 | `ADMOB_APP_ID`                      | Google AdMob Application ID (pre-configured with Google's official test app ID).                                                                                                                                        | `ca-app-pub-3940256099942544~3347511713` |
 | `FAN_REWARDED_INTERSTITIAL_AD_ID`   | Meta (Facebook) Audience Network placement ID for rewarded interstitial ads (pre-configured with official test ID).                                                                                                     | `VID_HD_9_16_39S_APP_INSTALL`            |
 | `ADMOB_REWARDED_INTERSTITIAL_AD_ID` | Google AdMob Ad Unit ID for rewarded interstitial ads (pre-configured with official test ad unit ID).                                                                                                                   | `ca-app-pub-3940256099942544/5354046379` |
