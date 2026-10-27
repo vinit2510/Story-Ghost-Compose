@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:network"))
     implementation(project(":core:common"))
+    implementation(project(":data:config"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.retrofit)

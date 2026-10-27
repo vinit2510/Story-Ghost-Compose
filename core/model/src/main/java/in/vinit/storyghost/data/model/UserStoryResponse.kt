@@ -7,10 +7,30 @@ import com.google.gson.annotations.SerializedName
 data class UserStoryResponse(
     @SerializedName("data") val data: Data? = null
 ) {
+    /**
+     * Helper accessor returning the list of [Data.ReelsMedia] across both modern Relay connection
+     * responses ([Data.XdtConnection]) and legacy standalone queries ([Data.XdtReelsMedia]).
+     */
+    val reelsMedia: List<Data.ReelsMedia>
+        get() = data?.xdtConnection?.edges?.mapNotNull { it.node }
+            ?: data?.xdtReelsMedia?.reelsMedia
+            ?: emptyList()
+
     @Immutable
     data class Data(
-        @SerializedName("xdt_api__v1__feed__reels_media") val xdtReelsMedia: XdtReelsMedia? = null
+        @SerializedName("xdt_api__v1__feed__reels_media") val xdtReelsMedia: XdtReelsMedia? = null,
+        @SerializedName("xdt_api__v1__feed__reels_media__connection") val xdtConnection: XdtConnection? = null
     ) {
+        @Immutable
+        data class XdtConnection(
+            @SerializedName("edges") val edges: List<Edge>? = null
+        ) {
+            @Immutable
+            data class Edge(
+                @SerializedName("node") val node: ReelsMedia? = null
+            )
+        }
+
         @Immutable
         data class XdtReelsMedia(
             @SerializedName("reels_media") val reelsMedia: List<ReelsMedia>? = null
