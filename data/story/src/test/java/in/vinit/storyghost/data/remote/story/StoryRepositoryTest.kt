@@ -4,6 +4,7 @@ import `in`.vinit.storyghost.config.AppConfig
 import `in`.vinit.storyghost.data.model.FollowingResponse
 import `in`.vinit.storyghost.data.model.HighlightsResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
+import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.data.story.StoryRepositoryImpl
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -19,12 +20,15 @@ class StoryRepositoryTest {
 
     private val api: StoryAPI = mockk()
     private val appConfig: AppConfig = mockk(relaxed = true)
+    private val remoteConfigRepository: RemoteConfigRepository = mockk(relaxed = true)
     private lateinit var repository: StoryRepositoryImpl
 
     @Before
     fun setUp() {
         every { appConfig.iBaseUrl } returns "https://i.example.com/"
-        repository = StoryRepositoryImpl(api, appConfig)
+        every { appConfig.docIdStoryAndHighlight } returns "fallback_doc_id"
+        every { remoteConfigRepository.getDocIdStoryAndHighlight() } returns "mock_story_doc_id"
+        repository = StoryRepositoryImpl(api, appConfig, remoteConfigRepository)
     }
 
     @Test
@@ -55,9 +59,9 @@ class StoryRepositoryTest {
     }
 
     @Test
-    fun `getStoryByUserId delegates to modern getStories with configured docIdStoryAndHighlight`() = runTest {
-        val testDocId = "mock_story_doc_id"
-        every { appConfig.docIdStoryAndHighlight } returns testDocId
+    fun `getStoryByUserId delegates to modern getStories with docId from remoteConfigRepository`() = runTest {
+        val testDocId = "remote_story_doc_id"
+        every { remoteConfigRepository.getDocIdStoryAndHighlight() } returns testDocId
         val userId = "user_99"
         val expected = UserStoryResponse()
         coEvery { api.getStories(testDocId, any()) } returns expected
@@ -67,6 +71,21 @@ class StoryRepositoryTest {
         assertNotNull(result)
         assertEquals(expected, result)
         coVerify(exactly = 1) { api.getStories(testDocId, match { it.contains("user_99") }) }
+    }
+
+    @Test
+    fun `getStoryByUserId falls back to appConfig when remoteConfig is blank`() = runTest {
+        every { remoteConfigRepository.getDocIdStoryAndHighlight() } returns ""
+        every { appConfig.docIdStoryAndHighlight } returns "fallback_doc_id"
+        val userId = "user_99"
+        val expected = UserStoryResponse()
+        coEvery { api.getStories("fallback_doc_id", any()) } returns expected
+
+        val result = repository.getStoryByUserId(userId)
+
+        assertNotNull(result)
+        assertEquals(expected, result)
+        coVerify(exactly = 1) { api.getStories("fallback_doc_id", match { it.contains("user_99") }) }
     }
 
     @Test
@@ -83,9 +102,9 @@ class StoryRepositoryTest {
     }
 
     @Test
-    fun `getHighlightStoryByReelId appends highlight prefix and delegates to modern getStories`() = runTest {
-        val testDocId = "mock_story_doc_id"
-        every { appConfig.docIdStoryAndHighlight } returns testDocId
+    fun `getHighlightStoryByReelId appends highlight prefix and delegates to modern getStories with remoteConfig docId`() = runTest {
+        val testDocId = "remote_story_doc_id"
+        every { remoteConfigRepository.getDocIdStoryAndHighlight() } returns testDocId
         val rawReelId = "12345"
         val expected = UserStoryResponse()
         coEvery { api.getStories(testDocId, any()) } returns expected
@@ -95,5 +114,20 @@ class StoryRepositoryTest {
         assertNotNull(result)
         assertEquals(expected, result)
         coVerify(exactly = 1) { api.getStories(testDocId, match { it.contains("highlight:12345") }) }
+    }
+
+    @Test
+    fun `getHighlightStoryByReelId falls back to appConfig when remoteConfig is blank`() = runTest {
+        every { remoteConfigRepository.getDocIdStoryAndHighlight() } returns " "
+        every { appConfig.docIdStoryAndHighlight } returns "fallback_doc_id"
+        val rawReelId = "highlight:12345"
+        val expected = UserStoryResponse()
+        coEvery { api.getStories("fallback_doc_id", any()) } returns expected
+
+        val result = repository.getHighlightStoryByReelId(rawReelId)
+
+        assertNotNull(result)
+        assertEquals(expected, result)
+        coVerify(exactly = 1) { api.getStories("fallback_doc_id", match { it.contains("highlight:12345") }) }
     }
 }

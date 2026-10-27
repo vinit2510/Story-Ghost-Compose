@@ -109,7 +109,7 @@ class StoryViewModel(
             val result = makeApiCall { storyRepository.getStoryByUserId(userId) }
             result.fold(
                 onSuccess = { data ->
-                    val reel = data.data?.xdtReelsMedia?.reelsMedia?.firstOrNull() ?: ReelsMedia(items = emptyList())
+                    val reel = data.reelsMedia.firstOrNull() ?: ReelsMedia(items = emptyList())
                     _uiState.update { UiState.Success(reel) }
                 },
                 onFailure = { ex ->
@@ -126,7 +126,7 @@ class StoryViewModel(
             val result = makeApiCall { storyRepository.getHighlightStoryByReelId(highlightId) }
             result.fold(
                 onSuccess = { data ->
-                    val reel = data.data?.xdtReelsMedia?.reelsMedia?.firstOrNull()
+                    val reel = data.reelsMedia.firstOrNull()
                     val reversedReel = reel?.copy(items = reel.items?.reversed() ?: emptyList()) ?: ReelsMedia(items = emptyList())
                     _uiState.update { UiState.Success(reversedReel) }
                 },

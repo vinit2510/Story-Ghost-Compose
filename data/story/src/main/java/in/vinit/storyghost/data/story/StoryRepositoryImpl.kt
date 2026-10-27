@@ -5,6 +5,7 @@ import `in`.vinit.storyghost.config.AppConfig
 import `in`.vinit.storyghost.data.model.FollowingResponse
 import `in`.vinit.storyghost.data.model.HighlightsResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
+import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.data.remote.story.StoryAPI
 
 /**
@@ -12,7 +13,8 @@ import `in`.vinit.storyghost.data.remote.story.StoryAPI
  */
 class StoryRepositoryImpl(
     private val api: StoryAPI,
-    private val appConfig: AppConfig
+    private val appConfig: AppConfig,
+    private val remoteConfigRepository: RemoteConfigRepository
 ) : StoryRepository {
 
     override suspend fun getFollowing(userId: String, maxId: String?): FollowingResponse {
@@ -23,12 +25,17 @@ class StoryRepositoryImpl(
     }
 
     override suspend fun getStoryByUserId(userId: String): UserStoryResponse {
+        val docId = remoteConfigRepository.getDocIdStoryAndHighlight().ifBlank {
+            appConfig.docIdStoryAndHighlight
+        }
         val vars = mapOf(
-            "media_id" to null,
-            "reel_ids_arr" to listOf(userId),
+            "initial_reel_id" to userId,
+            "reel_ids" to listOf(userId),
+            "first" to 3,
+            "last" to 2,
             "__relay_internal__pv__PolarisCommunityNoteStoriesLabelEnabledrelayprovider" to false
         )
-        return api.getStories(appConfig.docIdStoryAndHighlight, Gson().toJson(vars))
+        return api.getStories(docId, Gson().toJson(vars))
     }
 
     override suspend fun getHighlightReelsByUserId(userId: String): HighlightsResponse {
@@ -46,12 +53,17 @@ class StoryRepositoryImpl(
     }
 
     override suspend fun getHighlightStoryByReelId(highlightReelId: String): UserStoryResponse {
+        val docId = remoteConfigRepository.getDocIdStoryAndHighlight().ifBlank {
+            appConfig.docIdStoryAndHighlight
+        }
         val reelId = if (highlightReelId.startsWith("highlight:")) highlightReelId else "highlight:$highlightReelId"
         val vars = mapOf(
-            "media_id" to null,
-            "reel_ids_arr" to listOf(reelId),
+            "initial_reel_id" to reelId,
+            "reel_ids" to listOf(reelId),
+            "first" to 3,
+            "last" to 2,
             "__relay_internal__pv__PolarisCommunityNoteStoriesLabelEnabledrelayprovider" to false
         )
-        return api.getStories(appConfig.docIdStoryAndHighlight, Gson().toJson(vars))
+        return api.getStories(docId, Gson().toJson(vars))
     }
 }

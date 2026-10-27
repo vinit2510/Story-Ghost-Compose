@@ -306,4 +306,34 @@ class StoryViewModelTest {
 
         assertTrue(viewModel.uiState.value is UiState.Error)
     }
+
+    @Test
+    fun `loadStories resolves reel from modern xdtConnection format`() = runTest {
+        val userId = "12345"
+        val mockItems = listOf(
+            Item(id = "item_modern_1", mediaType = 1)
+        )
+        val mockResponse = UserStoryResponse(
+            data = UserStoryResponse.Data(
+                xdtConnection = UserStoryResponse.Data.XdtConnection(
+                    edges = listOf(
+                        UserStoryResponse.Data.XdtConnection.Edge(
+                            node = ReelsMedia(id = userId, items = mockItems)
+                        )
+                    )
+                )
+            )
+        )
+        coEvery { storyRepository.getStoryByUserId(userId) } returns mockResponse
+
+        viewModel.loadStories(userId, isHighlight = false)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify(exactly = 1) { storyRepository.getStoryByUserId(userId) }
+        val state = viewModel.uiState.value
+        assertTrue(state is UiState.Success)
+        val reel = (state as UiState.Success).data
+        assertEquals(mockItems, reel.items)
+        assertEquals(userId, reel.id)
+    }
 }
