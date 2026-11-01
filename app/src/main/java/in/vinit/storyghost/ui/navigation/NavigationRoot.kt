@@ -44,7 +44,11 @@ fun NavigationRoot(
     onDeepLinkConsumed: () -> Unit = {}
 ) {
     val backStack = rememberNavBackStack(initialRoute)
-    val popBackStack: () -> Unit = { backStack.removeLastOrNull() }
+    val popBackStack: () -> Unit = {
+        if (backStack.size > 1) {
+            backStack.removeLastOrNull()
+        }
+    }
     val analyticsLogger = LocalAnalyticsLogger.current
 
     val currentRoute = backStack.lastOrNull()
@@ -82,8 +86,10 @@ fun NavigationRoot(
                     NavEntry(key) {
                         OnboardingScreen(
                             onboardingComplete = {
-                                backStack.remove(key)
-                                backStack.add(Route.Home)
+                                if (backStack.lastOrNull() != Route.Home) {
+                                    backStack.add(Route.Home)
+                                    backStack.remove(key)
+                                }
                             },
                             onLoginClick = {
                                 backStack.add(Route.LoginWebView)
