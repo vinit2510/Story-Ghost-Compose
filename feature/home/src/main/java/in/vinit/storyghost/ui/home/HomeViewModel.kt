@@ -84,7 +84,7 @@ class HomeViewModel(
                     Gson().fromJson(
                         json,
                         UserInfoResponse::class.java
-                    )?.data?.userContainer?.reel?.user?.profilePicUrl
+                    )?.user?.profilePicUrl
                 } catch (_: Exception) {
                     null
                 }
@@ -256,7 +256,15 @@ class HomeViewModel(
     private fun fetchUserDataIfMissing() {
         viewModelScope.launch {
             val userJson = localStorage.getUserData().first()
-            if (userJson.isNullOrBlank()) {
+            val parsedUser = if (!userJson.isNullOrBlank()) {
+                try {
+                    Gson().fromJson(userJson, UserInfoResponse::class.java)
+                } catch (_: Exception) {
+                    null
+                }
+            } else null
+
+            if (parsedUser?.user == null) {
                 val userId = localStorage.getUserId().first()
                 if (!userId.isNullOrBlank()) {
                     val result = makeApiCall { userRepository.getUserInfoByUserId(userId) }

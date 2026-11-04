@@ -61,8 +61,8 @@ import `in`.vinit.storyghost.core.analytics.AnalyticsEvent
 import `in`.vinit.storyghost.core.analytics.LocalAnalyticsLogger
 import `in`.vinit.storyghost.core.ui.R
 import `in`.vinit.storyghost.data.model.UserStoryResponse
-import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia
-import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
+import `in`.vinit.storyghost.data.model.UserStoryResponse.ReelsMedia
+import `in`.vinit.storyghost.data.model.UserStoryResponse.ReelsMedia.Item
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.ErrorPlaceholder
 import `in`.vinit.storyghost.ui.component.VideoPlayer
@@ -254,7 +254,7 @@ fun StoryContent(
 
 @Composable
 fun StoryPage(
-    user: UserStoryResponse.Data.User?,
+    user: UserStoryResponse.User?,
     data: Item,
     currentCount: Int,
     totalCount: Int,
@@ -670,20 +670,20 @@ fun StoryPagePreview() {
         user = Item.ItemUser(
             id = "owner_id"
         ),
-        imageVersions2 = UserStoryResponse.Data.ImageVersions(
+        imageVersions2 = UserStoryResponse.ImageVersions(
             candidates = listOf(
-                UserStoryResponse.Data.ImageVersions.Candidate(
+                UserStoryResponse.ImageVersions.Candidate(
                     url = "https://example.com/story.jpg"
                 )
             )
         ),
         storyBloksStickers = listOf(
-            UserStoryResponse.Data.StoryBloksSticker(
+            UserStoryResponse.StoryBloksSticker(
                 x = 0.5,
                 y = 0.5,
-                bloksSticker = UserStoryResponse.Data.StoryBloksSticker.BloksSticker(
-                    stickerData = UserStoryResponse.Data.StoryBloksSticker.BloksSticker.StickerData(
-                        igMention = UserStoryResponse.Data.StoryBloksSticker.BloksSticker.StickerData.IgMention(
+                bloksSticker = UserStoryResponse.StoryBloksSticker.BloksSticker(
+                    stickerData = UserStoryResponse.StoryBloksSticker.BloksSticker.StickerData(
+                        igMention = UserStoryResponse.StoryBloksSticker.BloksSticker.StickerData.IgMention(
                             username = "janedoe",
                             fullName = "Jane Doe"
                         )
@@ -695,7 +695,7 @@ fun StoryPagePreview() {
 
     StoryGhostTheme {
         StoryPage(
-            user = UserStoryResponse.Data.User(
+            user = UserStoryResponse.User(
                 id = "mock_user",
                 username = "johndoe",
                 profilePicUrl = "https://example.com/pic.jpg"

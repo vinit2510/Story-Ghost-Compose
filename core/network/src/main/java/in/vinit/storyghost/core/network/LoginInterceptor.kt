@@ -7,15 +7,20 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
+import java.util.Base64
+
+private const val IG_APP_ID = "1217981644879628"
+private const val IG_CAPABILITIES = "360f/7f"
 
 /**
  * OkHttp [Interceptor] that injects authenticated session headers into outgoing network requests.
  *
  * Responsibilities:
- * - Injects the active session cookie (`Cookie`), CSRF token (`X-Csrftoken`), and generated Instagram `User-Agent`.
- * - Sets the official Instagram Web App ID header (`X-IG-App-ID`).
+ * - Injects the active session cookie (`Cookie`), CSRF token (`X-Csrftoken`), generated Instagram mobile `User-Agent`,
+ *   and synthesized Instagram `Authorization: Bearer IGT:2:...` header for mobile endpoints.
+ * - Sets the official Instagram Mobile App ID header (`X-IG-App-ID`) and capabilities (`X-IG-Capabilities`).
  * - Sanitizes headers against non-ASCII characters to prevent OkHttp IllegalArgumentExceptions.
- * - Detects unauthorized or redirect responses (401, 403, 302) and automatically clears local session data.
+ * - Detects unauthorized responses (401) and automatically clears local session data.
  */
 class LoginInterceptor(
     private val localStorage: LocalStorage,
@@ -23,7 +28,8 @@ class LoginInterceptor(
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val requestBuilder = chain.request().newBuilder()
+        val request = chain.request()
+        val requestBuilder = request.newBuilder()
 
         val cookie = runBlocking {
             try {
@@ -39,6 +45,21 @@ class LoginInterceptor(
                 null
             }
         }
+        val userId = runBlocking {
+            try {
+                localStorage.getUserId().first()
+            } catch (_: Exception) {
+                null
+            }
+        }
+        val sessionId = runBlocking {
+            try {
+                localStorage.getSessionId().first()
+            } catch (_: Exception) {
+                null
+            }
+        }
+
         val userAgent = UserAgentUtil.generateInstagramUserAgent(context)
 
         if (!cookie.isNullOrEmpty()) {
@@ -48,11 +69,21 @@ class LoginInterceptor(
             requestBuilder.header("X-Csrftoken", csrfToken.sanitizeHeader())
         }
         requestBuilder.header("User-Agent", userAgent.sanitizeHeader())
-        requestBuilder.header("X-IG-App-ID", "936619743392459")
+        requestBuilder.header("X-IG-App-ID", IG_APP_ID)
+        requestBuilder.header("X-IG-Capabilities", IG_CAPABILITIES)
+
+        if (!userId.isNullOrEmpty() && !sessionId.isNullOrEmpty()) {
+            try {
+                val authJson = """{"ds_user_id":"$userId","sessionid":"$sessionId"}"""
+                val encoded = Base64.getEncoder().encodeToString(authJson.toByteArray(Charsets.UTF_8))
+                requestBuilder.header("Authorization", "Bearer IGT:2:$encoded")
+            } catch (_: Exception) {
+            }
+        }
 
         val response = chain.proceed(requestBuilder.build())
 
-        if (response.code == 401 || response.code == 403 || response.code == 302 || response.isRedirect) {
+        if (response.code == 401) {
             runBlocking {
                 try {
                     localStorage.clearAuthentication()

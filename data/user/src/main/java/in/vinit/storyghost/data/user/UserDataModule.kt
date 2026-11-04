@@ -10,6 +10,6 @@ val userDataModule = module {
     }
 
     single<UserRepository> {
-        UserRepositoryImpl(get(), get())
+        UserRepositoryImpl(get())
     }
 }

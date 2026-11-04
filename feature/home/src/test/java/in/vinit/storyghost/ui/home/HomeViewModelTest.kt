@@ -433,4 +433,25 @@ class HomeViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
+    @Test
+    fun `legacy cached user data without root user triggers remote fetch and saves migrated data`() = runTest {
+        val legacyJson = """{"data":{"user":{"id":"user_123","username":"legacy_user"}}}"""
+        val freshUser = UserInfoResponse(
+            user = UserInfoResponse.User(
+                id = "user_123",
+                username = "fresh_user",
+                profilePicUrl = "https://example.com/fresh.jpg"
+            )
+        )
+        coEvery { localStorage.getUserData() } returns flowOf(legacyJson)
+        coEvery { storyRepository.getFollowing("user_123", null) } returns FollowingResponse(users = emptyList())
+        coEvery { userRepository.getUserInfoByUserId("user_123") } returns freshUser
+
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify(exactly = 1) { userRepository.getUserInfoByUserId("user_123") }
+        coVerify(exactly = 1) { localStorage.saveUserData(any()) }
+    }
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.core.network.makeApiCall
-import `in`.vinit.storyghost.data.model.HighlightsResponse.Data.User.EdgeHighlightReels.Edge
+import `in`.vinit.storyghost.data.model.HighlightsResponse
 import `in`.vinit.storyghost.data.story.StoryRepository
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.toUiState
@@ -29,8 +29,8 @@ class HighlightViewModel(
     private val logger: Logger
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<UiState<List<Edge>>>(UiState.Loading)
-    val uiState: StateFlow<UiState<List<Edge>>> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<UiState<List<HighlightsResponse.TrayItem>>>(UiState.Loading)
+    val uiState: StateFlow<UiState<List<HighlightsResponse.TrayItem>>> = _uiState.asStateFlow()
 
     fun loadHighlights(userId: String) {
         if (_uiState.value is UiState.Success) {
@@ -39,8 +39,7 @@ class HighlightViewModel(
         viewModelScope.launch {
             _uiState.update { UiState.Loading }
             val result = makeApiCall {
-                storyRepository.getHighlightReelsByUserId(userId)
-                    .data?.user?.edgeHighlightReels?.edges ?: emptyList()
+                storyRepository.getHighlightReelsByUserId(userId).tray ?: emptyList()
             }
             if (result.isFailure) {
                 logger.e(

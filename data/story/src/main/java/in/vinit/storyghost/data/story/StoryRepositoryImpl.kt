@@ -1,69 +1,31 @@
 package `in`.vinit.storyghost.data.story
 
-import com.google.gson.Gson
-import `in`.vinit.storyghost.config.AppConfig
 import `in`.vinit.storyghost.data.model.FollowingResponse
 import `in`.vinit.storyghost.data.model.HighlightsResponse
 import `in`.vinit.storyghost.data.model.UserStoryResponse
-import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.data.remote.story.StoryAPI
 
 /**
  * Concrete implementation of [StoryRepository] interacting with [StoryAPI].
  */
 class StoryRepositoryImpl(
-    private val api: StoryAPI,
-    private val appConfig: AppConfig,
-    private val remoteConfigRepository: RemoteConfigRepository
+    private val api: StoryAPI
 ) : StoryRepository {
 
     override suspend fun getFollowing(userId: String, maxId: String?): FollowingResponse {
-        val base =
-            if (appConfig.iBaseUrl.endsWith("/")) appConfig.iBaseUrl else "${appConfig.iBaseUrl}/"
-        val url = "${base}api/v1/friendships/$userId/following/"
-        return api.getFollowing(url, maxId)
+        return api.getFollowing(userId = userId, maxId = maxId)
     }
 
     override suspend fun getStoryByUserId(userId: String): UserStoryResponse {
-        val docId = remoteConfigRepository.getDocIdStoryAndHighlight().ifBlank {
-            appConfig.docIdStoryAndHighlight
-        }
-        val vars = mapOf(
-            "initial_reel_id" to userId,
-            "reel_ids" to listOf(userId),
-            "first" to 3,
-            "last" to 2,
-            "__relay_internal__pv__PolarisCommunityNoteStoriesLabelEnabledrelayprovider" to false
-        )
-        return api.getStories(docId, Gson().toJson(vars))
+        return api.getReelsMedia(reelIds = userId)
     }
 
     override suspend fun getHighlightReelsByUserId(userId: String): HighlightsResponse {
-        val queryHash = appConfig.qhHighlightList
-        val vars = mapOf(
-            "user_id" to userId,
-            "include_chaining" to false,
-            "include_reel" to false,
-            "include_suggested_users" to false,
-            "include_logged_out_extras" to false,
-            "include_highlight_reels" to true,
-            "include_live_status" to false
-        )
-        return api.getHighlightReelsByUserId(queryHash, Gson().toJson(vars))
+        return api.getHighlightReelsByUserId(userId = userId)
     }
 
     override suspend fun getHighlightStoryByReelId(highlightReelId: String): UserStoryResponse {
-        val docId = remoteConfigRepository.getDocIdStoryAndHighlight().ifBlank {
-            appConfig.docIdStoryAndHighlight
-        }
         val reelId = if (highlightReelId.startsWith("highlight:")) highlightReelId else "highlight:$highlightReelId"
-        val vars = mapOf(
-            "initial_reel_id" to reelId,
-            "reel_ids" to listOf(reelId),
-            "first" to 3,
-            "last" to 2,
-            "__relay_internal__pv__PolarisCommunityNoteStoriesLabelEnabledrelayprovider" to false
-        )
-        return api.getStories(docId, Gson().toJson(vars))
+        return api.getReelsMedia(reelIds = reelId)
     }
 }

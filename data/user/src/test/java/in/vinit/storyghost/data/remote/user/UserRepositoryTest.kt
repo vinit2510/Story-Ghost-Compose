@@ -1,6 +1,5 @@
 package `in`.vinit.storyghost.data.remote.user
 
-import `in`.vinit.storyghost.config.AppConfig
 import `in`.vinit.storyghost.data.model.SearchUserResponse
 import `in`.vinit.storyghost.data.model.UserInfoResponse
 import `in`.vinit.storyghost.data.user.UserRepositoryImpl
@@ -16,26 +15,25 @@ import org.junit.Test
 class UserRepositoryTest {
 
     private val api: UserAPI = mockk()
-    private val appConfig: AppConfig = mockk(relaxed = true)
     private lateinit var repository: UserRepositoryImpl
 
     @Before
     fun setUp() {
-        repository = UserRepositoryImpl(api, appConfig)
+        repository = UserRepositoryImpl(api)
     }
 
     @Test
-    fun `getUserInfoByUserId delegates to API with serialized variables`() = runTest {
+    fun `getUserInfoByUserId delegates to API with userId`() = runTest {
         val userId = "123456"
         val expectedResponse = UserInfoResponse()
 
-        coEvery { api.getUserInfoByUserId(any(), any()) } returns expectedResponse
+        coEvery { api.getUserInfoByUserId(userId) } returns expectedResponse
 
         val result = repository.getUserInfoByUserId(userId)
 
         assertNotNull(result)
         assertEquals(expectedResponse, result)
-        coVerify(exactly = 1) { api.getUserInfoByUserId(any(), any()) }
+        coVerify(exactly = 1) { api.getUserInfoByUserId(userId) }
     }
 
     @Test
@@ -45,9 +43,9 @@ class UserRepositoryTest {
 
         coEvery {
             api.searchUsersByQuery(
-                query,
-                "blended",
-                "top_search_page"
+                query = query,
+                context = "blended",
+                searchSurface = "top_search_page"
             )
         } returns expectedResponse
 
@@ -55,6 +53,12 @@ class UserRepositoryTest {
 
         assertNotNull(result)
         assertEquals(expectedResponse, result)
-        coVerify(exactly = 1) { api.searchUsersByQuery(query, "blended", "top_search_page") }
+        coVerify(exactly = 1) {
+            api.searchUsersByQuery(
+                query = query,
+                context = "blended",
+                searchSurface = "top_search_page"
+            )
+        }
     }
 }

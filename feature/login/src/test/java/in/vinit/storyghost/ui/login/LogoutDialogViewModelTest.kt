@@ -45,15 +45,9 @@ class LogoutDialogViewModelTest {
     @Test
     fun `cached user JSON in localStorage loads successfully`() = runTest {
         val mockUser = UserInfoResponse(
-            data = UserInfoResponse.Data(
-                userContainer = UserInfoResponse.Data.UserContainer(
-                    reel = UserInfoResponse.Data.UserContainer.Reel(
-                        user = UserInfoResponse.Data.UserContainer.Reel.User(
-                            id = "123",
-                            username = "cached_user"
-                        )
-                    )
-                )
+            user = UserInfoResponse.User(
+                id = "123",
+                username = "cached_user"
             )
         )
         val userJson = Gson().toJson(mockUser)
@@ -65,7 +59,7 @@ class LogoutDialogViewModelTest {
         val state = viewModel.uiState.value
         assertTrue(state is UiState.Success)
         val loadedUser = (state as UiState.Success).data
-        assertEquals("cached_user", loadedUser?.data?.userContainer?.reel?.user?.username)
+        assertEquals("cached_user", loadedUser?.user?.username)
         coVerify(exactly = 0) { userRepository.getUserInfoByUserId(any()) }
     }
 
@@ -73,15 +67,9 @@ class LogoutDialogViewModelTest {
     fun `missing cached user fetches from remote using userId and saves to localStorage`() =
         runTest {
             val mockUser = UserInfoResponse(
-                data = UserInfoResponse.Data(
-                    userContainer = UserInfoResponse.Data.UserContainer(
-                        reel = UserInfoResponse.Data.UserContainer.Reel(
-                            user = UserInfoResponse.Data.UserContainer.Reel.User(
-                                id = "999",
-                                username = "remote_user"
-                            )
-                        )
-                    )
+                user = UserInfoResponse.User(
+                    id = "999",
+                    username = "remote_user"
                 )
             )
             coEvery { localStorage.getUserData() } returns flowOf(null)
@@ -95,8 +83,32 @@ class LogoutDialogViewModelTest {
             assertTrue(state is UiState.Success)
             assertEquals(
                 "remote_user",
-                (state as UiState.Success).data?.data?.userContainer?.reel?.user?.username
+                (state as UiState.Success).data?.user?.username
             )
+            coVerify(exactly = 1) { userRepository.getUserInfoByUserId("999") }
+            coVerify(exactly = 1) { localStorage.saveUserData(any()) }
+        }
+
+    @Test
+    fun `legacy cached user JSON without root user triggers remote fetch and saves migrated data`() =
+        runTest {
+            val legacyJson = """{"data":{"user":{"id":"999","username":"legacy_user"}}}"""
+            val freshUser = UserInfoResponse(
+                user = UserInfoResponse.User(
+                    id = "999",
+                    username = "fresh_user"
+                )
+            )
+            coEvery { localStorage.getUserData() } returns flowOf(legacyJson)
+            coEvery { localStorage.getUserId() } returns flowOf("999")
+            coEvery { userRepository.getUserInfoByUserId("999") } returns freshUser
+
+            viewModel = LogoutDialogViewModel(localStorage, userRepository, logger)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val state = viewModel.uiState.value
+            assertTrue(state is UiState.Success)
+            assertEquals("fresh_user", (state as UiState.Success).data?.user?.username)
             coVerify(exactly = 1) { userRepository.getUserInfoByUserId("999") }
             coVerify(exactly = 1) { localStorage.saveUserData(any()) }
         }

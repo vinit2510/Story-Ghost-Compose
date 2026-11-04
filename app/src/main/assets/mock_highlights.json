@@ -1,28 +1,44 @@
 {
-  "data": {
-    "user": {
-      "edge_highlight_reels": {
-        "edges": [
-          {
-            "node": {
-              "id": "highlight_111",
-              "title": "Adventures",
-              "cover_media": {
-                "thumbnail_src": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=150&h=150&q=80"
-              }
-            }
-          },
-          {
-            "node": {
-              "id": "highlight_222",
-              "title": "Scary Stuff",
-              "cover_media": {
-                "thumbnail_src": "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=150&h=150&q=80"
-              }
-            }
-          }
-        ]
-      }
+  "tray": [
+    {
+      "id": "highlight:111",
+      "latest_reel_media": 1712345678,
+      "seen": 0,
+      "can_reply": false,
+      "can_reshare": false,
+      "reel_type": "highlight_reel",
+      "cover_media": {
+        "media_id": "media_111",
+        "cropped_image_version": {
+          "width": 150,
+          "height": 150,
+          "url": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=150&h=150&q=80"
+        }
+      },
+      "title": "Adventures",
+      "created_at": 1712345678,
+      "media_count": 5
+    },
+    {
+      "id": "highlight:222",
+      "latest_reel_media": 1712345679,
+      "seen": 0,
+      "can_reply": false,
+      "can_reshare": false,
+      "reel_type": "highlight_reel",
+      "cover_media": {
+        "media_id": "media_222",
+        "cropped_image_version": {
+          "width": 150,
+          "height": 150,
+          "url": "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=150&h=150&q=80"
+        }
+      },
+      "title": "Scary Stuff",
+      "created_at": 1712345679,
+      "media_count": 3
     }
-  }
+  ],
+  "show_empty_state": false,
+  "status": "ok"
 }
