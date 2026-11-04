@@ -124,7 +124,7 @@ fun LogoutDialogContent(
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-            val displayUser = user?.data?.userContainer?.reel?.user
+            val displayUser = user?.user
 
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -157,7 +157,7 @@ fun LogoutDialogContent(
                 Text(
                     text = fullName,
                     modifier = Modifier.padding(top = 5.dp),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.tertiary
                 )
             }
@@ -183,17 +183,11 @@ private fun LogoutDialogPreview() {
     StoryGhostTheme {
         LogoutDialogContent(
             user = UserInfoResponse(
-                data = UserInfoResponse.Data(
-                    userContainer = UserInfoResponse.Data.UserContainer(
-                        reel = UserInfoResponse.Data.UserContainer.Reel(
-                            user = UserInfoResponse.Data.UserContainer.Reel.User(
-                                id = "1",
-                                username = "instagram",
-                                fullName = "Instagram User",
-                                profilePicUrl = ""
-                            )
-                        )
-                    )
+                user = UserInfoResponse.User(
+                    id = "1",
+                    username = "instagram",
+                    fullName = "Instagram User",
+                    profilePicUrl = ""
                 )
             ),
             onLogoutClick = {},

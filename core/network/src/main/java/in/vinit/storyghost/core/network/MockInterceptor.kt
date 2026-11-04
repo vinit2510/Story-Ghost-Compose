@@ -10,23 +10,20 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import java.io.IOException
 
 /**
- * OkHttp [Interceptor] that intercepts outgoing API requests and serves pre-recorded
- * JSON fixture responses from the application's `raw` assets when mock mode is enabled.
- *
- * Essential for:
- * - Offline development and UI testing without hitting live Instagram servers.
- * - Reproducible automated unit and integration tests.
- *
- * Matches incoming GraphQL query hashes and REST endpoints to specific JSON assets:
- * - User stories: `mock_user_story.json`
- * - Highlights: `mock_highlights.json`
- * - Search: `mock_search_user.json`
- * - Following feed: `mock_following.json`
+ * Interceptor that returns local mock JSON assets for testing and offline development.
  */
 class MockInterceptor(
     private val context: Context,
     private val appConfig: AppConfig
 ) : Interceptor {
+
+    private fun loadJsonFromAsset(fileName: String): String {
+        return try {
+            context.assets.open(fileName).bufferedReader().use { it.readText() }
+        } catch (_: IOException) {
+            """{"status": "fail"}"""
+        }
+    }
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
@@ -34,23 +31,12 @@ class MockInterceptor(
         val path = url.encodedPath
 
         val mockFileName = when {
-            path.contains("graphql/query") -> {
-                val formBody = request.body as? okhttp3.FormBody
-                val queryHash = url.queryParameter("query_hash")
-                    ?: (0 until (formBody?.size ?: 0)).firstOrNull { formBody?.name(it) == "doc_id" }?.let { formBody?.value(it) }
-                val variables = url.queryParameter("variables")
-                    ?: (0 until (formBody?.size ?: 0)).firstOrNull { formBody?.name(it) == "variables" }?.let { formBody?.value(it) }
-                    ?: ""
-
-                when {
-                    queryHash == appConfig.qhHighlightList && variables.contains("\"include_highlight_reels\":true") -> "mock_highlights.json"
-                    queryHash == appConfig.qhUserInfo && variables.contains("\"include_highlight_reels\":false") -> "mock_user_info.json"
-                    variables.contains("highlight:") -> "mock_user_highlights.json"
-                    queryHash == appConfig.docIdStoryAndHighlight -> "mock_user_story.json"
-                    else -> null
-                }
+            path.contains("highlights_tray") -> "mock_highlights.json"
+            path.contains("users") && path.contains("info") -> "mock_user_info.json"
+            path.contains("feed/reels_media") -> {
+                val reelIds = url.queryParameter("reel_ids") ?: ""
+                if (reelIds.contains("highlight:")) "mock_user_highlights.json" else "mock_user_story.json"
             }
-
             path.contains("api/v1/fbsearch/topsearch_flat") || path.contains("web/search/topsearch") -> "mock_search_user.json"
             path.contains("friendships") && path.contains("following") -> "mock_following.json"
             else -> null
@@ -73,18 +59,13 @@ class MockInterceptor(
                     .build()
             }
 
-            val jsonContent = try {
-                context.assets.open(mockFileName).bufferedReader().use { it.readText() }
-            } catch (e: IOException) {
-                "{}"
-            }
-
+            val mockResponse = loadJsonFromAsset(mockFileName)
             return Response.Builder()
                 .request(request)
                 .protocol(Protocol.HTTP_1_1)
                 .code(200)
                 .message("OK")
-                .body(jsonContent.toResponseBody("application/json".toMediaTypeOrNull()))
+                .body(mockResponse.toResponseBody("application/json".toMediaTypeOrNull()))
                 .build()
         }
 

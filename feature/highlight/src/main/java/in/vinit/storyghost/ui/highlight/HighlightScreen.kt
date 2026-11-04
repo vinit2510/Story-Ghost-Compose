@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import `in`.vinit.storyghost.core.ui.R
-import `in`.vinit.storyghost.data.model.HighlightsResponse.Data.User.EdgeHighlightReels.Edge
+import `in`.vinit.storyghost.data.model.HighlightsResponse
 import `in`.vinit.storyghost.ui.UiState
 import `in`.vinit.storyghost.ui.component.ErrorPlaceholder
 import `in`.vinit.storyghost.ui.component.MediaGridItem
@@ -65,7 +65,7 @@ fun HighlightScreen(
 @Composable
 fun HighlightContent(
     userName: String,
-    uiState: UiState<List<Edge>>,
+    uiState: UiState<List<HighlightsResponse.TrayItem>>,
     onBackClick: () -> Unit,
     onHighlightClick: (String) -> Unit,
     onRetryClick: () -> Unit,
@@ -142,15 +142,14 @@ fun HighlightContent(
                     if (uiState is UiState.Loading) {
                         storyGridShimmerItems()
                     } else if (uiState is UiState.Success) {
-                        items(uiState.data, key = { it.node?.id ?: it.hashCode() }) { edge ->
-                            val node = edge.node
-                            if (node != null) {
-                                MediaGridItem(
-                                    title = node.title ?: "",
-                                    coverUrl = node.coverMedia?.thumbnailSrc ?: "",
-                                    onClick = { node.id?.let { onHighlightClick(it) } }
-                                )
-                            }
+                        items(uiState.data, key = { it.id ?: it.hashCode() }) { item ->
+                            MediaGridItem(
+                                title = item.title ?: "",
+                                coverUrl = item.coverMedia?.croppedImageVersion?.url
+                                    ?: item.coverMedia?.fullImageVersion?.url
+                                    ?: "",
+                                onClick = { item.id?.let { onHighlightClick(it) } }
+                            )
                         }
                     }
                 }
@@ -190,26 +189,30 @@ fun HighlightScreenEmptyPreview() {
 @Preview(showBackground = true)
 @Composable
 fun HighlightScreenSuccessPreview() {
-    val mockEdges = listOf(
-        Edge(
-            node = Edge.Node(
-                id = "h1",
-                title = "Summer",
-                coverMedia = Edge.Node.CoverMedia(thumbnailSrc = "")
+    val mockItems = listOf(
+        HighlightsResponse.TrayItem(
+            id = "highlight:1",
+            title = "Summer",
+            coverMedia = HighlightsResponse.TrayItem.CoverMedia(
+                croppedImageVersion = HighlightsResponse.TrayItem.CoverMedia.ImageVersion(
+                    url = "https://example.com/summer.jpg"
+                )
             )
         ),
-        Edge(
-            node = Edge.Node(
-                id = "h2",
-                title = "Work",
-                coverMedia = Edge.Node.CoverMedia(thumbnailSrc = "")
+        HighlightsResponse.TrayItem(
+            id = "highlight:2",
+            title = "Work",
+            coverMedia = HighlightsResponse.TrayItem.CoverMedia(
+                croppedImageVersion = HighlightsResponse.TrayItem.CoverMedia.ImageVersion(
+                    url = "https://example.com/work.jpg"
+                )
             )
         )
     )
     StoryGhostTheme {
         HighlightContent(
             userName = "johndoe",
-            uiState = UiState.Success(mockEdges),
+            uiState = UiState.Success(mockItems),
             onBackClick = {},
             onHighlightClick = {},
             onRetryClick = {}

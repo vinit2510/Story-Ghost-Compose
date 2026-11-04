@@ -84,7 +84,7 @@ class HomeViewModel(
                     Gson().fromJson(
                         json,
                         UserInfoResponse::class.java
-                    )?.data?.userContainer?.reel?.user?.profilePicUrl
+                    )?.user?.profilePicUrl
                 } catch (_: Exception) {
                     null
                 }
@@ -108,12 +108,18 @@ class HomeViewModel(
             _isRemoteSearchActive
         ) { query, storiesState, results, remoteActive ->
             if (remoteActive) {
-                results
+                if (results is UiState.Success) {
+                    UiState.Success(results.data.distinctBy { it.id })
+                } else {
+                    results
+                }
             } else {
                 if (storiesState is UiState.Success) {
-                    val filtered = storiesState.data.filter { user ->
-                        user.username?.lowercase()?.contains(query.lowercase()) == true
-                    }
+                    val filtered = storiesState.data
+                        .filter { user ->
+                            user.username?.lowercase()?.contains(query.lowercase()) == true
+                        }
+                        .distinctBy { it.id }
                     UiState.Success(filtered)
                 } else {
                     storiesState
@@ -170,9 +176,10 @@ class HomeViewModel(
 
                     val newActiveStories = response.users
                         ?.filter { (it.latestReelMedia ?: 0L) != 0L }
-                        ?.map { user ->
+                        ?.mapNotNull { user ->
+                            val id = user.id ?: user.pkId?.toString() ?: return@mapNotNull null
                             StoryUser(
-                                id = user.id ?: user.pkId?.toString(),
+                                id = id,
                                 username = user.username,
                                 profilePicUrl = user.profilePicUrl,
                                 isVerified = user.isVerified == true
@@ -222,9 +229,10 @@ class HomeViewModel(
 
                     val newActiveStories = response.users
                         ?.filter { (it.latestReelMedia ?: 0L) != 0L }
-                        ?.map { user ->
+                        ?.mapNotNull { user ->
+                            val id = user.id ?: user.pkId?.toString() ?: return@mapNotNull null
                             StoryUser(
-                                id = user.id ?: user.pkId?.toString(),
+                                id = id,
                                 username = user.username,
                                 profilePicUrl = user.profilePicUrl,
                                 isVerified = user.isVerified == true
@@ -248,7 +256,15 @@ class HomeViewModel(
     private fun fetchUserDataIfMissing() {
         viewModelScope.launch {
             val userJson = localStorage.getUserData().first()
-            if (userJson.isNullOrBlank()) {
+            val parsedUser = if (!userJson.isNullOrBlank()) {
+                try {
+                    Gson().fromJson(userJson, UserInfoResponse::class.java)
+                } catch (_: Exception) {
+                    null
+                }
+            } else null
+
+            if (parsedUser?.user == null) {
                 val userId = localStorage.getUserId().first()
                 if (!userId.isNullOrBlank()) {
                     val result = makeApiCall { userRepository.getUserInfoByUserId(userId) }

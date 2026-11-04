@@ -11,80 +11,69 @@ class UserStoryResponseTest {
     private val gson = Gson()
 
     @Test
-    fun `reelsMedia returns nodes from modern xdt connection format`() {
+    fun `allReelsMedia returns items from native mobile reels_media array format`() {
         val json = """
             {
-              "data": {
-                "xdt_api__v1__feed__reels_media__connection": {
-                  "edges": [
+              "reels_media": [
+                {
+                  "id": "29142288954",
+                  "latest_reel_media": 1793711774,
+                  "items": [
                     {
-                      "node": {
-                        "id": "194317179",
-                        "items": [
-                          {
-                            "id": "item_123",
-                            "pk": "item_123",
-                            "media_type": 1,
-                            "taken_at": 1784557520
-                          }
-                        ]
-                      }
+                      "id": "item_native_1",
+                      "pk": "item_native_1",
+                      "media_type": 1,
+                      "taken_at": 1793711774
                     }
                   ]
                 }
-              }
+              ],
+              "status": "ok"
             }
         """.trimIndent()
 
         val response = gson.fromJson(json, UserStoryResponse::class.java)
 
-        assertNotNull(response.data)
-        assertEquals(1, response.reelsMedia.size)
-        val reel = response.reelsMedia.first()
-        assertEquals("194317179", reel.id)
+        assertEquals(1, response.allReelsMedia.size)
+        val reel = response.allReelsMedia.first()
+        assertEquals("29142288954", reel.id)
         assertEquals(1, reel.items?.size)
-        assertEquals("item_123", reel.items?.first()?.pk)
+        assertEquals("item_native_1", reel.items?.first()?.pk)
+        assertEquals("ok", response.status)
     }
 
     @Test
-    fun `reelsMedia returns items from legacy standalone reels_media format`() {
+    fun `allReelsMedia returns items from native mobile reels map format`() {
         val json = """
             {
-              "data": {
-                "xdt_api__v1__feed__reels_media": {
-                  "reels_media": [
+              "reels": {
+                "user_map_1": {
+                  "id": "user_map_1",
+                  "items": [
                     {
-                      "id": "user_456",
-                      "items": [
-                        {
-                          "id": "item_456",
-                          "pk": "item_456",
-                          "media_type": 2
-                        }
-                      ]
+                      "id": "item_map_1",
+                      "pk": "item_map_1",
+                      "media_type": 2
                     }
                   ]
                 }
-              }
+              },
+              "status": "ok"
             }
         """.trimIndent()
 
         val response = gson.fromJson(json, UserStoryResponse::class.java)
 
-        assertNotNull(response.data)
-        assertEquals(1, response.reelsMedia.size)
-        val reel = response.reelsMedia.first()
-        assertEquals("user_456", reel.id)
+        assertEquals(1, response.allReelsMedia.size)
+        val reel = response.allReelsMedia.first()
+        assertEquals("user_map_1", reel.id)
         assertEquals(1, reel.items?.size)
-        assertEquals("item_456", reel.items?.first()?.pk)
+        assertEquals("item_map_1", reel.items?.first()?.pk)
     }
 
     @Test
-    fun `reelsMedia returns empty list when data is null or empty`() {
+    fun `allReelsMedia returns empty list when reels_media and reels are null`() {
         val emptyResponse = UserStoryResponse()
-        assertTrue(emptyResponse.reelsMedia.isEmpty())
-
-        val emptyDataResponse = UserStoryResponse(data = UserStoryResponse.Data())
-        assertTrue(emptyDataResponse.reelsMedia.isEmpty())
+        assertTrue(emptyResponse.allReelsMedia.isEmpty())
     }
 }

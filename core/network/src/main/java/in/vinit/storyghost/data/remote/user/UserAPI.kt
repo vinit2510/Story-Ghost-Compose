@@ -3,6 +3,7 @@ package `in`.vinit.storyghost.data.remote.user
 import `in`.vinit.storyghost.data.model.SearchUserResponse
 import `in`.vinit.storyghost.data.model.UserInfoResponse
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
@@ -11,16 +12,14 @@ import retrofit2.http.Query
 interface UserAPI {
 
     /**
-     * Fetches user profile information for a given user ID.
+     * Fetches user profile information for a given user ID via Instagram mobile users info endpoint.
      *
-     * @param queryHash The GraphQL query hash for user profile info query.
-     * @param variables Serialized JSON string containing target user ID.
+     * @param userId The Instagram user ID whose profile is retrieved.
      * @return [UserInfoResponse] containing profile details.
      */
-    @GET("graphql/query/")
+    @GET("api/v1/users/{userId}/info/")
     suspend fun getUserInfoByUserId(
-        @Query("query_hash") queryHash: String,
-        @Query("variables") variables: String
+        @Path("userId") userId: String
     ): UserInfoResponse
 
     /**

@@ -2,7 +2,6 @@ package `in`.vinit.storyghost.ui.highlight
 
 import `in`.vinit.storyghost.core.common.Logger
 import `in`.vinit.storyghost.data.model.HighlightsResponse
-import `in`.vinit.storyghost.data.model.HighlightsResponse.Data.User.EdgeHighlightReels.Edge
 import `in`.vinit.storyghost.data.story.StoryRepository
 import `in`.vinit.storyghost.ui.UiState
 import io.mockk.coEvery
@@ -47,21 +46,19 @@ class HighlightViewModelTest {
     }
 
     @Test
-    fun `loadHighlights success updates uiState to Success with edges`() = runTest {
-        val mockEdge = Edge(
-            node = Edge.Node(
-                id = "highlight_123",
-                title = "Summer Vacation"
+    fun `loadHighlights success updates uiState to Success with tray items`() = runTest {
+        val mockItem = HighlightsResponse.TrayItem(
+            id = "highlight:123",
+            title = "Summer Vacation",
+            coverMedia = HighlightsResponse.TrayItem.CoverMedia(
+                croppedImageVersion = HighlightsResponse.TrayItem.CoverMedia.ImageVersion(
+                    url = "https://example.com/cover.jpg"
+                )
             )
         )
         val mockResponse = HighlightsResponse(
-            data = HighlightsResponse.Data(
-                user = HighlightsResponse.Data.User(
-                    edgeHighlightReels = HighlightsResponse.Data.User.EdgeHighlightReels(
-                        edges = listOf(mockEdge)
-                    )
-                )
-            )
+            tray = listOf(mockItem),
+            status = "ok"
         )
         coEvery { storyRepository.getHighlightReelsByUserId("user_1") } returns mockResponse
 
@@ -72,20 +69,16 @@ class HighlightViewModelTest {
         assertTrue(state is UiState.Success)
         val data = (state as UiState.Success).data
         assertEquals(1, data.size)
-        assertEquals("highlight_123", data[0].node?.id)
-        assertEquals("Summer Vacation", data[0].node?.title)
+        assertEquals("highlight:123", data[0].id)
+        assertEquals("Summer Vacation", data[0].title)
+        assertEquals("https://example.com/cover.jpg", data[0].coverMedia?.croppedImageVersion?.url)
     }
 
     @Test
     fun `loadHighlights does not re-fetch if state is already Success`() = runTest {
         val mockResponse = HighlightsResponse(
-            data = HighlightsResponse.Data(
-                user = HighlightsResponse.Data.User(
-                    edgeHighlightReels = HighlightsResponse.Data.User.EdgeHighlightReels(
-                        edges = emptyList()
-                    )
-                )
-            )
+            tray = emptyList(),
+            status = "ok"
         )
         coEvery { storyRepository.getHighlightReelsByUserId("user_1") } returns mockResponse
 

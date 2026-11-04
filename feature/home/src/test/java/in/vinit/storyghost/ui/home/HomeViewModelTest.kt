@@ -335,4 +335,123 @@ class HomeViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+    @Test
+    fun `loadStoryList ignores duplicate users in response`() = runTest {
+        val mockUsers = listOf(
+            FollowingResponse.User(id = "dup_user", username = "alice", latestReelMedia = 100L),
+            FollowingResponse.User(id = "dup_user", username = "alice", latestReelMedia = 100L),
+            FollowingResponse.User(id = "user_2", username = "bob", latestReelMedia = 100L)
+        )
+        coEvery { storyRepository.getFollowing("user_123", null) } returns FollowingResponse(users = mockUsers)
+
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.displayList.test {
+            var state = awaitItem()
+            if (state is UiState.Loading) {
+                state = awaitItem()
+            }
+            assertTrue(state is UiState.Success)
+            val list = (state as UiState.Success).data
+            assertEquals(2, list.size)
+            assertEquals("dup_user", list[0].id)
+            assertEquals("user_2", list[1].id)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `loadNextPage filters out duplicate users that already exist in previous pages`() = runTest {
+        val firstPage = FollowingResponse(
+            users = (1..6).map {
+                FollowingResponse.User(id = "user_$it", username = "name_$it", latestReelMedia = 100L)
+            },
+            nextMaxId = "cursor_1",
+            hasMore = true
+        )
+        val secondPage = FollowingResponse(
+            users = listOf(
+                FollowingResponse.User(id = "user_6", username = "name_6", latestReelMedia = 100L), // duplicate from page 1
+                FollowingResponse.User(id = "user_7", username = "name_7", latestReelMedia = 100L)
+            ),
+            nextMaxId = null,
+            hasMore = false
+        )
+        coEvery { storyRepository.getFollowing("user_123", null) } returns firstPage
+        coEvery { storyRepository.getFollowing("user_123", "cursor_1") } returns secondPage
+
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.loadNextPage()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.displayList.test {
+            var state = awaitItem()
+            if (state is UiState.Loading) {
+                state = awaitItem()
+            }
+            assertTrue(state is UiState.Success)
+            val list = (state as UiState.Success).data
+            assertEquals(7, list.size)
+            val userIds = list.map { it.id }
+            assertEquals(userIds.distinct(), userIds)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `performRemoteSearch removes duplicate users from search results`() = runTest {
+        coEvery { storyRepository.getFollowing("user_123", null) } returns FollowingResponse(users = emptyList())
+        val searchResults = SearchUserResponse(
+            users = listOf(
+                SearchUserResponse.Data(user = SearchUserResponse.Data.User(id = "dup_remote", username = "user_a")),
+                SearchUserResponse.Data(user = SearchUserResponse.Data.User(id = "dup_remote", username = "user_a")),
+                SearchUserResponse.Data(user = SearchUserResponse.Data.User(id = "unique_remote", username = "user_b"))
+            )
+        )
+        coEvery { userRepository.searchUsersByQuery("test") } returns searchResults
+
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onSearchQueryChange("test")
+        viewModel.performSearch()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.displayList.test {
+            var state = awaitItem()
+            if (state is UiState.Loading) {
+                state = awaitItem()
+            }
+            assertTrue(state is UiState.Success)
+            val list = (state as UiState.Success).data
+            assertEquals(2, list.size)
+            assertEquals("dup_remote", list[0].id)
+            assertEquals("unique_remote", list[1].id)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `legacy cached user data without root user triggers remote fetch and saves migrated data`() = runTest {
+        val legacyJson = """{"data":{"user":{"id":"user_123","username":"legacy_user"}}}"""
+        val freshUser = UserInfoResponse(
+            user = UserInfoResponse.User(
+                id = "user_123",
+                username = "fresh_user",
+                profilePicUrl = "https://example.com/fresh.jpg"
+            )
+        )
+        coEvery { localStorage.getUserData() } returns flowOf(legacyJson)
+        coEvery { storyRepository.getFollowing("user_123", null) } returns FollowingResponse(users = emptyList())
+        coEvery { userRepository.getUserInfoByUserId("user_123") } returns freshUser
+
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify(exactly = 1) { userRepository.getUserInfoByUserId("user_123") }
+        coVerify(exactly = 1) { localStorage.saveUserData(any()) }
+    }
 }

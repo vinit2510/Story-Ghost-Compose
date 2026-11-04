@@ -9,8 +9,8 @@ import `in`.vinit.storyghost.core.common.storage.LocalStorage
 import `in`.vinit.storyghost.core.network.makeApiCall
 import `in`.vinit.storyghost.core.play.InAppReviewManager
 import `in`.vinit.storyghost.data.downloads.DownloadsRepository
-import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia
-import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
+import `in`.vinit.storyghost.data.model.UserStoryResponse.ReelsMedia
+import `in`.vinit.storyghost.data.model.UserStoryResponse.ReelsMedia.Item
 import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.data.story.StoryRepository
 import `in`.vinit.storyghost.ui.UiState
@@ -109,7 +109,7 @@ class StoryViewModel(
             val result = makeApiCall { storyRepository.getStoryByUserId(userId) }
             result.fold(
                 onSuccess = { data ->
-                    val reel = data.reelsMedia.firstOrNull() ?: ReelsMedia(items = emptyList())
+                    val reel = data.allReelsMedia.firstOrNull() ?: ReelsMedia(items = emptyList())
                     _uiState.update { UiState.Success(reel) }
                 },
                 onFailure = { ex ->
@@ -126,7 +126,7 @@ class StoryViewModel(
             val result = makeApiCall { storyRepository.getHighlightStoryByReelId(highlightId) }
             result.fold(
                 onSuccess = { data ->
-                    val reel = data.reelsMedia.firstOrNull()
+                    val reel = data.allReelsMedia.firstOrNull()
                     val reversedReel = reel?.copy(items = reel.items?.reversed() ?: emptyList()) ?: ReelsMedia(items = emptyList())
                     _uiState.update { UiState.Success(reversedReel) }
                 },

@@ -51,7 +51,8 @@ class LogoutDialogViewModel(
 
             var user: UserInfoResponse? = if (!userJson.isNullOrBlank()) {
                 try {
-                    Gson().fromJson(userJson, UserInfoResponse::class.java)
+                    val parsed = Gson().fromJson(userJson, UserInfoResponse::class.java)
+                    if (parsed?.user != null) parsed else null
                 } catch (e: Exception) {
                     logger.e(TAG, "loadUserData: Failed to parse cached user JSON", e)
                     null
