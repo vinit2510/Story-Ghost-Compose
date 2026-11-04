@@ -6,8 +6,8 @@ import `in`.vinit.storyghost.core.common.storage.LocalStorage
 import `in`.vinit.storyghost.core.play.InAppReviewManager
 import `in`.vinit.storyghost.data.downloads.DownloadsRepository
 import `in`.vinit.storyghost.data.model.UserStoryResponse
-import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia
-import `in`.vinit.storyghost.data.model.UserStoryResponse.Data.ReelsMedia.Item
+import `in`.vinit.storyghost.data.model.UserStoryResponse.ReelsMedia
+import `in`.vinit.storyghost.data.model.UserStoryResponse.ReelsMedia.Item
 import `in`.vinit.storyghost.data.remote.config.RemoteConfigRepository
 import `in`.vinit.storyghost.data.story.StoryRepository
 import `in`.vinit.storyghost.ui.UiState
@@ -67,23 +67,20 @@ class StoryViewModelTest {
         val mockItems = listOf(
             Item(id = "item_1", mediaType = 1)
         )
-        val mockUser = UserStoryResponse.Data.User(
+        val mockUser = UserStoryResponse.User(
             id = userId,
             username = "ghost_hunter",
             profilePicUrl = "https://example.com/pic.jpg"
         )
         val mockResponse = UserStoryResponse(
-            data = UserStoryResponse.Data(
-                xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
-                    reelsMedia = listOf(
-                        ReelsMedia(
-                            id = userId,
-                            user = mockUser,
-                            items = mockItems
-                        )
-                    )
+            reelsMedia = listOf(
+                ReelsMedia(
+                    id = userId,
+                    user = mockUser,
+                    items = mockItems
                 )
-            )
+            ),
+            status = "ok"
         )
         coEvery { storyRepository.getStoryByUserId(userId) } returns mockResponse
 
@@ -106,13 +103,9 @@ class StoryViewModelTest {
                 Item(id = "item_1", mediaType = 1)
             )
             val mockResponse = UserStoryResponse(
-                data = UserStoryResponse.Data(
-                    xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
-                        reelsMedia = listOf(
-                            ReelsMedia(
-                                items = mockItems
-                            )
-                        )
+                reelsMedia = listOf(
+                    ReelsMedia(
+                        items = mockItems
                     )
                 )
             )
@@ -138,13 +131,9 @@ class StoryViewModelTest {
     fun `loadStories re-fetches when previous load resulted in error`() = runTest {
         val userId = "12345"
         val mockResponse = UserStoryResponse(
-            data = UserStoryResponse.Data(
-                xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
-                    reelsMedia = listOf(
-                        ReelsMedia(
-                            items = emptyList()
-                        )
-                    )
+            reelsMedia = listOf(
+                ReelsMedia(
+                    items = emptyList()
                 )
             )
         )
@@ -171,13 +160,9 @@ class StoryViewModelTest {
         runTest {
             val highlightId = "highlight_999"
             val mockResponse = UserStoryResponse(
-                data = UserStoryResponse.Data(
-                    xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
-                        reelsMedia = listOf(
-                            ReelsMedia(
-                                items = emptyList()
-                            )
-                        )
+                reelsMedia = listOf(
+                    ReelsMedia(
+                        items = emptyList()
                     )
                 )
             )
@@ -203,13 +188,9 @@ class StoryViewModelTest {
             val item2 = Item(id = "item_2", mediaType = 2)
             val item3 = Item(id = "item_3", mediaType = 1)
             val mockResponse = UserStoryResponse(
-                data = UserStoryResponse.Data(
-                    xdtReelsMedia = UserStoryResponse.Data.XdtReelsMedia(
-                        reelsMedia = listOf(
-                            ReelsMedia(
-                                items = listOf(item1, item2, item3)
-                            )
-                        )
+                reelsMedia = listOf(
+                    ReelsMedia(
+                        items = listOf(item1, item2, item3)
                     )
                 )
             )
@@ -255,9 +236,9 @@ class StoryViewModelTest {
         val item = Item(
             id = "item_1",
             mediaType = 1,
-            imageVersions2 = UserStoryResponse.Data.ImageVersions(
+            imageVersions2 = UserStoryResponse.ImageVersions(
                 candidates = listOf(
-                    UserStoryResponse.Data.ImageVersions.Candidate(url = "https://example.com/photo.jpg")
+                    UserStoryResponse.ImageVersions.Candidate(url = "https://example.com/photo.jpg")
                 )
             )
         )
@@ -278,9 +259,9 @@ class StoryViewModelTest {
         val item = Item(
             id = "item_2",
             mediaType = 1,
-            imageVersions2 = UserStoryResponse.Data.ImageVersions(
+            imageVersions2 = UserStoryResponse.ImageVersions(
                 candidates = listOf(
-                    UserStoryResponse.Data.ImageVersions.Candidate(url = "https://example.com/photo2.jpg")
+                    UserStoryResponse.ImageVersions.Candidate(url = "https://example.com/photo2.jpg")
                 )
             )
         )
@@ -308,21 +289,16 @@ class StoryViewModelTest {
     }
 
     @Test
-    fun `loadStories resolves reel from modern xdtConnection format`() = runTest {
+    fun `loadStories resolves reel from native mobile reels map format`() = runTest {
         val userId = "12345"
         val mockItems = listOf(
-            Item(id = "item_modern_1", mediaType = 1)
+            Item(id = "item_map_1", mediaType = 1)
         )
         val mockResponse = UserStoryResponse(
-            data = UserStoryResponse.Data(
-                xdtConnection = UserStoryResponse.Data.XdtConnection(
-                    edges = listOf(
-                        UserStoryResponse.Data.XdtConnection.Edge(
-                            node = ReelsMedia(id = userId, items = mockItems)
-                        )
-                    )
-                )
-            )
+            reels = mapOf(
+                userId to ReelsMedia(id = userId, items = mockItems)
+            ),
+            status = "ok"
         )
         coEvery { storyRepository.getStoryByUserId(userId) } returns mockResponse
 

@@ -40,8 +40,9 @@ val networkModule = module {
 
     single {
         val appConfig: AppConfig = get()
+        val baseUrl = if (appConfig.iBaseUrl.endsWith("/")) appConfig.iBaseUrl else "${appConfig.iBaseUrl}/"
         Retrofit.Builder()
-            .baseUrl(appConfig.baseUrl)
+            .baseUrl(baseUrl)
             .client(get())
             .addConverterFactory(GsonConverterFactory.create())
             .build()

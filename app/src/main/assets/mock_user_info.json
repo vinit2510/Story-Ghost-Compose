@@ -1,27 +1,12 @@
 {
-  "data": {
-    "user": {
-      "reel": {
-        "__typename": "GraphReel",
-        "id": "123456",
-        "expiring_at": 1784643920,
-        "has_pride_media": false,
-        "latest_reel_media": null,
-        "seen": null,
-        "user": {
-          "id": "123456",
-          "full_name": "Mock Ghost User",
-          "profile_pic_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&h=150&q=80",
-          "username": "mock_ghost_user"
-        },
-        "owner": {
-          "__typename": "GraphUser",
-          "id": "123456",
-          "profile_pic_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&h=150&q=80",
-          "username": "mock_ghost_user"
-        }
-      }
-    }
+  "user": {
+    "pk": 123456,
+    "id": "123456",
+    "username": "mock_ghost_user",
+    "full_name": "Mock Ghost User",
+    "is_private": false,
+    "profile_pic_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&h=150&q=80",
+    "is_verified": false
   },
   "status": "ok"
 }

@@ -10,6 +10,6 @@ val storyDataModule = module {
     }
 
     single<StoryRepository> {
-        StoryRepositoryImpl(get(), get(), get())
+        StoryRepositoryImpl(get())
     }
 }
