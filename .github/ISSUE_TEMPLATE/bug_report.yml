@@ -1,0 +1,121 @@
+name: "🐛 Technical Bug Report"
+description: Report a crash, broken feature, API error, or unexpected behavior
+title: "🐛 [Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting an issue! Please provide as much detail as possible so we can diagnose and resolve it quickly.
+  - type: input
+    id: app-version
+    attributes:
+      label: App Version
+      description: The StoryGhost version you are using (e.g., v3.0.4 or build versionCode 24).
+      placeholder: "e.g., v3.0.4 (versionCode 24)"
+    validations:
+      required: true
+  - type: input
+    id: device-info
+    attributes:
+      label: Device & Android Version
+      description: Device model and Android OS version.
+      placeholder: "e.g., Google Pixel 7 - Android 14 (or Samsung Galaxy S23 - One UI 6)"
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Feature / Component
+      description: Select the specific feature where the issue occurs.
+      options:
+        - Story List (Home feed & following stories)
+        - User Story (Loading a specific user's active story)
+        - Story Playback (Video freeze, black screen, player issue)
+        - Hidden Mentions (Mentions not revealing, shimmer stuck)
+        - Highlight List (Highlight tray / collection icons)
+        - Highlight Story (Playback inside highlight collection)
+        - Media Downloads (Saving photo or video to device)
+        - User Search & Profiles
+        - Instagram Login & Session Authentication
+        - Subscription & Google Play Billing
+        - Server / Connection Error (400, 403, 429, 500)
+        - App Crash or Freeze on Launch
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: incident-timestamp
+    attributes:
+      label: Timestamp & Timezone of Issue
+      description: When did this happen? (Helps correlate with backend / Instagram API incidents).
+      placeholder: "e.g., Nov 7, 2026 - 12:30 PM UTC (or IST)"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: "Describe what happened..."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the problem.
+      value: |
+        1. Open StoryGhost
+        2. Navigate to '...'
+        3. Tap on '...'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected-vs-actual
+    attributes:
+      label: Expected vs Actual Behavior
+      description: What did you expect to happen, and what actually occurred?
+      placeholder: "Expected: ... \nActual: ..."
+    validations:
+      required: true
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Screenshots or Screen Recordings
+      description: Drag and drop screenshots or screen recordings showing the issue (blur or obscure any personal account details).
+      placeholder: "Attach images or videos by dragging them here..."
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Error Messages / Logcat
+      description: Paste any error messages, logcat output, or stack traces here.
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution or Workaround (Optional)
+      description: If you have identified the root cause, have a suggested fix, or know a temporary workaround, please share it here (code snippets or patches welcome).
+      placeholder: |
+        e.g., Suggested code fix, workaround, or patch:
+        ```
+        // Your code or suggestion here
+        ```
+    validations:
+      required: false
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have updated to the latest release of StoryGhost on Google Play / GitHub.
+          required: true
+        - label: I have not included any sensitive personal credentials (passwords, full auth cookies, or private tokens).
+          required: true
+        - label: I searched existing open and closed issues to verify this is not a duplicate.
+          required: false
