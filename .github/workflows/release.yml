@@ -2,9 +2,8 @@ name: CD
 
 on:
   push:
-    tags:
-      - 'v*'
-  workflow_dispatch:
+    branches:
+      - master
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,13 +16,67 @@ jobs:
   release:
     name: Build, Sign & Publish
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     env:
       GRADLE_OPTS: "-Xmx4096m -Dfile.encoding=UTF-8"
-      BUILD_TOOLS_VERSION: "35.0.0"
 
     steps:
+      - name: Enforce Master Branch
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$REF" != "refs/heads/master" ]; then
+            echo "::error::Release CD can ONLY run on the 'master' branch! Current ref: $REF"
+            exit 1
+          fi
+
       - name: Checkout Code
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Extract & Validate Version from gradle.properties
+        id: get_version
+        run: |
+          set -euo pipefail
+
+          get_prop() {
+            { grep -E "^${1//./\\.}=" gradle.properties || true; } | tail -n 1 | cut -d'=' -f2- | tr -d '[:space:]'
+          }
+
+          VERSION_NAME=$(get_prop app.versionName)
+          VERSION_CODE=$(get_prop app.versionCode)
+
+          if [ -z "$VERSION_NAME" ] || [ -z "$VERSION_CODE" ]; then
+            echo "::error::Failed to extract app.versionName or app.versionCode from gradle.properties!"
+            exit 1
+          fi
+
+          if ! [[ "$VERSION_CODE" =~ ^[0-9]+$ ]]; then
+            echo "::error::app.versionCode must be a positive integer! Found: '$VERSION_CODE'"
+            exit 1
+          fi
+
+          if ! [[ "$VERSION_NAME" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
+            echo "::error::app.versionName must follow valid format (e.g. 3.0.4 or 3.1)! Found: '$VERSION_NAME'"
+            exit 1
+          fi
+
+          TAG_NAME="v$VERSION_NAME"
+          echo "Target Version Name: $VERSION_NAME"
+          echo "Target Version Code: $VERSION_CODE"
+          echo "Target Release Tag:  $TAG_NAME"
+
+          # Check if tag already exists on remote without pipefail hazards
+          EXISTING_REMOTE_TAG=$(git ls-remote --tags origin "refs/tags/$TAG_NAME") || true
+          if [ -n "$EXISTING_REMOTE_TAG" ]; then
+            echo "::error::Release tag '$TAG_NAME' already exists on remote! Please bump app.versionName in gradle.properties before releasing."
+            exit 1
+          fi
+
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+          echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Set up JDK 21
         uses: actions/setup-java@v5
@@ -33,92 +86,121 @@ jobs:
           cache: 'gradle'
 
       - name: Create .env File
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          I_BASE_URL: ${{ secrets.I_BASE_URL }}
+          IS_MOCK: ${{ secrets.IS_MOCK }}
+          QH_USER_INFO: ${{ secrets.QH_USER_INFO }}
+          DOC_ID_STORY_AND_HIGHLIGHT: ${{ secrets.DOC_ID_STORY_AND_HIGHLIGHT }}
+          QH_HIGHLIGHT_LIST: ${{ secrets.QH_HIGHLIGHT_LIST }}
+          FIREBASE_BASE64: ${{ secrets.FIREBASE_BASE64 }}
+          ADMOB_APP_ID: ${{ secrets.ADMOB_APP_ID }}
+          ADMOB_APP_OPEN_AD_ID: ${{ secrets.ADMOB_APP_OPEN_AD_ID }}
+          ADMOB_INTERSTITIAL_AD_ID: ${{ secrets.ADMOB_INTERSTITIAL_AD_ID }}
+          ADMOB_REWARDED_INTERSTITIAL_AD_ID: ${{ secrets.ADMOB_REWARDED_INTERSTITIAL_AD_ID }}
+          FAN_REWARDED_INTERSTITIAL_AD_ID: ${{ secrets.FAN_REWARDED_INTERSTITIAL_AD_ID }}
         run: |
-          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
-          echo "I_BASE_URL=${{ secrets.I_BASE_URL }}" >> .env
-          echo "IS_MOCK=${{ secrets.IS_MOCK }}" >> .env
-          echo "QH_USER_INFO=${{ secrets.QH_USER_INFO }}" >> .env
-          echo "DOC_ID_STORY_AND_HIGHLIGHT=${{ secrets.DOC_ID_STORY_AND_HIGHLIGHT }}" >> .env
-          echo "QH_HIGHLIGHT_LIST=${{ secrets.QH_HIGHLIGHT_LIST }}" >> .env
-          echo "FIREBASE_BASE64=${{ secrets.FIREBASE_BASE64 }}" >> .env
-          echo "ADMOB_APP_ID=${{ secrets.ADMOB_APP_ID }}" >> .env
-          echo "ADMOB_APP_OPEN_AD_ID=${{ secrets.ADMOB_APP_OPEN_AD_ID }}" >> .env
-          echo "ADMOB_INTERSTITIAL_AD_ID=${{ secrets.ADMOB_INTERSTITIAL_AD_ID }}" >> .env
-          echo "ADMOB_REWARDED_INTERSTITIAL_AD_ID=${{ secrets.ADMOB_REWARDED_INTERSTITIAL_AD_ID }}" >> .env
-          echo "FAN_REWARDED_INTERSTITIAL_AD_ID=${{ secrets.FAN_REWARDED_INTERSTITIAL_AD_ID }}" >> .env
+          set -euo pipefail
+          for v in BASE_URL I_BASE_URL IS_MOCK QH_USER_INFO DOC_ID_STORY_AND_HIGHLIGHT \
+                   QH_HIGHLIGHT_LIST FIREBASE_BASE64 ADMOB_APP_ID ADMOB_APP_OPEN_AD_ID \
+                   ADMOB_INTERSTITIAL_AD_ID ADMOB_REWARDED_INTERSTITIAL_AD_ID \
+                   FAN_REWARDED_INTERSTITIAL_AD_ID; do
+            printf '%s=%s\n' "$v" "${!v}" >> .env
+          done
 
       - name: Grant Execute Permission to Gradle Wrapper
         run: chmod +x gradlew
 
-      - name: Detect Android Build Tools Version
+      - name: Locate Android Build Tools
+        id: build_tools
         run: |
-          BUILD_TOOLS_PATH="/usr/local/lib/android/sdk/build-tools"
-          if [ -d "$BUILD_TOOLS_PATH" ]; then
-            DETECTED_VERSION=$(ls -1 "$BUILD_TOOLS_PATH" | sort -V | tail -n 1)
-            echo "Detected Android Build-Tools version: $DETECTED_VERSION"
-            echo "BUILD_TOOLS_VERSION=$DETECTED_VERSION" >> $GITHUB_ENV
+          set -euo pipefail
+          BUILD_TOOLS_DIR=$(ls -d "$ANDROID_HOME/build-tools/"[0-9]* 2>/dev/null | grep -v -- '-rc' | grep -v -- '-beta' | sort -V | tail -n 1)
+          if [ -z "$BUILD_TOOLS_DIR" ] || [ ! -d "$BUILD_TOOLS_DIR" ]; then
+            echo "::error::No valid Android build-tools found in \$ANDROID_HOME/build-tools!"
+            exit 1
           fi
+          echo "Using Android Build-Tools from: $BUILD_TOOLS_DIR"
+          echo "dir=$BUILD_TOOLS_DIR" >> "$GITHUB_OUTPUT"
 
       - name: Run Unit Tests
         run: ./gradlew testDebugUnitTest --no-daemon --stacktrace
 
-      - name: Build Release Bundle (AAB)
-        run: ./gradlew :app:bundleRelease --no-daemon --stacktrace
-
-      - name: Build Release APK
-        run: ./gradlew :app:assembleRelease --no-daemon --stacktrace
+      - name: Build Release Bundle & APK
+        run: ./gradlew :app:bundleRelease :app:assembleRelease --no-daemon --stacktrace
 
       - name: Decode Keystore
-        run: echo "${{ secrets.SIGNING_KEY_BASE64 }}" | base64 -d > release.keystore
+        env:
+          SIGNING_KEY_BASE64: ${{ secrets.SIGNING_KEY_BASE64 }}
+        run: |
+          set -euo pipefail
+          echo "$SIGNING_KEY_BASE64" | base64 -d > release.keystore
+          chmod 600 release.keystore
 
       - name: Sign Release AAB
         id: sign_aab
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
+          set -euo pipefail
           AAB_FILE=$(find app/build/outputs/bundle/release -name "*.aab" | head -n 1)
+          if [ -z "$AAB_FILE" ] || [ ! -f "$AAB_FILE" ]; then
+            echo "::error::Release AAB file not found!"
+            exit 1
+          fi
+
           jarsigner -verbose \
             -sigalg SHA256withRSA \
             -digestalg SHA-256 \
             -keystore release.keystore \
-            -storepass "${{ secrets.KEYSTORE_PASSWORD }}" \
-            -keypass "${{ secrets.KEY_PASSWORD }}" \
-            "$AAB_FILE" "${{ secrets.KEY_ALIAS }}"
-          echo "signedReleaseFile=$AAB_FILE" >> $GITHUB_OUTPUT
+            -storepass:env KEYSTORE_PASSWORD \
+            -keypass:env KEY_PASSWORD \
+            "$AAB_FILE" "$KEY_ALIAS"
 
-      - name: Sign Release APK
+          # Verify signature (without -strict so self-signed Android keystores do not fail)
+          jarsigner -verify "$AAB_FILE"
+          echo "signedReleaseFile=$AAB_FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Align and Sign Release APK
         id: sign_apk
+        env:
+          BUILD_TOOLS_DIR: ${{ steps.build_tools.outputs.dir }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
-          BUILD_TOOLS_DIR="/usr/local/lib/android/sdk/build-tools/$BUILD_TOOLS_VERSION"
-          UNSIGNED_APK=$(find app/build/outputs/apk/release -name "*.apk" | head -n 1)
+          set -euo pipefail
+          UNSIGNED_APK=$(find app/build/outputs/apk/release -name "*-unsigned.apk" -o -name "*.apk" | head -n 1)
+          if [ -z "$UNSIGNED_APK" ] || [ ! -f "$UNSIGNED_APK" ]; then
+            echo "::error::Release APK file not found!"
+            exit 1
+          fi
+
           ALIGNED_APK="app/build/outputs/apk/release/storyghost-release-aligned.apk"
           SIGNED_APK="app/build/outputs/apk/release/storyghost-release-signed.apk"
-          if [ -f "$BUILD_TOOLS_DIR/zipalign" ]; then
-            "$BUILD_TOOLS_DIR/zipalign" -v -p 4 "$UNSIGNED_APK" "$ALIGNED_APK" || cp "$UNSIGNED_APK" "$ALIGNED_APK"
-          else
-            cp "$UNSIGNED_APK" "$ALIGNED_APK"
-          fi
-          if [ -f "$BUILD_TOOLS_DIR/apksigner" ]; then
-            "$BUILD_TOOLS_DIR/apksigner" sign \
-              --ks release.keystore \
-              --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
-              --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
-              --key-pass "pass:${{ secrets.KEY_PASSWORD }}" \
-              --out "$SIGNED_APK" \
-              "$ALIGNED_APK"
-          else
-            jarsigner -verbose \
-              -sigalg SHA256withRSA \
-              -digestalg SHA-256 \
-              -keystore release.keystore \
-              -storepass "${{ secrets.KEYSTORE_PASSWORD }}" \
-              -keypass "${{ secrets.KEY_PASSWORD }}" \
-              "$ALIGNED_APK" "${{ secrets.KEY_ALIAS }}"
-            cp "$ALIGNED_APK" "$SIGNED_APK"
-          fi
-          echo "signedReleaseFile=$SIGNED_APK" >> $GITHUB_OUTPUT
 
-      - name: Clean up Keystore
+          # Zipalign must succeed; do not swallow failures
+          "$BUILD_TOOLS_DIR/zipalign" -v -p 4 "$UNSIGNED_APK" "$ALIGNED_APK"
+
+          # Sign using apksigner with v2/v3 signature scheme
+          "$BUILD_TOOLS_DIR/apksigner" sign \
+            --ks release.keystore \
+            --ks-key-alias "$KEY_ALIAS" \
+            --ks-pass env:KEYSTORE_PASSWORD \
+            --key-pass env:KEY_PASSWORD \
+            --out "$SIGNED_APK" \
+            "$ALIGNED_APK"
+
+          # Verify APK signature scheme
+          "$BUILD_TOOLS_DIR/apksigner" verify --verbose "$SIGNED_APK"
+
+          echo "signedReleaseFile=$SIGNED_APK" >> "$GITHUB_OUTPUT"
+
+      - name: Clean up Sensitive Files
         if: always()
-        run: rm -f release.keystore
+        run: rm -f release.keystore .env
 
       - name: Upload Signed AAB as GitHub Artifact
         uses: actions/upload-artifact@v6
@@ -144,14 +226,25 @@ jobs:
           status: draft
           mappingFile: app/build/outputs/mapping/release/mapping.txt
 
+      - name: Create and Push Git Tag
+        env:
+          TAG_NAME: ${{ steps.get_version.outputs.tag_name }}
+          VERSION_CODE: ${{ steps.get_version.outputs.version_code }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG_NAME" -m "Release $TAG_NAME (VersionCode: $VERSION_CODE)"
+          git push origin "$TAG_NAME"
+
       - name: Publish GitHub Release (Draft)
         uses: softprops/action-gh-release@v3
         with:
-          name: Release ${{ github.ref_name }}
+          tag_name: ${{ steps.get_version.outputs.tag_name }}
+          name: Release ${{ steps.get_version.outputs.tag_name }}
           files: |
             ${{ steps.sign_aab.outputs.signedReleaseFile }}
             ${{ steps.sign_apk.outputs.signedReleaseFile }}
-            app/build/outputs/mapping/release/mapping.txt
           generate_release_notes: true
           draft: true
           prerelease: false

@@ -15,8 +15,8 @@ android {
         applicationId = "in.vinit.storyghost"
         minSdk = 26
         targetSdk = 37
-        versionCode = 24
-        versionName = "3.0.4"
+        versionCode = providers.gradleProperty("app.versionCode").map { it.toInt() }.getOrElse(0)
+        versionName = providers.gradleProperty("app.versionName").getOrElse("0")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
