@@ -1,0 +1,47 @@
+name: "💡 Feature Request / Suggestion"
+description: Propose a new feature, capability, or user experience enhancement
+title: "💡 [Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea to make StoryGhost even better? Tell us about it below!
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem or limitation? Please describe.
+      placeholder: "e.g., I'm always frustrated when..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature or improvement you would like to see added.
+      placeholder: "Describe the desired behavior or UI..."
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any alternative solutions or features you've considered?
+      placeholder: "Describe any alternatives..."
+    validations:
+      required: false
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups / Visual Examples
+      description: Drag and drop mockups, sketches, or UI screenshots here if applicable.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing feature requests to avoid submitting a duplicate.
+          required: false

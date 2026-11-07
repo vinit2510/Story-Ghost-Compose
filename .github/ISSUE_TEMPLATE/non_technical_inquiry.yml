@@ -1,0 +1,74 @@
+name: "💬 General Inquiry, Server Issues & Support"
+description: Report server or loading issues, ask general questions, get help, or share feedback
+title: "💬 [Inquiry]: "
+labels: ["support", "inquiry"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please use this form if you are experiencing server connection or loading trouble, have questions about features, need account/billing help, or want to share feedback.
+        > **Warning:** Never share your Instagram password, private session cookies, or payment card numbers here.
+  - type: dropdown
+    id: inquiry-type
+    attributes:
+      label: Topic / Affected Feature
+      description: Select the specific feature or topic your inquiry is regarding.
+      options:
+        - Story List (Home feed & following stories)
+        - User Story (Cannot view a user's active story)
+        - Story Playback (Video buffering or playback issue)
+        - Hidden Mentions (Mentions not revealing or inquiry)
+        - Highlight List (Highlight tray not showing)
+        - Highlight Story (Cannot view highlights)
+        - Media Downloads (Question or issue saving media)
+        - User Search & Profiles
+        - Instagram Login & Session Connection
+        - Google Play Subscription & Billing
+        - Server Status / General Connection Issue
+        - Privacy & Anonymous Story Viewing
+        - General Question / How-To
+        - Feedback & Suggestions
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: App Version
+      description: The app version you are using (found in Settings -> About).
+      placeholder: "e.g., v3.0.4"
+    validations:
+      required: false
+  - type: input
+    id: incident-timestamp
+    attributes:
+      label: When did this issue start?
+      description: Approximate date and time you started noticing the problem (helps us check backend/server status).
+      placeholder: "e.g., Today around 12:30 PM UTC (or IST)"
+    validations:
+      required: false
+  - type: textarea
+    id: inquiry-details
+    attributes:
+      label: Description
+      description: What are you experiencing, or what would you like help with?
+      placeholder: "e.g., The app was working earlier, but now when opening stories it displays 'Failed to load'..."
+    validations:
+      required: true
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Screenshots or Screen Recordings
+      description: Drag and drop screenshots of the error or loading screen (blur or crop personal account details if needed).
+      placeholder: "Attach images or recordings here..."
+    validations:
+      required: false
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I understand this is a public repository and have obscured any sensitive private information.
+          required: true
+        - label: I verified my internet connection and checked if an update is available on Google Play / GitHub.
+          required: false
